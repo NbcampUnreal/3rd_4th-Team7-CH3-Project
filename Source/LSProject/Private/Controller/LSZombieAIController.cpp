@@ -1,5 +1,56 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Controller/LSZombieAIController.h"
 
+#include "BehaviorTree/BlackboardComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Perception/AIPerceptionComponent.h"
+
+ALSZombieAIController::ALSZombieAIController()
+{
+	AIPerception=CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerception"));
+	SetPerceptionComponent(*AIPerception);
+	
+	BlackboardComp = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackBoardComp"));
+}
+
+//EnemyTodo : ForceInline
+UBlackboardComponent* ALSZombieAIController::GetBlackBoardComp() const
+{
+	return BlackboardComp;
+}
+
+void ALSZombieAIController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+
+	
+}
+
+void ALSZombieAIController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (BlackboardComp)
+	{
+		BlackboardComp->SetValueAsBool(TEXT("IsCanGoToPlayer"), false);
+		UE_LOG(LogTemp, Warning, TEXT("[LSEnemy] Blackboard initialized successfully"));
+	}
+
+	if (AIPerception)
+	{
+		AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &ALSZombieAIController::OnPerceptionUpdated);
+	}
+}
+
+void ALSZombieAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
+{
+	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	if (Actor != PlayerPawn || !BlackboardComp) 
+	{
+		return;
+	}
+	if (Stimulus.WasSuccessfullySensed())
+	{
+		// Blackboard에 정보 저장
+		BlackboardComp->SetValueAsObject(TEXT("TargetActor"), Actor);
+	}	
+}
