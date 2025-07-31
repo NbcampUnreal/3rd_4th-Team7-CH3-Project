@@ -7,6 +7,7 @@ ALSEnemy::ALSEnemy()
 
 void ALSEnemy::Attack()
 {
+	
 }
 
 void ALSEnemy::Death()

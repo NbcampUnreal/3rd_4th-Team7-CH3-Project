@@ -8,5 +8,6 @@ UCLASS()
 class LSPROJECT_API ALSNormalZombie : public ALSEnemy
 {
 	GENERATED_BODY()
-	
+public:
+	ALSNormalZombie();
 };
