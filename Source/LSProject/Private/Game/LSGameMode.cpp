@@ -2,4 +2,9 @@
 
 
 #include "Game/LSGameMode.h"
+#include "Game/LSPlayerState.h"
 
+ALSGameMode::ALSGameMode()
+{
+	PlayerStateClass = ALSPlayerState::StaticClass();
+}

@@ -13,5 +13,11 @@ UCLASS()
 class LSPROJECT_API ALSPlayerState : public APlayerState
 {
 	GENERATED_BODY()
-	
+public:
+	ALSPlayerState();
+
+	FORCEINLINE int32 GetCoin() const{return Coin;}
+	FORCEINLINE void SetCoin(int32 NewCoin) {Coin=NewCoin;}
+private:
+	int32 Coin;
 };
