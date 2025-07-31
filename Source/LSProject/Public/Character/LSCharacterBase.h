@@ -1,29 +1,31 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
+#include "LSCharacterInterface.h"
 #include "GameFramework/Character.h"
 #include "LSCharacterBase.generated.h"
 
 UCLASS()
-class LSPROJECT_API ALSCharacterBase : public ACharacter
+class LSPROJECT_API ALSCharacterBase : public ACharacter, public ILSCharacterInterface
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	ALSCharacterBase();
 
 protected:
-	// Called when the game starts or when spawned
+	float WalkSpeed;
+	float Health;
+	
 	virtual void BeginPlay() override;
+	virtual void TakeDamage(float Damage) override;
+	virtual void Attack() override;
+	virtual void Death() override;
 
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 };

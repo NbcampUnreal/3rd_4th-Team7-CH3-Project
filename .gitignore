@@ -86,3 +86,4 @@ DerivedDataCache/*
 *.d
 
 Content/Developers/*
+*.DotSettings.user
