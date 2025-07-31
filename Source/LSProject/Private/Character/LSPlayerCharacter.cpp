@@ -1,10 +1,10 @@
-
 #include "Character/LSPlayerCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Controller/LSPlayerController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 ALSPlayerCharacter::ALSPlayerCharacter()
 {
@@ -51,26 +51,26 @@ void ALSPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 			if (PlayerController->MoveAction)
 			{
 				EnhancedInput->BindAction(PlayerController->MoveAction, ETriggerEvent::Triggered,
-					this, &ALSPlayerCharacter::Move);
+				                          this, &ALSPlayerCharacter::Move);
 			}
 			if (PlayerController->LookAction)
 			{
 				EnhancedInput->BindAction(PlayerController->LookAction, ETriggerEvent::Triggered,
-					this, &ALSPlayerCharacter::Look);
+				                          this, &ALSPlayerCharacter::Look);
 			}
 			if (PlayerController->JumpAction)
 			{
 				EnhancedInput->BindAction(PlayerController->JumpAction, ETriggerEvent::Triggered,
-					this, &ALSPlayerCharacter::StartJump);
+				                          this, &ALSPlayerCharacter::StartJump);
 				EnhancedInput->BindAction(PlayerController->JumpAction, ETriggerEvent::Completed,
-					this, &ALSPlayerCharacter::StopJump);
+				                          this, &ALSPlayerCharacter::StopJump);
 			}
 			if (PlayerController->SprintAction)
 			{
 				EnhancedInput->BindAction(PlayerController->SprintAction, ETriggerEvent::Triggered,
-					this, &ALSPlayerCharacter::StartSprint);
+				                          this, &ALSPlayerCharacter::StartSprint);
 				EnhancedInput->BindAction(PlayerController->SprintAction, ETriggerEvent::Completed,
-					this, &ALSPlayerCharacter::StopSprint);
+				                          this, &ALSPlayerCharacter::StopSprint);
 			}
 		}
 	}
@@ -81,14 +81,18 @@ void ALSPlayerCharacter::Move(const FInputActionValue& Value)
 	if (!Controller) return;
 
 	const FVector2D MoveInput = Value.Get<FVector2D>();
-
+	FRotator Rotation = GetControlRotation();
+	
+	FVector ForwardVector = UKismetMathLibrary::GetForwardVector(FRotator(0.0f, Rotation.Yaw, 0.0f));
+	FVector RightVector = UKismetMathLibrary::GetRightVector(FRotator(0.0f, Rotation.Yaw, 0.0f));
+	
 	if (!FMath::IsNearlyZero(MoveInput.X))
 	{
-		AddMovementInput(GetActorForwardVector(), MoveInput.X);
+		AddMovementInput(ForwardVector, MoveInput.X);
 	}
 	if (!FMath::IsNearlyZero(MoveInput.Y))
 	{
-		AddMovementInput(GetActorRightVector(), MoveInput.Y);
+		AddMovementInput(RightVector, MoveInput.Y);
 	}
 }
 
