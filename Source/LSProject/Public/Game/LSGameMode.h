@@ -13,5 +13,7 @@ UCLASS()
 class LSPROJECT_API ALSGameMode : public AGameMode
 {
 	GENERATED_BODY()
-	
+
+public:
+	ALSGameMode();
 };

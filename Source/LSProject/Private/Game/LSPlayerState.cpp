@@ -3,3 +3,8 @@
 
 #include "Game/LSPlayerState.h"
 
+ALSPlayerState::ALSPlayerState()
+{
+	//추후 수정
+	Coin=500;
+}
