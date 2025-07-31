@@ -84,3 +84,5 @@ DerivedDataCache/*
 
 # Prerequisites
 *.d
+
+Content/Developers/*
