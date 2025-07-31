@@ -14,8 +14,11 @@ public class LSProject : ModuleRules
 			"CoreUObject",
 			"Engine",
 			"InputCore",
-			"EnhancedInput"
-		});
+			"EnhancedInput",
+            "AIModule",
+            "NavigationSystem",
+            "GameplayTasks"
+        });
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "EnhancedInput" });
 
