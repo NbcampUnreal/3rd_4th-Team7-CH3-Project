@@ -3,8 +3,10 @@
 
 #include "Game/LSGameMode.h"
 #include "Game/LSPlayerState.h"
+#include "Controller/LSPlayerController.h"
 
 ALSGameMode::ALSGameMode()
 {
 	PlayerStateClass = ALSPlayerState::StaticClass();
+	PlayerControllerClass = ALSPlayerController::StaticClass();
 }

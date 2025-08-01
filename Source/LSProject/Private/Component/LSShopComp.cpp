@@ -1,26 +1,35 @@
+// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Inven/LSShop.h"
+#include "Component//LSShopComp.h"
 #include "Controller/LSPlayerController.h"
 #include "Game/LSPlayerState.h"
 #include "DataTable/LSShopItemRow.h"
 #include "Engine/DataTable.h"
 
-//추후삭제
-#include "Inven/LSInventory.h"
+//추후 삭제
+#include "Component/LSInventoryComp.h"
 
-ALSShop::ALSShop()
+ULSShopComp::ULSShopComp()
 {
-	PrimaryActorTick.bCanEverTick = false;
-	
+	PrimaryComponentTick.bCanEverTick = true;
+
+	ShopItemData=CreateDefaultSubobject<UDataTable>(TEXT("ShopItemData"));
+
+	//추후 이동
+	Inventory=CreateDefaultSubobject<ULSInventoryComp>(TEXT("Inventory"));
 }
 
-void ALSShop::BeginPlay()
+
+void ULSShopComp::BeginPlay()
 {
 	Super::BeginPlay();
+
 }
 
-void ALSShop::BuyItem(const FName&  ItemName)
+void ULSShopComp::BuyItem(const FName& ItemName)
 {
+	if (!ShopItemData)	return;
+	
 	if (ALSPlayerController* PC=Cast<ALSPlayerController>(GetWorld()->GetFirstPlayerController()))
 	{
 		if (ALSPlayerState* PlayerState=PC->GetPlayerState<ALSPlayerState>())
@@ -39,6 +48,9 @@ void ALSShop::BuyItem(const FName&  ItemName)
 					CurCoin-=ItemPrice;
 					PlayerState->SetCoin(CurCoin);
 					//PC->Player->Inventory->AddtoInven(ItemName)
+					Inventory->AddToInven(ItemName);
+
+					UE_LOG(LogTemp,Warning,TEXT("CurCoin: %d"),CurCoin);
 				}
 				else
 				{
@@ -50,10 +62,6 @@ void ALSShop::BuyItem(const FName&  ItemName)
 	}
 }
 
-void ALSShop::SellItem()
+void ULSShopComp::SellItem()
 {
 }
-
-
-
-

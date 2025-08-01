@@ -1,5 +1,5 @@
 
-#include "Inven/LSInventoryComp.h"
+#include "Component/LSInventoryComp.h"
 
 ULSInventoryComp::ULSInventoryComp()
 {
@@ -25,6 +25,6 @@ void ULSInventoryComp::ShowInven()
 	for (const auto& Pair : MyItems)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Name:%s, Count: %d"),*Pair.Key.ToString(),Pair.Value);
-		
 	}
+	UE_LOG(LogTemp, Warning, TEXT(" "));
 }
