@@ -3,6 +3,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Perception/AIPerceptionComponent.h"
+//#include "BehaviorTree/BehaviorTreeComponent.h"
 
 ALSZombieAIController::ALSZombieAIController()
 {
@@ -12,10 +13,41 @@ ALSZombieAIController::ALSZombieAIController()
 	BlackboardComp = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackBoardComp"));
 }
 
+void ALSZombieAIController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (BlackboardComp)
+	{
+		BlackboardComp->SetValueAsBool(TEXT("IsCanGoToPlayer"), false);
+		BlackboardComp->SetValueAsVector(TEXT("ClosestFenceLocation"), FVector(0.0f, 0.0f, 0.0f));
+		UE_LOG(LogTemp, Warning, TEXT("[LSEnemy] Blackboard initialized successfully"));
+		StartBehaviorTree();
+	}
+
+	if (AIPerception)
+	{
+		AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &ALSZombieAIController::OnPerceptionUpdated);
+	}
+}
+
 //EnemyTodo : ForceInline
 UBlackboardComponent* ALSZombieAIController::GetBlackBoardComp() const
 {
 	return BlackboardComp;
+}
+
+void ALSZombieAIController::StartBehaviorTree()
+{
+	if (BehaviorTreeAsset)
+	{
+		RunBehaviorTree(BehaviorTreeAsset);
+		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] BehaviorTreeAsset is start"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] BehaviorTreeAsset NOT START"));
+	}
 }
 
 void ALSZombieAIController::OnPossess(APawn* InPawn)
@@ -25,26 +57,11 @@ void ALSZombieAIController::OnPossess(APawn* InPawn)
 	
 }
 
-void ALSZombieAIController::BeginPlay()
-{
-	Super::BeginPlay();
-
-	if (BlackboardComp)
-	{
-		BlackboardComp->SetValueAsBool(TEXT("IsCanGoToPlayer"), false);
-		UE_LOG(LogTemp, Warning, TEXT("[LSEnemy] Blackboard initialized successfully"));
-	}
-
-	if (AIPerception)
-	{
-		AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &ALSZombieAIController::OnPerceptionUpdated);
-	}
-}
-
+//EnemyTodo :
 void ALSZombieAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
 	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-	if (Actor != PlayerPawn || !BlackboardComp) 
+	if (Actor != PlayerPawn || !BlackboardComp)
 	{
 		return;
 	}
@@ -52,5 +69,7 @@ void ALSZombieAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimu
 	{
 		// Blackboard에 정보 저장
 		BlackboardComp->SetValueAsObject(TEXT("TargetActor"), Actor);
+		//BlackboardComp->SetValueAsVector(TEXT("ClosestFenceLocation"), FVector(0.0f, 0.0f, 0.0f));//EnemyTodo : Vector
+		UE_LOG(LogTemp, Warning, TEXT("[LSEnemy] Blackboard PerceptionUpdated successfully"));
 	}	
 }

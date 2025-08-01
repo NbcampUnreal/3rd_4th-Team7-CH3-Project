@@ -2,18 +2,20 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
-#include "LSBTTask_CanGoToPlayer.generated.h"
+#include "LSBTTask_FindCloseFense.generated.h"
 
 UCLASS()
-class LSPROJECT_API ULSBTTask_CanGoToPlayer : public UBTTaskNode
+class LSPROJECT_API ULSBTTask_FindCloseFense : public UBTTaskNode
 {
 	GENERATED_BODY()
-public:
-	ULSBTTask_CanGoToPlayer();
+
+	ULSBTTask_FindCloseFense();
+
+	FVector FindCloseFense(UBehaviorTreeComponent& Comp, APawn* AIPawn);
 
 protected:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& Comp, uint8* NodeMemory) override;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Blackboard")
-	struct FBlackboardKeySelector IsCanGoToPlayerKey;
+	struct FBlackboardKeySelector ClosestFenceLocationKey;
 };
