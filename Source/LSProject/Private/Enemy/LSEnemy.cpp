@@ -64,7 +64,11 @@ void ALSEnemy::TakeDamage(float Damage)
 {
 	Super::TakeDamage(Damage);
 
-	
+	Health -= Damage;
+	if (Health <= 0)
+	{
+		Death();
+	}
 }
 
 void ALSEnemy::EnemyDelete()

@@ -11,7 +11,7 @@ class LSPROJECT_API ULSBTTask_CanGoToPlayer : public UBTTaskNode
 public:
 	ULSBTTask_CanGoToPlayer();
 
-	protected:
+protected:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& Comp, uint8* NodeMemory) override;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Blackboard")

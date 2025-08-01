@@ -57,7 +57,7 @@ void ALSZombieAIController::OnPossess(APawn* InPawn)
 	
 }
 
-//EnemyTodo : 
+//EnemyTodo :
 void ALSZombieAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
 	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
@@ -69,7 +69,7 @@ void ALSZombieAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimu
 	{
 		// Blackboard에 정보 저장
 		BlackboardComp->SetValueAsObject(TEXT("TargetActor"), Actor);
-		BlackboardComp->SetValueAsVector(TEXT("ClosestFenceLocation"), FVector(0.0f, 0.0f, 0.0f));
+		//BlackboardComp->SetValueAsVector(TEXT("ClosestFenceLocation"), FVector(0.0f, 0.0f, 0.0f));//EnemyTodo : Vector
 		UE_LOG(LogTemp, Warning, TEXT("[LSEnemy] Blackboard PerceptionUpdated successfully"));
 	}	
 }

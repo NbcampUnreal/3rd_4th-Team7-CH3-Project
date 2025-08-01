@@ -8,5 +8,14 @@ UCLASS()
 class LSPROJECT_API ULSBTTask_FindCloseFense : public UBTTaskNode
 {
 	GENERATED_BODY()
-	
+
+	ULSBTTask_FindCloseFense();
+
+	FVector FindCloseFense(UBehaviorTreeComponent& Comp, APawn* AIPawn);
+
+protected:
+	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& Comp, uint8* NodeMemory) override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Blackboard")
+	struct FBlackboardKeySelector ClosestFenceLocationKey;
 };
