@@ -15,7 +15,10 @@ public:
 protected:
 	void Attack();
 	void Death();
+	void TakeDamage(float Damage) override;
 	virtual void EnemyDelete();
 	
-	float Damage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Attack)
+	float AttackRange;
+	float AttackDamage;
 };
