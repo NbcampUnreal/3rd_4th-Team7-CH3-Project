@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "LSShopWidget.generated.h"
 
+class UButton;
+
 /**
  * 
  */
