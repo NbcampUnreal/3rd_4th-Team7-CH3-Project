@@ -22,8 +22,7 @@ protected:
 	virtual void TakeDamage(float Damage) override;
 	virtual void Attack() override;
 	virtual void Death() override;
-
-public:	
+	
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

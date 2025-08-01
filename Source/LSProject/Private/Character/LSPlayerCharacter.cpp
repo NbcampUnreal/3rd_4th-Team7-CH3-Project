@@ -21,8 +21,14 @@ ALSPlayerCharacter::ALSPlayerCharacter()
 
 	WalkSpeed = 600.0f;
 	Health = 300.0f;
+	
 
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+}
+
+ECurrentWeapon ALSPlayerCharacter::GetCurrentWeapon() const
+{
+	return CurrentWeapon;
 }
 
 void ALSPlayerCharacter::TakeDamage(float Damage)
