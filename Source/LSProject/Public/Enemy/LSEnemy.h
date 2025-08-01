@@ -13,6 +13,7 @@ public:
 	ALSEnemy();
 
 protected:
+	void Tick(float DeltaTime) override;
 	void Attack();
 	void Death();
 	void TakeDamage(float Damage) override;

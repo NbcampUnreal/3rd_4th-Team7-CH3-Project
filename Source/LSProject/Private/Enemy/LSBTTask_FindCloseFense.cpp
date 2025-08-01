@@ -33,7 +33,7 @@ EBTNodeResult::Type ULSBTTask_FindCloseFense::ExecuteTask(UBehaviorTreeComponent
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Get Close Fence Vector Is SUCCEEDED"))
+		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Get Close Fence Vector Is SUCCEEDED, %s"),*CloseFenceLocation.ToString() )
 		Comp.GetBlackboardComponent()->SetValueAsVector(ClosestFenceLocationKey.SelectedKeyName,CloseFenceLocation);
 		return EBTNodeResult::Succeeded;
 	}
@@ -43,8 +43,6 @@ FVector ULSBTTask_FindCloseFense::FindCloseFense(UBehaviorTreeComponent& Comp, A
 {
 	TArray<AActor*> AllActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALSTestFence::StaticClass(), AllActors);
-
-
 	
 	AActor* NearestFence = nullptr;
 	float MinDistance = FLT_MAX;
@@ -72,5 +70,3 @@ FVector ULSBTTask_FindCloseFense::FindCloseFense(UBehaviorTreeComponent& Comp, A
 	}
 	return NearestFence->GetActorLocation();
 }
-
-

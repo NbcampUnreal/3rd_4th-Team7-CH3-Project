@@ -6,6 +6,18 @@ ALSEnemy::ALSEnemy()
 {
 	AttackRange=30.0f;
 	AttackDamage=30.0f;
+	WalkSpeed=300.0f;
+	
+	
+}
+
+void ALSEnemy::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	
+	
+	
 }
 
 void ALSEnemy::Attack()
