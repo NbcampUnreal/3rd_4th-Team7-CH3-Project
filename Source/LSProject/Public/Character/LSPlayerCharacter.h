@@ -9,6 +9,14 @@ class UCameraComponent;
 class USpringArmComponent;
 struct FInputActionValue;
 
+UENUM(BlueprintType)
+enum class ECurrentWeapon : uint8
+{
+	Pistol		UMETA(DisplayName = "Pistol"),
+	Rifle		UMETA(DisplayName = "Rifle"),
+	Shotgun		UMETA(DisplayName = "Shotgun")
+};
+
 UCLASS()
 class LSPROJECT_API ALSPlayerCharacter : public ALSCharacterBase
 {
@@ -21,6 +29,9 @@ public:
 	USpringArmComponent* SpringArm;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	UCameraComponent* Camera;
+
+	UFUNCTION(Blueprintpure, Category = "State")
+	ECurrentWeapon GetCurrentWeapon() const;
 
 protected:
 	virtual void TakeDamage(float Damage) override;
@@ -41,6 +52,7 @@ protected:
 	UFUNCTION()
 	void StopSprint(const FInputActionValue& Value);
 
-
+private:
+	ECurrentWeapon CurrentWeapon;
 	
 };
