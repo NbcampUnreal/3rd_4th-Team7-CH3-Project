@@ -34,9 +34,37 @@ EBTNodeResult::Type ULSBTTask_CanGoToPlayer::ExecuteTask(UBehaviorTreeComponent&
 		return EBTNodeResult::Failed;
 	}
 	
-	//EnemyTodo : Player에게 가는 길이 있는지 확인 > node로 변경 예정
-	// bool bCanGoPlayer = NavSystem->TestPathSync(AIController, AIPawn->GetActorLocation(), PlayerPawn->GetActorLocation());
-	//
-	// Comp.GetBlackboardComponent()->SetValueAsBool(IsCanGoToPlayerKey.SelectedKeyName, bCanGoPlayer);
+	//EnemyTodo : Player에게 가는 길이 있는지 확인
+	bool bCanGoPlayer = false;
+	FVector PlayerLocation = PlayerPawn->GetActorLocation();
+	FNavLocation PlayerLocationNav;
+	
+	if (NavSystem->ProjectPointToNavigation(PlayerLocation, PlayerLocationNav, FVector(5.0f,5.0f,100.0f)))
+	{
+		FAIMoveRequest MoveRequest;
+		MoveRequest.SetGoalLocation(PlayerLocationNav.Location);
+		MoveRequest.SetAcceptanceRadius(50.0f);
+
+		FPathFindingQuery Query;
+		bool bValidQuery = AIController->BuildPathfindingQuery(MoveRequest, Query);
+		if (bValidQuery)
+		{
+			bCanGoPlayer = NavSystem->TestPathSync(Query);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[LSEnemy]NavSystem->Valid Query if false"));
+			bCanGoPlayer=false;
+			Comp.GetBlackboardComponent()->SetValueAsBool(IsCanGoToPlayerKey.SelectedKeyName, bCanGoPlayer);
+			return EBTNodeResult::Failed;
+		}
+	}
+	else
+	{
+		Comp.GetBlackboardComponent()->SetValueAsBool(IsCanGoToPlayerKey.SelectedKeyName, bCanGoPlayer);
+		return EBTNodeResult::Failed;
+	}
+	
+	Comp.GetBlackboardComponent()->SetValueAsBool(IsCanGoToPlayerKey.SelectedKeyName, bCanGoPlayer);
 	return EBTNodeResult::Succeeded;
 }
