@@ -12,10 +12,9 @@ class LSPROJECT_API ULSZombieAnimInstance : public UAnimInstance
 public:
 	ULSZombieAnimInstance();
 
-	void SetCurrentVelocity();
+protected:
+	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
-	void NativeUpdateAnimation(float DeltaSeconds) override;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "AI")
+	UPROPERTY(BlueprintReadOnly, Category = "AI")
 	float CurrentVelocity;
 };

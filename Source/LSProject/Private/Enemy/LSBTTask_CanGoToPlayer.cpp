@@ -7,7 +7,6 @@
 ULSBTTask_CanGoToPlayer::ULSBTTask_CanGoToPlayer()
 {
 	NodeName = TEXT("Is CanGoTo Player");
-	IsCanGoToPlayerKey.AddBoolFilter(this, GET_MEMBER_NAME_CHECKED(ULSBTTask_CanGoToPlayer,IsCanGoToPlayerKey));
 }
 
 EBTNodeResult::Type ULSBTTask_CanGoToPlayer::ExecuteTask(UBehaviorTreeComponent& Comp, uint8* NodeMemory)
@@ -22,7 +21,7 @@ EBTNodeResult::Type ULSBTTask_CanGoToPlayer::ExecuteTask(UBehaviorTreeComponent&
 	if (!PlayerPawn)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("PlayerPawn is NULL"));
-		Comp.GetBlackboardComponent()->SetValueAsBool(IsCanGoToPlayerKey.SelectedKeyName, false);
+		Comp.GetBlackboardComponent()->SetValueAsBool(TEXT("IsCanGoToPlayer"), false);
 		return EBTNodeResult::Succeeded;
 	}
 	
@@ -30,7 +29,7 @@ EBTNodeResult::Type ULSBTTask_CanGoToPlayer::ExecuteTask(UBehaviorTreeComponent&
 	if (!NavSystem)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("NavSystem is NULL"));
-		Comp.GetBlackboardComponent()->SetValueAsBool(IsCanGoToPlayerKey.SelectedKeyName, false);
+		Comp.GetBlackboardComponent()->SetValueAsBool(TEXT("IsCanGoToPlayer"), false);
 		return EBTNodeResult::Failed;
 	}
 	
@@ -55,16 +54,16 @@ EBTNodeResult::Type ULSBTTask_CanGoToPlayer::ExecuteTask(UBehaviorTreeComponent&
 		{
 			UE_LOG(LogTemp, Warning, TEXT("[LSEnemy]NavSystem->Valid Query if false"));
 			bCanGoPlayer=false;
-			Comp.GetBlackboardComponent()->SetValueAsBool(IsCanGoToPlayerKey.SelectedKeyName, bCanGoPlayer);
+			Comp.GetBlackboardComponent()->SetValueAsBool(TEXT("IsCanGoToPlayer"), bCanGoPlayer);
 			return EBTNodeResult::Failed;
 		}
 	}
 	else
 	{
-		Comp.GetBlackboardComponent()->SetValueAsBool(IsCanGoToPlayerKey.SelectedKeyName, bCanGoPlayer);
+		Comp.GetBlackboardComponent()->SetValueAsBool(TEXT("IsCanGoToPlayer"), bCanGoPlayer);
 		return EBTNodeResult::Failed;
 	}
 	
-	Comp.GetBlackboardComponent()->SetValueAsBool(IsCanGoToPlayerKey.SelectedKeyName, bCanGoPlayer);
+	Comp.GetBlackboardComponent()->SetValueAsBool(TEXT("IsCanGoToPlayer"), bCanGoPlayer);
 	return EBTNodeResult::Succeeded;
 }

@@ -15,7 +15,4 @@ class LSPROJECT_API ULSBTTask_FindCloseFense : public UBTTaskNode
 
 protected:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& Comp, uint8* NodeMemory) override;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Blackboard")
-	struct FBlackboardKeySelector ClosestFenceLocationKey;
 };

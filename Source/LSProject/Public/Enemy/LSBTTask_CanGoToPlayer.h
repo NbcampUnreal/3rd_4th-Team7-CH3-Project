@@ -13,7 +13,4 @@ public:
 
 protected:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& Comp, uint8* NodeMemory) override;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Blackboard")
-	struct FBlackboardKeySelector IsCanGoToPlayerKey;
 };

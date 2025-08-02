@@ -1,22 +1,14 @@
 #include "Enemy/LSZombieAnimInstance.h"
 
-#include "Enemy/LSEnemy.h"
-
 ULSZombieAnimInstance::ULSZombieAnimInstance()
 {
-}
-
-void ULSZombieAnimInstance::SetCurrentVelocity()
-{
-	
-	
+	CurrentVelocity=0.0f;
 }
 
 void ULSZombieAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
-	//todo : 액터의 속도를 반환
 	APawn* Pawn = TryGetPawnOwner();
 	if (Pawn == nullptr) return;
 	

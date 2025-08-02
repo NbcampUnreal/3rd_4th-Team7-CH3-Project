@@ -8,12 +8,11 @@
 ULSBTTask_FindCloseFense::ULSBTTask_FindCloseFense()
 {
 	NodeName = "FindCloseFense";
-	ClosestFenceLocationKey.AddVectorFilter(this,GET_MEMBER_NAME_CHECKED(ULSBTTask_FindCloseFense,ClosestFenceLocationKey));
 }
 
 EBTNodeResult::Type ULSBTTask_FindCloseFense::ExecuteTask(UBehaviorTreeComponent& Comp, uint8* NodeMemory)
 {
-	AAIController* AIController = Comp.GetAIOwner(); //todo : 위치 변경
+	AAIController* AIController = Comp.GetAIOwner();
 	if (!AIController)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Controller is Not Found in FindCloseFence"))
@@ -34,7 +33,7 @@ EBTNodeResult::Type ULSBTTask_FindCloseFense::ExecuteTask(UBehaviorTreeComponent
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Get Close Fence Vector Is SUCCEEDED, %s"),*CloseFenceLocation.ToString() )
-		Comp.GetBlackboardComponent()->SetValueAsVector(ClosestFenceLocationKey.SelectedKeyName,CloseFenceLocation);
+		Comp.GetBlackboardComponent()->SetValueAsVector(TEXT("ClosestFenceLocation"),CloseFenceLocation);
 		return EBTNodeResult::Succeeded;
 	}
 }
