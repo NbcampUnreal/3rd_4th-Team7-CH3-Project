@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -12,9 +11,10 @@ struct FInputActionValue;
 UENUM(BlueprintType)
 enum class ECurrentWeapon : uint8
 {
-	Pistol		UMETA(DisplayName = "Pistol"),
-	Rifle		UMETA(DisplayName = "Rifle"),
-	Shotgun		UMETA(DisplayName = "Shotgun")
+	None UMETA(DisplayName = "None"),
+	Pistol UMETA(DisplayName = "Pistol"),
+	Rifle UMETA(DisplayName = "Rifle"),
+	Shotgun UMETA(DisplayName = "Shotgun")
 };
 
 UCLASS()
@@ -24,7 +24,7 @@ class LSPROJECT_API ALSPlayerCharacter : public ALSCharacterBase
 
 public:
 	ALSPlayerCharacter();
-	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	USpringArmComponent* SpringArm;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
@@ -32,6 +32,8 @@ public:
 
 	UFUNCTION(Blueprintpure, Category = "State")
 	ECurrentWeapon GetCurrentWeapon() const;
+	UFUNCTION(BlueprintCallable, Category = "State")
+	void SetCurrentWeapon(ECurrentWeapon Weapon);
 
 protected:
 	virtual void TakeDamage(float Damage) override;
@@ -54,5 +56,4 @@ protected:
 
 private:
 	ECurrentWeapon CurrentWeapon;
-	
 };
