@@ -7,7 +7,9 @@
 #include "LSShopWidget.generated.h"
 
 class UButton;
-
+class UTextBlock;
+class UDataTable;
+class ULSBuyButtonWidget;
 /**
  * 
  */
@@ -19,10 +21,16 @@ class LSPROJECT_API ULSShopWidget : public UUserWidget
 protected:
 	virtual void NativeOnInitialized() override;
 
+	virtual void NativeConstruct() override;
+
 public:
-	UPROPERTY(meta=(BindWidget))
-	UButton* BuyButton;
+	UPROPERTY(EditDefaultsOnly, Category="Store")
+	UDataTable* ShopItemTable;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Store")
+	TSubclassOf<ULSBuyButtonWidget> BuyButtonWidgetClass;
 
 	UFUNCTION()
-	void OnBuyClicked();
+	void HandleBuyClicked();
+private:
 };
