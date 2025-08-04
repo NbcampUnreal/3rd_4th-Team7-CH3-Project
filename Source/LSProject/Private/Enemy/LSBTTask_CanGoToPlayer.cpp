@@ -66,6 +66,6 @@ EBTNodeResult::Type ULSBTTask_CanGoToPlayer::ExecuteTask(UBehaviorTreeComponent&
 		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] NavSystem->Valid Query if false"));
 		return EBTNodeResult::Failed;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] ProjectPointToNavigation method is false"));
+	UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Player Not Find"));
 	return EBTNodeResult::Failed;
 }

@@ -8,7 +8,6 @@
 ULSBTTask_FindCloseFense::ULSBTTask_FindCloseFense()
 {
 	NodeName = "FindCloseFense";
-	UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] ULSBTTask_FindCloseFense is Created"))
 }
 
 EBTNodeResult::Type ULSBTTask_FindCloseFense::ExecuteTask(UBehaviorTreeComponent& Comp, uint8* NodeMemory)
@@ -32,7 +31,7 @@ EBTNodeResult::Type ULSBTTask_FindCloseFense::ExecuteTask(UBehaviorTreeComponent
 		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] GetCloseFenceVectorIsNoFind"))
 		return EBTNodeResult::Failed;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Get Close Fence Vector Is SUCCEEDED, %s"),*CloseFenceLocation.ToString())
+	//UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Get Close Fence Vector Is SUCCEEDED, %s"),*CloseFenceLocation.ToString())
 	Comp.GetBlackboardComponent()->SetValueAsVector(TEXT("ClosestFenceLocation"),CloseFenceLocation);
 	return EBTNodeResult::Succeeded;
 }
@@ -51,13 +50,13 @@ FVector ULSBTTask_FindCloseFense::FindCloseFense(APawn* AIPawn)
 		{
 			//EnemyTodo : 좀비와 거리 비교
 			float NowDistance = FVector::DistSquared(NowFence->GetActorLocation(), AIPawn->GetActorLocation());
-			UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] Now Distance is %f"),NowDistance);
+			//UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] Now Distance is %f"),NowDistance);
 			
 			if (NowDistance < MinDistance)
 			{
 				MinDistance=NowDistance;
 				NearestFence=NowFence;
-				UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] Now Min Distance is %f"),NowDistance);
+				//UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] Now Min Distance is %f"),NowDistance);
 			}
 		}
 	}

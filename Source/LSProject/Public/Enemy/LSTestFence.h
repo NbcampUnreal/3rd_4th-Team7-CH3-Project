@@ -12,14 +12,14 @@ class LSPROJECT_API ALSTestFence : public AActor
 public:
 	ALSTestFence();
 	
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	
+protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="SceneComp")
 	USceneComponent* Scene;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="StaticMeshComp")
 	UStaticMeshComponent* StaticMesh;
-
-protected:
-	virtual void BeginPlay() override;
-
+	
 private:
 	float Health;
 };
