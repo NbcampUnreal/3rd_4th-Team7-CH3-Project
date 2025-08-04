@@ -1,4 +1,3 @@
-
 #include "Controller/LSPlayerController.h"
 #include "EnhancedInputSubsystems.h"
 
@@ -7,7 +6,8 @@ ALSPlayerController::ALSPlayerController() :
 	MoveAction(nullptr),
 	LookAction(nullptr),
 	JumpAction(nullptr),
-	SprintAction(nullptr)
+	SprintAction(nullptr),
+	AttackAction(nullptr)
 {
 }
 

@@ -27,6 +27,8 @@ public:
 	UInputAction* JumpAction;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	UInputAction* SprintAction;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UInputAction* AttackAction;
 
 protected:
 	virtual void BeginPlay() override;

@@ -40,6 +40,10 @@ protected:
 	virtual void Attack() override;
 	virtual void Death() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	// virtual float TakeDamage(float DamageAmount,
+	// 						 struct FDamageEvent const& DamageEvent,
+	// 						 AController* EventInstigator,
+	// 						 AActor* DamageCauser) override;
 
 	UFUNCTION()
 	void Move(const FInputActionValue& Value);
@@ -53,7 +57,12 @@ protected:
 	void StartSprint(const FInputActionValue& Value);
 	UFUNCTION()
 	void StopSprint(const FInputActionValue& Value);
+	UFUNCTION()
+	void Fire(const FInputActionValue& Value);
 
 private:
 	ECurrentWeapon CurrentWeapon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* FireMontage;
 };

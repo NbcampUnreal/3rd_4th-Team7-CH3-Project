@@ -83,9 +83,20 @@ void ALSPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 				EnhancedInput->BindAction(PlayerController->SprintAction, ETriggerEvent::Completed,
 				                          this, &ALSPlayerCharacter::StopSprint);
 			}
+			if (PlayerController->AttackAction)
+			{
+				EnhancedInput->BindAction(PlayerController->AttackAction, ETriggerEvent::Triggered,
+				                          this, &ALSPlayerCharacter::Fire);
+			}
 		}
 	}
 }
+
+// float ALSPlayerCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+// 	AController* EventInstigator, AActor* DamageCauser)
+// {
+// 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+// }
 
 void ALSPlayerCharacter::Move(const FInputActionValue& Value)
 {
@@ -144,5 +155,15 @@ void ALSPlayerCharacter::StopSprint(const FInputActionValue& Value)
 	if (GetCharacterMovement())
 	{
 		GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+	}
+}
+
+void ALSPlayerCharacter::Fire(const FInputActionValue& Value)
+{
+	UAnimMontage* MontageToPlay = FireMontage;
+	
+	if (MontageToPlay)
+	{
+		PlayAnimMontage(MontageToPlay);
 	}
 }
