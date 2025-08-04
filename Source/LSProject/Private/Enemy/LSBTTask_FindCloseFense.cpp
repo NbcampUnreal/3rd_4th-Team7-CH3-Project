@@ -8,43 +8,38 @@
 ULSBTTask_FindCloseFense::ULSBTTask_FindCloseFense()
 {
 	NodeName = "FindCloseFense";
-	ClosestFenceLocationKey.AddVectorFilter(this,GET_MEMBER_NAME_CHECKED(ULSBTTask_FindCloseFense,ClosestFenceLocationKey));
 }
 
 EBTNodeResult::Type ULSBTTask_FindCloseFense::ExecuteTask(UBehaviorTreeComponent& Comp, uint8* NodeMemory)
 {
-	AAIController* AIController = Comp.GetAIOwner(); //todo : 위치 변경
+	AAIController* AIController = Comp.GetAIOwner();
 	if (!AIController)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Controller is Not Found in FindCloseFence"))
 	}
 	
 	APawn* AIPawn = AIController->GetPawn();
+	UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] AIPawn Name : %s"), *AIPawn->GetName())
 	if (!AIPawn)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] AIPawn is Not Found in FindCloseFence"))
 	}
 	
-	FVector CloseFenceLocation =  FindCloseFense(Comp, AIPawn);
+	FVector CloseFenceLocation =  FindCloseFense(AIPawn);
 	if (CloseFenceLocation==FVector::ZeroVector)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] GetCloseFenceVectorIsNoFind"))
 		return EBTNodeResult::Failed;
 	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Get Close Fence Vector Is SUCCEEDED"))
-		Comp.GetBlackboardComponent()->SetValueAsVector(ClosestFenceLocationKey.SelectedKeyName,CloseFenceLocation);
-		return EBTNodeResult::Succeeded;
-	}
+	//UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Get Close Fence Vector Is SUCCEEDED, %s"),*CloseFenceLocation.ToString())
+	Comp.GetBlackboardComponent()->SetValueAsVector(TEXT("ClosestFenceLocation"),CloseFenceLocation);
+	return EBTNodeResult::Succeeded;
 }
 
-FVector ULSBTTask_FindCloseFense::FindCloseFense(UBehaviorTreeComponent& Comp, APawn* AIPawn)
+FVector ULSBTTask_FindCloseFense::FindCloseFense(APawn* AIPawn)
 {
 	TArray<AActor*> AllActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALSTestFence::StaticClass(), AllActors);
-
-
 	
 	AActor* NearestFence = nullptr;
 	float MinDistance = FLT_MAX;
@@ -54,23 +49,21 @@ FVector ULSBTTask_FindCloseFense::FindCloseFense(UBehaviorTreeComponent& Comp, A
 		if (ALSTestFence* NowFence = Cast<ALSTestFence>(Actor))
 		{
 			//EnemyTodo : 좀비와 거리 비교
-			FVector ZombieLocation = AIPawn->GetActorLocation();
-			FVector FenceLocation = NowFence->GetActorLocation();
-
-			float Distance = FVector::DistSquared(FenceLocation, ZombieLocation);
+			float NowDistance = FVector::DistSquared(NowFence->GetActorLocation(), AIPawn->GetActorLocation());
+			//UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] Now Distance is %f"),NowDistance);
 			
-			if (Distance < MinDistance)
+			if (NowDistance < MinDistance)
 			{
+				MinDistance=NowDistance;
 				NearestFence=NowFence;
+				//UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] Now Min Distance is %f"),NowDistance);
 			}
 		}
 	}
 	if (!NearestFence)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Not NearestFence"));
+		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Not NearestFence"));
 		return FVector::ZeroVector;
 	}
 	return NearestFence->GetActorLocation();
 }
-
-

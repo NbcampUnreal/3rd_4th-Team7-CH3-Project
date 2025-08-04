@@ -2,17 +2,14 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
-#include "LSBTTask_FindCloseFense.generated.h"
+#include "LSBTTask_Attack.generated.h"
 
 UCLASS()
-class LSPROJECT_API ULSBTTask_FindCloseFense : public UBTTaskNode
+class LSPROJECT_API ULSBTTask_Attack : public UBTTaskNode
 {
 	GENERATED_BODY()
-
-	ULSBTTask_FindCloseFense();
-
+public:
+	ULSBTTask_Attack();
 protected:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& Comp, uint8* NodeMemory) override;
-
-	FVector FindCloseFense(APawn* AIPawn);
 };

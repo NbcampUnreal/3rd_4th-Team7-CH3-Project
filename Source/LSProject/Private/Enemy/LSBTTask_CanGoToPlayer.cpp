@@ -1,4 +1,5 @@
 #include "Enemy/LSBTTask_CanGoToPlayer.h"
+
 #include "AIController.h"
 #include "NavigationSystem.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -6,36 +7,40 @@
 
 ULSBTTask_CanGoToPlayer::ULSBTTask_CanGoToPlayer()
 {
-	NodeName = TEXT("Is CanGoTo Player");
-	IsCanGoToPlayerKey.AddBoolFilter(this, GET_MEMBER_NAME_CHECKED(ULSBTTask_CanGoToPlayer,IsCanGoToPlayerKey));
+	NodeName = "Is CanGoTo Player";
+	UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] LSBTTask CanGoToPlayer is Created"));
 }
 
 EBTNodeResult::Type ULSBTTask_CanGoToPlayer::ExecuteTask(UBehaviorTreeComponent& Comp, uint8* NodeMemory)
 {
 	AAIController* AIController = Comp.GetAIOwner();
-	if (!AIController) return EBTNodeResult::Failed;
-	
+	if (!AIController)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] AIController is NULL"));
+		return EBTNodeResult::Failed;
+	}
 	APawn* AIPawn = AIController->GetPawn();
-	if (!AIPawn) return EBTNodeResult::Failed;
-	
+	if (!AIPawn)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] AIPawn is NULL"));
+		return EBTNodeResult::Failed;
+	}
 	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(AIPawn->GetWorld(),0);
 	if (!PlayerPawn)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("PlayerPawn is NULL"));
-		Comp.GetBlackboardComponent()->SetValueAsBool(IsCanGoToPlayerKey.SelectedKeyName, false);
-		return EBTNodeResult::Succeeded;
+		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] PlayerPawn is NULL"));
+		return EBTNodeResult::Failed;
 	}
 	
 	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetCurrent(AIPawn->GetWorld());
 	if (!NavSystem)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("NavSystem is NULL"));
-		Comp.GetBlackboardComponent()->SetValueAsBool(IsCanGoToPlayerKey.SelectedKeyName, false);
+		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] NavSystem is NULL"));
 		return EBTNodeResult::Failed;
 	}
 	
 	//EnemyTodo : Player에게 가는 길이 있는지 확인
-	bool bCanGoPlayer = false;
+	
 	FVector PlayerLocation = PlayerPawn->GetActorLocation();
 	FNavLocation PlayerLocationNav;
 	
@@ -49,22 +54,18 @@ EBTNodeResult::Type ULSBTTask_CanGoToPlayer::ExecuteTask(UBehaviorTreeComponent&
 		bool bValidQuery = AIController->BuildPathfindingQuery(MoveRequest, Query);
 		if (bValidQuery)
 		{
-			bCanGoPlayer = NavSystem->TestPathSync(Query);
+			if (NavSystem->TestPathSync(Query))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Find Player Location is SUCCEEDED"));
+				Comp.GetBlackboardComponent()->SetValueAsVector(TEXT("PlayerLocation"), PlayerPawn->GetActorLocation());
+				return EBTNodeResult::Succeeded;
+			}
+			UE_LOG(LogTemp,Warning,TEXT("Player Path Is None"));
 		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("[LSEnemy]NavSystem->Valid Query if false"));
-			bCanGoPlayer=false;
-			Comp.GetBlackboardComponent()->SetValueAsBool(IsCanGoToPlayerKey.SelectedKeyName, bCanGoPlayer);
-			return EBTNodeResult::Failed;
-		}
-	}
-	else
-	{
-		Comp.GetBlackboardComponent()->SetValueAsBool(IsCanGoToPlayerKey.SelectedKeyName, bCanGoPlayer);
+		
+		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] NavSystem->Valid Query if false"));
 		return EBTNodeResult::Failed;
 	}
-	
-	Comp.GetBlackboardComponent()->SetValueAsBool(IsCanGoToPlayerKey.SelectedKeyName, bCanGoPlayer);
-	return EBTNodeResult::Succeeded;
+	UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Player Not Find"));
+	return EBTNodeResult::Failed;
 }

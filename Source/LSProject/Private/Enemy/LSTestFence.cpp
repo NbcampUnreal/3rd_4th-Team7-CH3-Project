@@ -9,10 +9,11 @@ ALSTestFence::ALSTestFence()
 	Health=100.0f;
 }
 
-void ALSTestFence::BeginPlay()
+float ALSTestFence::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+	class AController* EventInstigator, AActor* DamageCauser)
 {
-	Super::BeginPlay();
-	
+	UE_LOG(LogTemp, Warning, TEXT("[LSEnemy] Fence Take Damaged"))
+	Health -= DamageAmount;
+	//EnemyTodo : Delete() 호출 후 울타리 삭제
+	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
-
-
