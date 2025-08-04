@@ -17,7 +17,6 @@ class LSPROJECT_API ILSCharacterInterface
 	GENERATED_BODY()
 
 public:
-	virtual void TakeDamage(float Damage) = 0;
 	virtual void Attack() = 0;
 	virtual void Death() = 0;
 

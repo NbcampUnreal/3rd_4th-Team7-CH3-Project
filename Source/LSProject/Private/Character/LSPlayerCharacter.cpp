@@ -36,11 +36,6 @@ void ALSPlayerCharacter::SetCurrentWeapon(ECurrentWeapon Weapon)
 	CurrentWeapon = Weapon;
 }
 
-void ALSPlayerCharacter::TakeDamage(float Damage)
-{
-	Super::TakeDamage(Damage);
-}
-
 void ALSPlayerCharacter::Attack()
 {
 	Super::Attack();
@@ -92,11 +87,11 @@ void ALSPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 	}
 }
 
-// float ALSPlayerCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
-// 	AController* EventInstigator, AActor* DamageCauser)
-// {
-// 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-// }
+float ALSPlayerCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+	AController* EventInstigator, AActor* DamageCauser)
+{
+	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+}
 
 void ALSPlayerCharacter::Move(const FInputActionValue& Value)
 {

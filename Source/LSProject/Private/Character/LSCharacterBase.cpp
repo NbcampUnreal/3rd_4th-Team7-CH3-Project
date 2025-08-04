@@ -15,10 +15,6 @@ void ALSCharacterBase::BeginPlay()
 	
 }
 
-void ALSCharacterBase::TakeDamage(float Damage)
-{
-}
-
 void ALSCharacterBase::Attack()
 {
 }

@@ -19,7 +19,6 @@ protected:
 	float Health;
 	
 	virtual void BeginPlay() override;
-	virtual void TakeDamage(float Damage) override;
 	virtual void Attack() override;
 	virtual void Death() override;
 	
