@@ -87,12 +87,17 @@ void ALSPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 				EnhancedInput->BindAction(PlayerController->AttackAction, ETriggerEvent::Triggered,
 				                          this, &ALSPlayerCharacter::Fire);
 			}
+			if (PlayerController->ReloadAction)
+			{
+				EnhancedInput->BindAction(PlayerController->ReloadAction, ETriggerEvent::Triggered,
+				                          this, &ALSPlayerCharacter::Reload);
+			}
 		}
 	}
 }
 
 float ALSPlayerCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
-	AController* EventInstigator, AActor* DamageCauser)
+                                     AController* EventInstigator, AActor* DamageCauser)
 {
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
@@ -103,10 +108,10 @@ void ALSPlayerCharacter::Move(const FInputActionValue& Value)
 
 	const FVector2D MoveInput = Value.Get<FVector2D>();
 	FRotator Rotation = GetControlRotation();
-	
+
 	FVector ForwardVector = UKismetMathLibrary::GetForwardVector(FRotator(0.0f, Rotation.Yaw, 0.0f));
 	FVector RightVector = UKismetMathLibrary::GetRightVector(FRotator(0.0f, Rotation.Yaw, 0.0f));
-	
+
 	if (!FMath::IsNearlyZero(MoveInput.X))
 	{
 		AddMovementInput(ForwardVector, MoveInput.X);
@@ -159,10 +164,34 @@ void ALSPlayerCharacter::StopSprint(const FInputActionValue& Value)
 
 void ALSPlayerCharacter::Fire(const FInputActionValue& Value)
 {
-	UAnimMontage* MontageToPlay = FireMontage;
-	
-	if (MontageToPlay)
+	if (FireMontageCollection.IsEmpty()) return;
+
+	const int32 Index = static_cast<int32>(CurrentWeapon) - 1;
+
+	if (FireMontageCollection.IsValidIndex(Index))
 	{
-		PlayAnimMontage(MontageToPlay);
+		FireMontage = FireMontageCollection[Index];
+	}
+	if (CurrentWeapon != ECurrentWeapon::None)
+	{
+		PlayAnimMontage(FireMontage);
+		UE_LOG(LogTemp, Warning, TEXT("Index : %d"), Index);
+	}
+	// todo:클릭 한번 누를 때마다 엄청 실행되는  안고쳐도 될 수도?
+}
+
+void ALSPlayerCharacter::Reload(const FInputActionValue& Value)
+{
+	if (ReloadMontageCollection.IsEmpty()) return;
+
+	const int32 Index = static_cast<int32>(CurrentWeapon) - 1;
+
+	if (ReloadMontageCollection.IsValidIndex(Index))
+	{
+		ReloadMontage = ReloadMontageCollection[Index];
+	}
+	if (CurrentWeapon != ECurrentWeapon::None)
+	{
+		PlayAnimMontage(ReloadMontage);
 	}
 }
