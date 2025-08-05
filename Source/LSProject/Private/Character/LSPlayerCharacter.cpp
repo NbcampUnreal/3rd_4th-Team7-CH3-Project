@@ -83,6 +83,11 @@ void ALSPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 				EnhancedInput->BindAction(PlayerController->AttackAction, ETriggerEvent::Triggered,
 				                          this, &ALSPlayerCharacter::Fire);
 			}
+			if (PlayerController->ReloadAction)
+			{
+				EnhancedInput->BindAction(PlayerController->ReloadAction, ETriggerEvent::Triggered,
+				                          this, &ALSPlayerCharacter::Reload);
+			}
 		}
 	}
 }
@@ -156,6 +161,16 @@ void ALSPlayerCharacter::StopSprint(const FInputActionValue& Value)
 void ALSPlayerCharacter::Fire(const FInputActionValue& Value)
 {
 	UAnimMontage* MontageToPlay = FireMontage;
+	
+	if (MontageToPlay)
+	{
+		PlayAnimMontage(MontageToPlay);
+	}
+}
+
+void ALSPlayerCharacter::Reload(const FInputActionValue& Value)
+{
+	UAnimMontage* MontageToPlay = ReloadMontage;
 	
 	if (MontageToPlay)
 	{

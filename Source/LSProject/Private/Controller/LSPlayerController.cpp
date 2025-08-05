@@ -7,7 +7,8 @@ ALSPlayerController::ALSPlayerController() :
 	LookAction(nullptr),
 	JumpAction(nullptr),
 	SprintAction(nullptr),
-	AttackAction(nullptr)
+	AttackAction(nullptr),
+	ReloadAction(nullptr)
 {
 }
 

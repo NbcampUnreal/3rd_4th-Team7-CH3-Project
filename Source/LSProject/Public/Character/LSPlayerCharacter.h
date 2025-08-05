@@ -58,10 +58,15 @@ protected:
 	void StopSprint(const FInputActionValue& Value);
 	UFUNCTION()
 	void Fire(const FInputActionValue& Value);
+	UFUNCTION()
+	void Reload(const FInputActionValue& Value);
 
 private:
 	ECurrentWeapon CurrentWeapon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* FireMontage;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* ReloadMontage;
+	
 };
