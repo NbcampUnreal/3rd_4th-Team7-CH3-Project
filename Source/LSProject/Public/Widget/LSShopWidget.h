@@ -10,6 +10,7 @@ class UButton;
 class UTextBlock;
 class UDataTable;
 class ULSBuyButtonWidget;
+class ULSShopComp;
 /**
  * 
  */
@@ -30,7 +31,19 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Store")
 	TSubclassOf<ULSBuyButtonWidget> BuyButtonWidgetClass;
 
+	UPROPERTY(meta=(BindWidget))
+	UPanelWidget* WeaponContainer;
+
+	UPROPERTY(meta=(BindWidget))
+	UPanelWidget* AttachmentContainer;
+
+	UPROPERTY(meta=(BindWidget))
+	UPanelWidget* ItemContainer;  
+	
 	UFUNCTION()
-	void HandleBuyClicked();
+	void HandleBuyClicked(const FName& Name);
+	
+	//UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="Store")
+	ULSShopComp* ShopComp;
 private:
 };

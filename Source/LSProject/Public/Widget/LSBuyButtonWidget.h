@@ -42,6 +42,4 @@ public:
 
 	UFUNCTION()
 	void ButtonClicked();
-
-	ULSShopComp* ShopComp;
 };

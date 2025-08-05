@@ -20,7 +20,6 @@ void ULSBuyButtonWidget::ButtonClicked()
 	FString Label = TEXT("");
 	if (NameText)
 	{
-		
 		Label = NameText->GetText().ToString();
 	}
 	OnBuyClicked.Broadcast(FName(*Label));

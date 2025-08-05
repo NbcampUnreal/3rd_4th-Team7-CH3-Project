@@ -22,7 +22,9 @@ public:
 	void AddToInven(const FName& Input);
 
 	//추후 삭제
+	UFUNCTION(Blueprintable)
 	void ShowInven();
 private:
+	UPROPERTY()
 	TMap<FName,int32> MyItems;
 };

@@ -7,6 +7,7 @@
 class UCameraComponent;
 class USpringArmComponent;
 struct FInputActionValue;
+class ULSShopComp;
 
 UENUM(BlueprintType)
 enum class ECurrentWeapon : uint8
@@ -35,6 +36,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "State")
 	void SetCurrentWeapon(ECurrentWeapon Weapon);
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Store")
+	ULSShopComp* ShopComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Store")
+	ULSShopComp* InvenComp;
+	
 protected:
 	virtual void Attack() override;
 	virtual void Death() override;

@@ -5,6 +5,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Component/LSShopComp.h"
 
 ALSPlayerCharacter::ALSPlayerCharacter()
 {
@@ -24,6 +25,9 @@ ALSPlayerCharacter::ALSPlayerCharacter()
 	CurrentWeapon = ECurrentWeapon::None;
 
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+
+	ShopComp=CreateDefaultSubobject<ULSShopComp>(TEXT("ShopComponent"));
+	InvenComp=CreateDefaultSubobject<ULSShopComp>(TEXT("InventoryComponent"));
 }
 
 ECurrentWeapon ALSPlayerCharacter::GetCurrentWeapon() const
