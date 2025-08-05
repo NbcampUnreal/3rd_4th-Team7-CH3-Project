@@ -14,5 +14,5 @@ class LSPROJECT_API ULSBTTask_FindCloseFense : public UBTTaskNode
 protected:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& Comp, uint8* NodeMemory) override;
 
-	FVector FindCloseFense(APawn* AIPawn);
+	FVector FindCloseFense(APawn* AIPawn) const;
 };

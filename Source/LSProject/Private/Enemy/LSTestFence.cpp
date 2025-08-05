@@ -14,6 +14,10 @@ float ALSTestFence::TakeDamage(float DamageAmount, struct FDamageEvent const& Da
 {
 	UE_LOG(LogTemp, Warning, TEXT("[LSEnemy] Fence Take Damaged"))
 	Health -= DamageAmount;
-	//EnemyTodo : Delete() 호출 후 울타리 삭제
+	UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Now Fence Health : %f"), Health)
+	if (Health<=0.0f)
+	{
+		Destroy();
+	}
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }

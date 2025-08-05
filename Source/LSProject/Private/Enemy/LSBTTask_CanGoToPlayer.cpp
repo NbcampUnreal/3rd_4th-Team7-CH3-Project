@@ -51,10 +51,11 @@ EBTNodeResult::Type ULSBTTask_CanGoToPlayer::ExecuteTask(UBehaviorTreeComponent&
 		MoveRequest.SetAcceptanceRadius(50.0f);
 
 		FPathFindingQuery Query;
-		bool bValidQuery = AIController->BuildPathfindingQuery(MoveRequest, Query);
-		if (bValidQuery)
+		
+		if (AIController->BuildPathfindingQuery(MoveRequest, Query))
 		{
-			if (NavSystem->TestPathSync(Query))
+			FPathFindingResult result = NavSystem->FindPathSync(Query, EPathFindingMode::Regular);
+			if (result.IsSuccessful())
 			{
 				UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Find Player Location is SUCCEEDED"));
 				Comp.GetBlackboardComponent()->SetValueAsVector(TEXT("PlayerLocation"), PlayerPawn->GetActorLocation());
@@ -62,7 +63,6 @@ EBTNodeResult::Type ULSBTTask_CanGoToPlayer::ExecuteTask(UBehaviorTreeComponent&
 			}
 			UE_LOG(LogTemp,Warning,TEXT("Player Path Is None"));
 		}
-		
 		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] NavSystem->Valid Query if false"));
 		return EBTNodeResult::Failed;
 	}

@@ -19,13 +19,15 @@ void ALSEnemy::Attack()
 	FCollisionShape CollisionShape = FCollisionShape::MakeSphere(50.0f);
 
 	UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+	UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Attack Succeeded"))
 
 	if (Anim)
 	{
 		Anim->StopAllMontages(0.5f);
-		if (Montage)
+		if (HitMontage)
 		{
-			Anim->Montage_Play(Montage, 1.f);
+			UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] HitMontage Succeeded"))
+			Anim->Montage_Play(HitMontage, 1.f);
 		}
 	}
 
@@ -63,26 +65,28 @@ void ALSEnemy::Attack()
 	}
 }
 
-//EnemyTodo : TakeDamage 수정
-// float ALSEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
-// 	class AController* EventInstigator, AActor* DamageCauser)
-// {
-// 	UE_LOG(LogTemp, Warning, TEXT("[LSEnemy] Fence Take Damaged"))
-// 	Health -= DamageAmount;
-// 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-// }
+float ALSEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+	class AController* EventInstigator, AActor* DamageCauser)
+{
+	UE_LOG(LogTemp, Warning, TEXT("[LSEnemy] Fence Take Damaged"))
+	Health -= DamageAmount;
+	if (Health<=0.0f)
+	{
+		Death();
+	}
+	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+}
 
 void ALSEnemy::Death()
 {
-	//EnemyTodo : Death() 내부에서 Destroy() 실행
-	//EnemyTodo : AnimInstance의 Health 변수 Update > Death Motion 실행 > 아니면 그냥 몽타주 한 번 보여주고 죽기
-	if (true)
+	UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+	if (Anim)
 	{
-		EnemyDelete();
+		Anim->StopAllMontages(0.5f);
+		if (DeathMontage)
+		{
+			PlayAnimMontage(DeathMontage,1.0f);
+		}
 	}
-}
-
-void ALSEnemy::EnemyDelete()
-{
 	Destroy();
 }
