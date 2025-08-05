@@ -16,10 +16,11 @@ struct FLSShopItemRow : public FTableRowBase
 	
 public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	FName ItemName;
+	FName Name;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	int32 Price;
 	
-
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	FName ShopCategory;
 };

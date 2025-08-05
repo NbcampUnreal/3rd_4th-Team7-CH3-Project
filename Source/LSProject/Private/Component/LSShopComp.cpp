@@ -5,18 +5,14 @@
 #include "Game/LSPlayerState.h"
 #include "DataTable/LSShopItemRow.h"
 #include "Engine/DataTable.h"
-
-//추후 삭제
 #include "Component/LSInventoryComp.h"
+#include "Character/LSPlayerCharacter.h"
 
 ULSShopComp::ULSShopComp()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
 	ShopItemData=CreateDefaultSubobject<UDataTable>(TEXT("ShopItemData"));
-
-	//추후 이동
-	Inventory=CreateDefaultSubobject<ULSInventoryComp>(TEXT("Inventory"));
 }
 
 
@@ -24,6 +20,18 @@ void ULSShopComp::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (AActor* Owner=GetOwner())
+	{
+		if (ALSPlayerCharacter* Player=Cast<ALSPlayerCharacter>(Owner))
+		{
+			ULSInventoryComp* InvenComp=Player->FindComponentByClass<ULSInventoryComp>();
+			if (InvenComp)
+			{
+				Inventory=InvenComp;
+			}
+				
+		}
+	}
 }
 
 void ULSShopComp::BuyItem(const FName& ItemName)
