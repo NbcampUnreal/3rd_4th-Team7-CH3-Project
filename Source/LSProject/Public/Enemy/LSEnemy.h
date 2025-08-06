@@ -27,6 +27,7 @@ public:
 	virtual void Death() override;
 
 protected:
+	virtual void BeginPlay() override;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Type)
 	ELSZombieType ZombieType;

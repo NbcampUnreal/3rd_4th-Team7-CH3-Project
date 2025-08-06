@@ -1,5 +1,6 @@
 #include "Enemy/LSEnemy.h"
 
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 ALSEnemy::ALSEnemy()
@@ -51,7 +52,10 @@ void ALSEnemy::Attack()
 				if (HitActor->ActorHasTag("Player") || HitActor->ActorHasTag("Fence"))
 				{
 					UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Enemy Attack is Perfect Completed"));
-					
+					if (HitActor->ActorHasTag("Player"))
+					{
+						UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog]  is Player "));
+					}
 					UGameplayStatics::ApplyDamage(
 						HitActor,
 						AttackDamage,
@@ -89,4 +93,10 @@ void ALSEnemy::Death()
 		}
 	}
 	Destroy();
+}
+
+void ALSEnemy::BeginPlay()
+{
+	Super::BeginPlay();
+	
 }

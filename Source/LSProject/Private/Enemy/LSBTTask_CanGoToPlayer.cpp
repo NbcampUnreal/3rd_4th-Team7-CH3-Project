@@ -54,8 +54,7 @@ EBTNodeResult::Type ULSBTTask_CanGoToPlayer::ExecuteTask(UBehaviorTreeComponent&
 		
 		if (AIController->BuildPathfindingQuery(MoveRequest, Query))
 		{
-			FPathFindingResult result = NavSystem->FindPathSync(Query, EPathFindingMode::Regular);
-			if (result.IsSuccessful())
+			if (NavSystem->TestPathSync(Query))
 			{
 				UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Find Player Location is SUCCEEDED"));
 				Comp.GetBlackboardComponent()->SetValueAsVector(TEXT("PlayerLocation"), PlayerPawn->GetActorLocation());
