@@ -37,7 +37,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "State")
 	void SetCurrentWeapon(ECurrentWeapon Weapon);
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Store")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Store")
 	TObjectPtr<ULSShopComp> ShopComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Store")

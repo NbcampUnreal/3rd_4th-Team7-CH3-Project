@@ -7,7 +7,7 @@
 #include "LSShopComp.generated.h"
 
 
-UCLASS(ClassGroup=(Custom),Blueprintable ,meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup=(Custom) ,meta=(BlueprintSpawnableComponent))
 class LSPROJECT_API ULSShopComp : public UActorComponent
 {
 	GENERATED_BODY()
@@ -23,9 +23,8 @@ public:
 	void BuyItem(const FName& ItemName);
 	void SellItem();
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
 	UDataTable* ShopItemData;
-	
 private:
 	//추후 플레이어 클래스로 이동
 	class ULSInventoryComp* Inventory;
