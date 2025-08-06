@@ -15,6 +15,9 @@ void ULSInventoryComp::BeginPlay()
 void ULSInventoryComp::AddToInven(const FName& Input)
 {
 	MyItems.FindOrAdd(Input)++;
+
+	//
+	ShowInven();
 }
 
 void ULSInventoryComp::ShowInven()
@@ -26,5 +29,4 @@ void ULSInventoryComp::ShowInven()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Name:%s, Count: %d"),*Pair.Key.ToString(),Pair.Value);
 	}
-	UE_LOG(LogTemp, Warning, TEXT(" "));
 }
