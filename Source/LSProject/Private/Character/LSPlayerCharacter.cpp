@@ -1,6 +1,7 @@
 #include "Character/LSPlayerCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Component/LSInventoryComp.h"
 #include "Controller/LSPlayerController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -27,7 +28,7 @@ ALSPlayerCharacter::ALSPlayerCharacter()
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 
 	ShopComp=CreateDefaultSubobject<ULSShopComp>(TEXT("ShopComponent"));
-	InvenComp=CreateDefaultSubobject<ULSShopComp>(TEXT("InventoryComponent"));
+	InvenComp=CreateDefaultSubobject<ULSInventoryComp>(TEXT("InventoryComponent"));
 }
 
 ECurrentWeapon ALSPlayerCharacter::GetCurrentWeapon() const
