@@ -8,6 +8,7 @@
 
 class UInputMappingContext;
 class UInputAction;
+class ULSShopWidget;
 
 UCLASS()
 class LSPROJECT_API ALSPlayerController : public APlayerController
@@ -32,6 +33,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	UInputAction* ReloadAction;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TSubclassOf<ULSShopWidget> ShopWidgetClass;
+	TObjectPtr<ULSShopWidget> ShopWidgetInstance;
+	
 protected:
 	virtual void BeginPlay() override;
+
+private:
+	void CreateShopWidget();
 };

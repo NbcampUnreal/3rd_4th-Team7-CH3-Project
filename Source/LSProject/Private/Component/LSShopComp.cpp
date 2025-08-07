@@ -57,12 +57,11 @@ void ULSShopComp::BuyItem(const FName& ItemName)
 					PlayerState->SetCoin(CurCoin);
 					//PC->Player->Inventory->AddtoInven(ItemName)
 					Inventory->AddToInven(ItemName);
-
-					UE_LOG(LogTemp,Warning,TEXT("CurCoin: %d"),CurCoin);
 				}
 				else
 				{
 					//UI->돈이 부족
+					OnShopNotEnoughMoney.Broadcast();
 				}
 			}
 			

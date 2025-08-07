@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "LSShopComp.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnShopNotEnoughMoney);
 
 UCLASS(ClassGroup=(Custom) ,meta=(BlueprintSpawnableComponent))
 class LSPROJECT_API ULSShopComp : public UActorComponent
@@ -15,16 +16,16 @@ class LSPROJECT_API ULSShopComp : public UActorComponent
 public:
 	ULSShopComp();
 
-protected:
-	virtual void BeginPlay() override;
-
-public:
-	UFUNCTION(BlueprintCallable)
 	void BuyItem(const FName& ItemName);
 	void SellItem();
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
 	UDataTable* ShopItemData;
+
+	FOnShopNotEnoughMoney OnShopNotEnoughMoney;
+protected:
+	virtual void BeginPlay() override;
+
 private:
 	//추후 플레이어 클래스로 이동
 	class ULSInventoryComp* Inventory;

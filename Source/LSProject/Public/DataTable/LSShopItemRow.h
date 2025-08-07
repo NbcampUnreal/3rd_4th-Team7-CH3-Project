@@ -23,4 +23,10 @@ public:
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	FName ShopCategory;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* Icon;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	int32 Number;
 };

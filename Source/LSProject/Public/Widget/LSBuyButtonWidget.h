@@ -10,6 +10,7 @@
 
 class UButton;
 class UTextBlock;
+class UImage;
 
 /**
  * 
@@ -29,6 +30,11 @@ protected:
 	virtual void NativeConstruct() override;
 	
 public:
+	FLSShopItemRow RowData;
+
+	UPROPERTY(meta=(BindWidget))
+	UButton* BuyButton;
+	
 	UPROPERTY(meta=(BindWidget))
 	UTextBlock* NameText;
 
@@ -36,9 +42,10 @@ public:
 	UTextBlock* PriceText;
 
 	UPROPERTY(meta=(BindWidget))
-	UButton* BuyButton;
+	UTextBlock* NumText;
 
-	FLSShopItemRow RowData;
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	UImage* IconImage;
 
 	UFUNCTION()
 	void ButtonClicked();

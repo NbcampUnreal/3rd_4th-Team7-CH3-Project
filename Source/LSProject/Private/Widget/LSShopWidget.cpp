@@ -8,7 +8,8 @@
 #include "Widget/LSBuyButtonWidget.h"
 #include "Components/TextBlock.h"
 #include "Component/LSShopComp.h"
-#include "Character/LSPlayerCharacter.h"
+#include "Components/Image.h"
+#include "Game/LSPlayerState.h"
 
 void ULSShopWidget::NativeOnInitialized()
 {
@@ -18,13 +19,17 @@ void ULSShopWidget::NativeOnInitialized()
 	{
 		if (ALSPlayerCharacter* Player=Cast<ALSPlayerCharacter>(Pawn))
 		{
-			ShopComp = Pawn->FindComponentByClass<ULSShopComp>();
-			if (!ShopComp)
-				UE_LOG(LogTemp, Warning, TEXT("ShopComp not found on Pawn"));
+			ULSShopComp* ShopComp = Player->FindComponentByClass<ULSShopComp>();
+			if (ShopComp)
+			{
+				ShopComp->OnShopNotEnoughMoney.AddDynamic(this,&ULSShopWidget::ShowInsufficientMoneyText);
+			}
 		}
+
+		NotEnoughMoneyText->SetVisibility(ESlateVisibility::Hidden);
 	}
 
-	
+	DurationDisappear=2.0f;
 }
 
 void ULSShopWidget::NativeConstruct()
@@ -44,34 +49,27 @@ void ULSShopWidget::NativeConstruct()
 		ULSBuyButtonWidget* Btn = CreateWidget<ULSBuyButtonWidget>(this, BuyButtonWidgetClass);
 		if (!Btn) continue;
 
+		FText NText=FText::FromName(Row->Name);
+		Btn->NameText->SetText(NText);
+
+		FString PString=FString::Printf(TEXT("%d$"),Row->Price);
+		Btn->PriceText->SetText(FText::FromString(PString));
+		
+		FString NString=FString::Printf(TEXT("X %d"),Row->Number);
+		Btn->NumText->SetText(FText::FromString(NString));
+
+		Btn->IconImage->SetBrushFromTexture(Row->Icon);
+		
 		if (Row->ShopCategory==FName(TEXT("Weapon")))
 		{
-			FText NText=FText::FromName(Row->Name);
-			Btn->NameText->SetText(NText);
-
-			FText PText=FText::AsNumber(Row->Price);
-			Btn->PriceText->SetText(PText);
-		
 			WeaponContainer->AddChild(Btn);
 		}
 		else if (Row->ShopCategory==FName(TEXT("Attachment")))
 		{
-			FText NText=FText::FromName(Row->Name);
-			Btn->NameText->SetText(NText);
-
-			FText PText=FText::AsNumber(Row->Price);
-			Btn->PriceText->SetText(PText);
-		
 			AttachmentContainer->AddChild(Btn);
 		}
 		else if (Row->ShopCategory==FName(TEXT("Item")))
 		{
-			FText NText=FText::FromName(Row->Name);
-			Btn->NameText->SetText(NText);
-
-			FText PText=FText::AsNumber(Row->Price);
-			Btn->PriceText->SetText(PText);
-		
 			ItemContainer->AddChild(Btn);
 		}
 		
@@ -80,10 +78,47 @@ void ULSShopWidget::NativeConstruct()
 	}
 }
 
+void ULSShopWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	ALSPlayerState* PS = GetOwningPlayerState<ALSPlayerState>(false);
+	if (PS)
+	{
+		CoinText->SetText(FText::AsNumber(PS->GetCoin()));
+	}
+}
+
 void ULSShopWidget::HandleBuyClicked(const FName& Name)
 {
-	ShopComp->BuyItem(Name);
+	if (APawn* Pawn = GetOwningPlayerPawn())
+	{
+		if (ALSPlayerCharacter* Player=Cast<ALSPlayerCharacter>(Pawn))
+		{
+			ULSShopComp* ShopComp = Player->FindComponentByClass<ULSShopComp>();
+			if (ShopComp)
+			{
+				ShopComp->BuyItem(Name);
+			}
+		}
+	}
+}
 
-	//UE_LOG(LogTemp, Warning, TEXT("Shop Ui Button Clicked: %s"),*Name.ToString());
+void ULSShopWidget::ShowInsufficientMoneyText()
+{
+	NotEnoughMoneyText->SetVisibility(ESlateVisibility::Visible);
+
+	GetWorld()->GetTimerManager().SetTimer(
+		HideNotEnoughMoneyTextTimer,
+		this,
+		&ULSShopWidget::HideInsufficientMoneyText,
+		DurationDisappear,
+		false
+		);
+}
+
+void ULSShopWidget::HideInsufficientMoneyText()
+{
+	NotEnoughMoneyText->SetVisibility(ESlateVisibility::Hidden);
 }
 

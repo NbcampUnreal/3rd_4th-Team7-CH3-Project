@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "EntitySystem/MovieSceneComponentPtr.h"
 #include "LSShopWidget.generated.h"
 
 class UButton;
@@ -21,8 +22,10 @@ class LSPROJECT_API ULSShopWidget : public UUserWidget
 
 protected:
 	virtual void NativeOnInitialized() override;
-
+	
 	virtual void NativeConstruct() override;
+	
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 public:
 	UPROPERTY(EditDefaultsOnly, Category="Store")
@@ -38,12 +41,22 @@ public:
 	UPanelWidget* AttachmentContainer;
 
 	UPROPERTY(meta=(BindWidget))
-	UPanelWidget* ItemContainer;  
+	UPanelWidget* ItemContainer;
+
+	UPROPERTY(meta=(BindWidget))
+	TObjectPtr<UTextBlock> CoinText;
+
+	UPROPERTY(meta=(BindWidget))
+	TObjectPtr<UTextBlock> NotEnoughMoneyText;
 	
 	UFUNCTION()
 	void HandleBuyClicked(const FName& Name);
-	
-	//UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="Store")
-	ULSShopComp* ShopComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings")
+	float DurationDisappear;
 private:
+	UFUNCTION()
+	void ShowInsufficientMoneyText();
+	void HideInsufficientMoneyText();
+	FTimerHandle HideNotEnoughMoneyTextTimer;
 };
