@@ -1,4 +1,4 @@
-#include "Controller/LSDayNightController.h"
+#include "System/LSDayNightController.h"
 #include "Components/StaticMeshComponent.h"
 
 ALSDayNightController::ALSDayNightController()

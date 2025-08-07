@@ -3,6 +3,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Kismet/KismetSystemLibrary.h"
 
+
 ALSPlayerController::ALSPlayerController() :
 	InputMappingContext(nullptr),
 	MoveAction(nullptr),
@@ -34,7 +35,7 @@ void ALSPlayerController::BeginPlay()
 
 	if (IsLocalController() && MainMenuWidgetClass)
 	{
-		MainMenuWidget = CreateWidget<UUserWidget>(this, MainMenuWidgetClass);
+		MainMenuWidget = CreateWidget<UUserWidget>( this, MainMenuWidgetClass);
 		if (MainMenuWidget)
 		{
 			MainMenuWidget->AddToViewport();
@@ -53,7 +54,14 @@ void ALSPlayerController::GameStart()
 		MainMenuWidget->RemoveFromParent();
 		MainMenuWidget = nullptr;
 	}
-	
+	if (InGameHUDWidgetClass && !InGameHUDWidget)
+	{
+		InGameHUDWidget = CreateWidget<UUserWidget>(this,InGameHUDWidgetClass);
+		if (InGameHUDWidget)
+		{
+			InGameHUDWidget->AddToViewport();
+		}
+	}
 	FInputModeGameOnly InputMode;
 	SetInputMode(InputMode);
 	bShowMouseCursor = false;
