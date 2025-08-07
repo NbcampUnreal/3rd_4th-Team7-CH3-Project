@@ -9,6 +9,7 @@ class USpringArmComponent;
 struct FInputActionValue;
 class ULSShopComp;
 class ULSInventoryComp;
+class ULSCharacterStateComp;
 
 UENUM(BlueprintType)
 enum class ECurrentWeapon : uint8
@@ -42,6 +43,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Store")
 	TObjectPtr<ULSInventoryComp> InvenComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="StateComp")
+	TObjectPtr<ULSCharacterStateComp> CharacterStateComp;
 	
 protected:
 	virtual void Attack() override;
@@ -65,8 +69,6 @@ protected:
 	UFUNCTION()
 	void StopSprint(const FInputActionValue& Value);
 	UFUNCTION()
-	void Fire(const FInputActionValue& Value);
-	UFUNCTION()
 	void Reload(const FInputActionValue& Value);
 
 private:
@@ -76,6 +78,8 @@ private:
 	UAnimMontage* FireMontage;
 	UPROPERTY()
 	UAnimMontage* ReloadMontage;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* DieMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	TArray<UAnimMontage*> FireMontageCollection;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))

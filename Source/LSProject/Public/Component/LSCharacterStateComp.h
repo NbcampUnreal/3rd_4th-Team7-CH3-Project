@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "LSMontagePlayComp.generated.h"
+#include "LSCharacterStateComp.generated.h"
 
 class ALSPlayerCharacter;
 
@@ -16,26 +16,28 @@ enum class ECharacterState : uint8
 };
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class LSPROJECT_API ULSMontagePlayComp : public UActorComponent
+class LSPROJECT_API ULSCharacterStateComp : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:
-	ULSMontagePlayComp();
+	ULSCharacterStateComp();
 
 protected:
 	virtual void BeginPlay() override;
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-	                           FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	UFUNCTION()
+	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
 private:
-	ECharacterState CurrentState;
 
 	UPROPERTY()
 	TObjectPtr<ALSPlayerCharacter> OwnerCharacter;
+	UPROPERTY()
+	TObjectPtr<UAnimInstance> OwnerAnimInstance;
 
-	float CurrentMontageDuration;
-	float MontageStartTime;
+	ECharacterState CurrentState;
 
 public:
 	bool CanMove() const;
@@ -43,8 +45,8 @@ public:
 	bool CanFire() const;
 	bool CanReload() const;
 	ECharacterState GetCurrentState() const;
+	void SetState(ECharacterState NewState);
 
 private:
-	void SetState(ECharacterState NewState);
 	void StopCurrentMontage();
 };
