@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "LSMontagePlayComp.generated.h"
+#include "LSCharacterStateComp.generated.h"
 
 class ALSPlayerCharacter;
 
@@ -16,12 +16,12 @@ enum class ECharacterState : uint8
 };
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class LSPROJECT_API ULSMontagePlayComp : public UActorComponent
+class LSPROJECT_API ULSCharacterStateComp : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:
-	ULSMontagePlayComp();
+	ULSCharacterStateComp();
 
 protected:
 	virtual void BeginPlay() override;
@@ -43,6 +43,8 @@ public:
 	bool CanFire() const;
 	bool CanReload() const;
 	ECharacterState GetCurrentState() const;
+
+	void SetCurrentMontageDuration(float Duration);
 
 private:
 	void SetState(ECharacterState NewState);

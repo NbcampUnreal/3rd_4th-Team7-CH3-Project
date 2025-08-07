@@ -1,7 +1,7 @@
-#include "Component/LSMontagePlayComp.h"
+#include "Component/LSCharacterStateComp.h"
 #include "Character/LSPlayerCharacter.h"
 
-ULSMontagePlayComp::ULSMontagePlayComp()
+ULSCharacterStateComp::ULSCharacterStateComp()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
@@ -10,7 +10,7 @@ ULSMontagePlayComp::ULSMontagePlayComp()
 	MontageStartTime = 0.0f;
 }
 
-void ULSMontagePlayComp::BeginPlay()
+void ULSCharacterStateComp::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -18,7 +18,7 @@ void ULSMontagePlayComp::BeginPlay()
 }
 
 
-void ULSMontagePlayComp::TickComponent(float DeltaTime, ELevelTick TickType,
+void ULSCharacterStateComp::TickComponent(float DeltaTime, ELevelTick TickType,
                                        FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
@@ -33,17 +33,17 @@ void ULSMontagePlayComp::TickComponent(float DeltaTime, ELevelTick TickType,
 	}
 }
 
-bool ULSMontagePlayComp::CanMove() const
+bool ULSCharacterStateComp::CanMove() const
 {
 	return CurrentState != ECharacterState::Die;
 }
 
-bool ULSMontagePlayComp::CanJump() const
+bool ULSCharacterStateComp::CanJump() const
 {
 	return CurrentState != ECharacterState::Die;
 }
 
-bool ULSMontagePlayComp::CanFire() const
+bool ULSCharacterStateComp::CanFire() const
 {
 	switch (CurrentState)
 	{
@@ -56,7 +56,7 @@ bool ULSMontagePlayComp::CanFire() const
 	}
 }
 
-bool ULSMontagePlayComp::CanReload() const
+bool ULSCharacterStateComp::CanReload() const
 {
 	switch (CurrentState)
 	{
@@ -71,21 +71,25 @@ bool ULSMontagePlayComp::CanReload() const
 	}
 }
 
-ECharacterState ULSMontagePlayComp::GetCurrentState() const
+ECharacterState ULSCharacterStateComp::GetCurrentState() const
 {
 	return CurrentState;
 }
 
-void ULSMontagePlayComp::SetState(ECharacterState NewState)
+void ULSCharacterStateComp::SetCurrentMontageDuration(float Duration)
+{
+	CurrentMontageDuration = Duration;
+	MontageStartTime = GetWorld()->GetTimeSeconds();
+}
+
+void ULSCharacterStateComp::SetState(ECharacterState NewState)
 {
 	if (CurrentState == NewState) return;
 
 	CurrentState = NewState;
-
-	// todo: 정말 set이 이게 끝인가?
 }
 
-void ULSMontagePlayComp::StopCurrentMontage()
+void ULSCharacterStateComp::StopCurrentMontage()
 {
 	if (!OwnerCharacter) return;
 

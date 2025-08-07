@@ -9,6 +9,7 @@ class USpringArmComponent;
 struct FInputActionValue;
 class ULSShopComp;
 class ULSInventoryComp;
+class ULSMontagePlayComp;
 
 UENUM(BlueprintType)
 enum class ECurrentWeapon : uint8
@@ -42,6 +43,8 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Store")
 	TObjectPtr<ULSInventoryComp> InvenComp;
+
+	TObjectPtr<ULSMontagePlayComp> PlayMontageComp;
 	
 protected:
 	virtual void Attack() override;
