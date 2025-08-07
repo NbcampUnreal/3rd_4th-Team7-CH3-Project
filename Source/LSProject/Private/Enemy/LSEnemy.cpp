@@ -1,10 +1,13 @@
 #include "Enemy/LSEnemy.h"
 
+#include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Game/LSPlayerState.h"
 
 ALSEnemy::ALSEnemy()
 {
+	EnemyCoin=0;
 	AttackRange=30.0f;
 	AttackDamage=30.0f;
 	WalkSpeed=300.0f;
@@ -20,16 +23,11 @@ void ALSEnemy::Attack()
 	FCollisionShape CollisionShape = FCollisionShape::MakeSphere(50.0f);
 
 	UAnimInstance* Anim = GetMesh()->GetAnimInstance();
-	UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Attack Succeeded"))
 
-	if (Anim)
+	if (Anim && HitMontage)
 	{
 		Anim->StopAllMontages(0.5f);
-		if (HitMontage)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] HitMontage Succeeded"))
-			Anim->Montage_Play(HitMontage, 1.f);
-		}
+		Anim->Montage_Play(HitMontage, 1.f);
 	}
 
 	bool bHit = GetWorld()->SweepMultiByChannel(
@@ -40,7 +38,8 @@ void ALSEnemy::Attack()
 		ECC_Pawn,
 		CollisionShape
 	);
-	
+
+	//EnemyTodo : SphereTrace랑 LineTrace랑 둘 다 Hit 합치기
 	DrawDebugLine(GetWorld(),StartLocation,EndLocation,FColor::Red,false, 3.0f);
 	DrawDebugSphere(GetWorld(), StartLocation, CollisionShape.GetSphereRadius(), 16, FColor::Red,false, 2.0f);
 	if (bHit)
@@ -92,11 +91,33 @@ void ALSEnemy::Death()
 			PlayAnimMontage(DeathMontage,1.0f);
 		}
 	}
+	ALSPlayerState* GameState = Cast<ALSPlayerState>(GetPlayerState());
+	if (GameState)
+	{
+		GameState->SetCoin(EnemyCoin);
+	}
 	Destroy();
 }
 
 void ALSEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+	FString EnumZombieType = UEnum::GetValueAsString(ZombieType);
+	UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] ZombieType : %s"), *EnumZombieType)
 	
+	if (ZombieType == ELSZombieType::Fence)
+	{
+		UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] ZombieType is Fence"));
+		AAIController* AIController = Cast<AAIController>(GetController());
+		if (AIController)
+		{
+			UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] FenceZom AIController"));
+			UBlackboardComponent* Blackboard = Cast<UBlackboardComponent>(AIController->GetBlackboardComponent());
+			if (Blackboard)
+			{
+				UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] BlackBoard Key Is Fence"));
+				Blackboard->SetValueAsBool("IsFenceZom",true);
+			}
+		}
+	}
 }

@@ -11,7 +11,7 @@ class LSPROJECT_API ULSBTTask_RotationToTarget : public UBTTaskNode
 public:
 	ULSBTTask_RotationToTarget();
 
-	void SetRotationToTarget();
+	void SetRotationToTarget(FVector GoVector);
 
 protected:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
