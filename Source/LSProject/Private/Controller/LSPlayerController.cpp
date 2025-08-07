@@ -16,9 +16,9 @@ ALSPlayerController::ALSPlayerController() :
 	ShopWidgetClass(nullptr),
 	ShopWidgetInstance(nullptr),
 	MainMenuWidgetClass(nullptr),
+	InGameHUDWidgetClass(nullptr),
 	MainMenuWidget(nullptr),
-	InGameHUDWidget(nullptr),
-	InGameHUDWidgetClass(nullptr)
+	InGameHUDWidget(nullptr)
 {
 }
 
