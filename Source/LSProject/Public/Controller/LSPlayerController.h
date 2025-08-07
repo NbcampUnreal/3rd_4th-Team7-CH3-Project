@@ -10,6 +10,10 @@ class UInputMappingContext;
 class UInputAction;
 class ULSShopWidget;
 
+class UUserWidget;
+class UWBP_MainMenu;
+class UWBP_InGameHUD;
+
 UCLASS()
 class LSPROJECT_API ALSPlayerController : public APlayerController
 {
@@ -37,6 +41,19 @@ public:
 	TSubclassOf<ULSShopWidget> ShopWidgetClass;
 	TObjectPtr<ULSShopWidget> ShopWidgetInstance;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UUserWidget> MainMenuWidgetClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UUserWidget> InGameHUDWidgetClass;
+	UPROPERTY()
+	UUserWidget* MainMenuWidget;
+	UPROPERTY()
+	UUserWidget* InGameHUDWidget;
+	UFUNCTION(BlueprintCallable)
+	void GameStart();
+	UFUNCTION(BlueprintCallable)
+	void GameQuit();
+
 protected:
 	virtual void BeginPlay() override;
 
