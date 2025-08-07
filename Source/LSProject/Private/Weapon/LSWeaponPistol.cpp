@@ -29,6 +29,8 @@ ALSWeaponPistol::ALSWeaponPistol()
 void ALSWeaponPistol::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	UE_LOG(LogTemp, Warning, TEXT("게임시작"));	
 
 	if (APlayerController* PC = Cast<APlayerController>(GetOwner()->GetInstigatorController()))
 	{
