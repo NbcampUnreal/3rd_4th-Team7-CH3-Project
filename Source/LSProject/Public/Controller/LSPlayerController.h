@@ -9,6 +9,9 @@
 class UInputMappingContext;
 class UInputAction;
 
+class UUserWidget;
+class ULSMainMenuWidget;
+
 UCLASS()
 class LSPROJECT_API ALSPlayerController : public APlayerController
 {
@@ -31,6 +34,15 @@ public:
 	UInputAction* AttackAction;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	UInputAction* ReloadAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UUserWidget> MainMenuWidgetClass;
+	UPROPERTY()
+	UUserWidget* MainMenuWidget;
+	UFUNCTION(BlueprintCallable)
+	void GameStart();
+	UFUNCTION(BlueprintCallable)
+	void GameQuit();
 
 protected:
 	virtual void BeginPlay() override;
