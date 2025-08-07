@@ -3,11 +3,9 @@
 
 ULSCharacterStateComp::ULSCharacterStateComp()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	CurrentState = ECharacterState::Idle;
-	CurrentMontageDuration = 0.0f;
-	MontageStartTime = 0.0f;
 }
 
 void ULSCharacterStateComp::BeginPlay()
@@ -15,22 +13,33 @@ void ULSCharacterStateComp::BeginPlay()
 	Super::BeginPlay();
 
 	OwnerCharacter = Cast<ALSPlayerCharacter>(GetOwner());
-}
 
-
-void ULSCharacterStateComp::TickComponent(float DeltaTime, ELevelTick TickType,
-                                       FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	if (CurrentState != ECharacterState::Idle)
+	if (OwnerCharacter)
 	{
-		float ElapsedTime = GetWorld()->GetTimeSeconds() - MontageStartTime;
-		if (ElapsedTime >= CurrentMontageDuration)
+		OwnerAnimInstance = OwnerCharacter->GetMesh()->GetAnimInstance();
+		if (OwnerAnimInstance)
 		{
-			SetState(ECharacterState::Idle);
+			OwnerAnimInstance->OnMontageEnded.AddDynamic(this, &ULSCharacterStateComp::OnMontageEnded);
 		}
 	}
+}
+
+void ULSCharacterStateComp::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	if (OwnerAnimInstance)
+	{
+		OwnerAnimInstance->OnMontageEnded.RemoveDynamic(this, &ULSCharacterStateComp::OnMontageEnded);
+	}
+}
+
+void ULSCharacterStateComp::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	if (bInterrupted) return;
+	
+	SetState(ECharacterState::Idle);
+	UE_LOG(LogTemp, Warning, TEXT("Montage Ended"));
 }
 
 bool ULSCharacterStateComp::CanMove() const
@@ -76,17 +85,12 @@ ECharacterState ULSCharacterStateComp::GetCurrentState() const
 	return CurrentState;
 }
 
-void ULSCharacterStateComp::SetCurrentMontageDuration(float Duration)
-{
-	CurrentMontageDuration = Duration;
-	MontageStartTime = GetWorld()->GetTimeSeconds();
-}
-
 void ULSCharacterStateComp::SetState(ECharacterState NewState)
 {
 	if (CurrentState == NewState) return;
-
+	
 	CurrentState = NewState;
+	UE_LOG(LogTemp, Warning, TEXT("Set StateIN : %d"), CurrentState);
 }
 
 void ULSCharacterStateComp::StopCurrentMontage()

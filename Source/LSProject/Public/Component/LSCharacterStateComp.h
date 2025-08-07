@@ -25,17 +25,19 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-	                           FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	UFUNCTION()
+	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
 private:
-	ECharacterState CurrentState;
 
 	UPROPERTY()
 	TObjectPtr<ALSPlayerCharacter> OwnerCharacter;
+	UPROPERTY()
+	TObjectPtr<UAnimInstance> OwnerAnimInstance;
 
-	float CurrentMontageDuration;
-	float MontageStartTime;
+	ECharacterState CurrentState;
 
 public:
 	bool CanMove() const;
@@ -43,10 +45,8 @@ public:
 	bool CanFire() const;
 	bool CanReload() const;
 	ECharacterState GetCurrentState() const;
-
-	void SetCurrentMontageDuration(float Duration);
+	void SetState(ECharacterState NewState);
 
 private:
-	void SetState(ECharacterState NewState);
 	void StopCurrentMontage();
 };

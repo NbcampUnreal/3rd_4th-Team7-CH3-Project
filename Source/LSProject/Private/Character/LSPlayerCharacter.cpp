@@ -1,6 +1,7 @@
 #include "Character/LSPlayerCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Component/LSCharacterStateComp.h"
 #include "Component/LSInventoryComp.h"
 #include "Controller/LSPlayerController.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -27,8 +28,9 @@ ALSPlayerCharacter::ALSPlayerCharacter()
 
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 
-	ShopComp=CreateDefaultSubobject<ULSShopComp>(TEXT("ShopComponent"));
-	InvenComp=CreateDefaultSubobject<ULSInventoryComp>(TEXT("InventoryComponent"));
+	ShopComp = CreateDefaultSubobject<ULSShopComp>(TEXT("ShopComponent"));
+	InvenComp = CreateDefaultSubobject<ULSInventoryComp>(TEXT("InventoryComponent"));
+	CharacterStateComp = CreateDefaultSubobject<ULSCharacterStateComp>(TEXT("CharacterStateComponent"));
 }
 
 ECurrentWeapon ALSPlayerCharacter::GetCurrentWeapon() const
@@ -41,14 +43,12 @@ void ALSPlayerCharacter::SetCurrentWeapon(ECurrentWeapon Weapon)
 	CurrentWeapon = Weapon;
 }
 
-void ALSPlayerCharacter::Attack()
-{
-	Super::Attack();
-}
-
 void ALSPlayerCharacter::Death()
 {
 	Super::Death();
+
+	PlayAnimMontage(DieMontage);
+	CharacterStateComp->SetState(ECharacterState::Die);
 }
 
 void ALSPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -85,12 +85,12 @@ void ALSPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 			}
 			if (PlayerController->AttackAction)
 			{
-				EnhancedInput->BindAction(PlayerController->AttackAction, ETriggerEvent::Triggered,
-				                          this, &ALSPlayerCharacter::Fire);
+				EnhancedInput->BindAction(PlayerController->AttackAction, ETriggerEvent::Started,
+				                          this, &ALSPlayerCharacter::Attack);
 			}
 			if (PlayerController->ReloadAction)
 			{
-				EnhancedInput->BindAction(PlayerController->ReloadAction, ETriggerEvent::Triggered,
+				EnhancedInput->BindAction(PlayerController->ReloadAction, ETriggerEvent::Started,
 				                          this, &ALSPlayerCharacter::Reload);
 			}
 		}
@@ -107,19 +107,22 @@ void ALSPlayerCharacter::Move(const FInputActionValue& Value)
 {
 	if (!Controller) return;
 
-	const FVector2D MoveInput = Value.Get<FVector2D>();
-	FRotator Rotation = GetControlRotation();
-
-	FVector ForwardVector = UKismetMathLibrary::GetForwardVector(FRotator(0.0f, Rotation.Yaw, 0.0f));
-	FVector RightVector = UKismetMathLibrary::GetRightVector(FRotator(0.0f, Rotation.Yaw, 0.0f));
-
-	if (!FMath::IsNearlyZero(MoveInput.X))
+	if (CharacterStateComp->CanMove())
 	{
-		AddMovementInput(ForwardVector, MoveInput.X);
-	}
-	if (!FMath::IsNearlyZero(MoveInput.Y))
-	{
-		AddMovementInput(RightVector, MoveInput.Y);
+		const FVector2D MoveInput = Value.Get<FVector2D>();
+		FRotator Rotation = GetControlRotation();
+
+		FVector ForwardVector = UKismetMathLibrary::GetForwardVector(FRotator(0.0f, Rotation.Yaw, 0.0f));
+		FVector RightVector = UKismetMathLibrary::GetRightVector(FRotator(0.0f, Rotation.Yaw, 0.0f));
+
+		if (!FMath::IsNearlyZero(MoveInput.X))
+		{
+			AddMovementInput(ForwardVector, MoveInput.X);
+		}
+		if (!FMath::IsNearlyZero(MoveInput.Y))
+		{
+			AddMovementInput(RightVector, MoveInput.Y);
+		}
 	}
 }
 
@@ -133,17 +136,23 @@ void ALSPlayerCharacter::Look(const FInputActionValue& Value)
 
 void ALSPlayerCharacter::StartJump(const FInputActionValue& Value)
 {
-	if (Value.Get<bool>())
+	if (CharacterStateComp->CanJump())
 	{
-		Jump();
+		if (Value.Get<bool>())
+		{
+			Jump();
+		}
 	}
 }
 
 void ALSPlayerCharacter::StopJump(const FInputActionValue& Value)
 {
-	if (!Value.Get<bool>())
+	if (CharacterStateComp->CanJump())
 	{
-		StopJumping();
+		if (!Value.Get<bool>())
+		{
+			StopJumping();
+		}
 	}
 }
 
@@ -163,36 +172,41 @@ void ALSPlayerCharacter::StopSprint(const FInputActionValue& Value)
 	}
 }
 
-void ALSPlayerCharacter::Fire(const FInputActionValue& Value)
+void ALSPlayerCharacter::Attack()
 {
+	Super::Attack();
+
 	if (FireMontageCollection.IsEmpty()) return;
+	if (CurrentWeapon == ECurrentWeapon::None) return;
+	if (!CharacterStateComp->CanFire()) return;
 
 	const int32 Index = static_cast<int32>(CurrentWeapon) - 1;
 
 	if (FireMontageCollection.IsValidIndex(Index))
 	{
 		FireMontage = FireMontageCollection[Index];
-	}
-	if (CurrentWeapon != ECurrentWeapon::None)
-	{
 		PlayAnimMontage(FireMontage);
-		UE_LOG(LogTemp, Warning, TEXT("Index : %d"), Index);
+		CharacterStateComp->SetState(ECharacterState::Fire);
+		UE_LOG(LogTemp, Warning, TEXT("Fire attempt - State: %s"),
+		   *UEnum::GetValueAsString(CharacterStateComp->GetCurrentState()));
 	}
-	// todo:클릭 한번 누를 때마다 엄청 실행되는  안고쳐도 될 수도?
 }
 
 void ALSPlayerCharacter::Reload(const FInputActionValue& Value)
 {
+	
 	if (ReloadMontageCollection.IsEmpty()) return;
+	if (CurrentWeapon == ECurrentWeapon::None) return;
+	if (!CharacterStateComp->CanReload()) return;
 
 	const int32 Index = static_cast<int32>(CurrentWeapon) - 1;
 
 	if (ReloadMontageCollection.IsValidIndex(Index))
 	{
 		ReloadMontage = ReloadMontageCollection[Index];
-	}
-	if (CurrentWeapon != ECurrentWeapon::None)
-	{
 		PlayAnimMontage(ReloadMontage);
+		CharacterStateComp->SetState(ECharacterState::Reload);
+		UE_LOG(LogTemp, Warning, TEXT("Reload attempt - State: %s"),
+			   *UEnum::GetValueAsString(CharacterStateComp->GetCurrentState()));
 	}
 }
