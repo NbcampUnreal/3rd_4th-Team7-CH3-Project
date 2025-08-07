@@ -16,7 +16,9 @@ ALSPlayerController::ALSPlayerController() :
 	ShopWidgetClass(nullptr),
 	ShopWidgetInstance(nullptr),
 	MainMenuWidgetClass(nullptr),
-	MainMenuWidget(nullptr)
+	MainMenuWidget(nullptr),
+	InGameHUDWidget(nullptr),
+	InGameHUDWidgetClass(nullptr)
 {
 }
 
@@ -62,7 +64,7 @@ void ALSPlayerController::CreateShopWidget()
 		if (ShopWidgetInstance)
 		{
 			ShopWidgetInstance->AddToViewport();
-			ShopWidgetInstance->SetVisibility(ESlateVisibility::Visible);
+			ShopWidgetInstance->SetVisibility(ESlateVisibility::Hidden);
 
 		}
 	}
