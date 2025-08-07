@@ -9,7 +9,8 @@ enum class ELSZombieType : uint8
 {
 	Normal	UMETA(DisplayName = "Normal"),
 	Fence	UMETA(DisplayName = "Fence"),
-	Big		UMETA(DisplayName = "Big")
+	Big		UMETA(DisplayName = "Big"),
+	Boss	UMETA(DisplayName = "Boss")
 };
 
 UCLASS()
@@ -31,6 +32,9 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Type)
 	ELSZombieType ZombieType;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Type)
+	int32 EnemyCoin;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Attack)
 	float AttackRange;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Attack)
