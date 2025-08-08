@@ -9,6 +9,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Component/LSShopComp.h"
 #include "Game/LSGameState.h"
+#include "Weapon/LSPlayerWeaponSystemComp.h" 
 
 ALSPlayerCharacter::ALSPlayerCharacter()
 {
@@ -35,6 +36,8 @@ ALSPlayerCharacter::ALSPlayerCharacter()
 	CharacterStateComp = CreateDefaultSubobject<ULSCharacterStateComp>(TEXT("CharacterStateComponent"));
 
 	MaxInteractWithDoorDistance=200.0f;
+	// Weapon 
+	WeaponSystem = CreateDefaultSubobject<ULSPlayerWeaponSystemComp>(TEXT("WeaponSystem")); 
 }
 
 ECurrentWeapon ALSPlayerCharacter::GetCurrentWeapon() const
@@ -105,9 +108,26 @@ void ALSPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 			if (PlayerController->ReloadAction)
 			{
 				EnhancedInput->BindAction(PlayerController->ReloadAction, ETriggerEvent::Started,
-				                          this, &ALSPlayerCharacter::Reload);
+										  this, &ALSPlayerCharacter::Reload);
 			}
-		}
+
+			// Weapon 
+			if (PlayerController->EquipPistol) 
+			{ 
+				EnhancedInput->BindAction(PlayerController->EquipPistol, ETriggerEvent::Triggered, 
+											this, &ALSPlayerCharacter::EquipPistol); 
+			} 
+			if (PlayerController->EquipShotgun) 
+			{ 
+				EnhancedInput->BindAction(PlayerController->EquipShotgun, ETriggerEvent::Triggered, 
+											this, &ALSPlayerCharacter::EquipShotgun); 
+			} 
+			if (PlayerController->EquipRifle) 
+			{ 
+				EnhancedInput->BindAction(PlayerController->EquipRifle, ETriggerEvent::Triggered, 
+											this, &ALSPlayerCharacter::EquipRifle); 
+			} 
+		} 
 	}
 }
 
@@ -313,4 +333,26 @@ void ALSPlayerCharacter::CheckForDoorHover()
 		}
 	}
 }
+// Weapon 
+void ALSPlayerCharacter :: EquipPistol(const FInputActionValue& Value) 
+{ 
+	if (WeaponSystem) 
+	{ 
+		WeaponSystem->EquipPistol(); 
+	} 
+} 
+void ALSPlayerCharacter :: EquipShotgun(const FInputActionValue& Value) 
+{ 
+	if (WeaponSystem) 
+	{ 
+		WeaponSystem->EquipShotgun(); 
+	} 
+} 
+void ALSPlayerCharacter :: EquipRifle(const FInputActionValue& Value) 
+{ 
+	if (WeaponSystem) 
+	{ 
+		WeaponSystem->EquipRifle(); 
+	} 
+} 
 

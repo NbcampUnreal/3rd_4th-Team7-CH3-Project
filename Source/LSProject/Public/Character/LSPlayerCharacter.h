@@ -101,13 +101,14 @@ private:
 	void CheckForDoorHover();
 
 	
-	// Weapon
-	UPROPERTY()
-	ULSPlayerWeaponSystemComp* WeaponSystem;
-	UFUNCTION()
-	void EquipPistol(const FInputActionValue& Value);
-	UFUNCTION()
-	void EquipShotgun(const FInputActionValue& Value);
-	UFUNCTION()
-	void EquipRifle(const FInputActionValue& Value);
-};
+	// Weapon 
+	UPROPERTY() 
+	ULSPlayerWeaponSystemComp* WeaponSystem; 
+	UFUNCTION() 
+	void EquipPistol(const FInputActionValue& Value); 
+	UFUNCTION() 
+	void EquipShotgun(const FInputActionValue& Value); 
+	UFUNCTION() 
+	void EquipRifle(const FInputActionValue& Value);  
+}; 
+ 
