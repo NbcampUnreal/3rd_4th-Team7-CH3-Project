@@ -17,10 +17,3 @@ ALSWeaponBase::ALSWeaponBase()
 }
 
 
-// Called to bind functionality to input
-void ALSWeaponBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-}
-

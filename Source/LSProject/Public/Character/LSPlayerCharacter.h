@@ -11,6 +11,8 @@ class ULSShopComp;
 class ULSInventoryComp;
 class ULSCharacterStateComp;
 
+class ULSPlayerWeaponSystemComp;
+
 UENUM(BlueprintType)
 enum class ECurrentWeapon : uint8
 {
