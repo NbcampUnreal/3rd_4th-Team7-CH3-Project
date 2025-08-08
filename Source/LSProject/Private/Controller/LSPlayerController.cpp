@@ -4,7 +4,6 @@
 #include "Blueprint/UserWidget.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-
 ALSPlayerController::ALSPlayerController() :
 	InputMappingContext(nullptr),
 	MoveAction(nullptr),
@@ -37,10 +36,7 @@ void ALSPlayerController::BeginPlay()
 			}
 		}
 	}
-
-
-	CreateShopWidget();
-
+	
 	if (IsLocalController() && MainMenuWidgetClass)
 	{
 		MainMenuWidget = CreateWidget<UUserWidget>( this, MainMenuWidgetClass);
@@ -56,7 +52,7 @@ void ALSPlayerController::BeginPlay()
 	}
 }
 
-void ALSPlayerController::CreateShopWidget()
+void ALSPlayerController::ShowShopWidget()
 {
 	if (ShopWidgetClass)
 	{
@@ -64,8 +60,11 @@ void ALSPlayerController::CreateShopWidget()
 		if (ShopWidgetInstance)
 		{
 			ShopWidgetInstance->AddToViewport();
-			ShopWidgetInstance->SetVisibility(ESlateVisibility::Hidden);
-
+			FInputModeUIOnly InputMode;
+			//FInputModeGameAndUI InputMode;
+			SetInputMode(InputMode);
+			bShowMouseCursor = true;
+			ShopWidgetInstance->SetVisibility(ESlateVisibility::Visible);
 		}
 	}
 }
@@ -88,6 +87,7 @@ void ALSPlayerController::GameStart()
 	FInputModeGameOnly InputMode;
 	SetInputMode(InputMode);
 	bShowMouseCursor = false;
+
 }
 void ALSPlayerController::GameQuit()
 {

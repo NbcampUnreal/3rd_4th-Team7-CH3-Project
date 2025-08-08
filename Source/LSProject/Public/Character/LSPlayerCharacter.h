@@ -46,8 +46,12 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="StateComp")
 	TObjectPtr<ULSCharacterStateComp> CharacterStateComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Store")
+	float MaxInteractWithDoorDistance;
 	
 protected:
+	virtual void Tick(float DeltaTime) override;
 	virtual void Attack() override;
 	virtual void Death() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -84,4 +88,6 @@ private:
 	TArray<UAnimMontage*> FireMontageCollection;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	TArray<UAnimMontage*> ReloadMontageCollection;
+	
+	void CheckForDoorHover();
 };

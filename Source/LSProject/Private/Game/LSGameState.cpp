@@ -3,3 +3,7 @@
 
 #include "Game/LSGameState.h"
 
+ALSGameState::ALSGameState()
+{
+	bCanUseShop=false;
+}

@@ -8,10 +8,11 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Component/LSShopComp.h"
+#include "Game/LSGameState.h"
 
 ALSPlayerCharacter::ALSPlayerCharacter()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
@@ -31,6 +32,8 @@ ALSPlayerCharacter::ALSPlayerCharacter()
 	ShopComp = CreateDefaultSubobject<ULSShopComp>(TEXT("ShopComponent"));
 	InvenComp = CreateDefaultSubobject<ULSInventoryComp>(TEXT("InventoryComponent"));
 	CharacterStateComp = CreateDefaultSubobject<ULSCharacterStateComp>(TEXT("CharacterStateComponent"));
+
+	MaxInteractWithDoorDistance=200.0f;
 }
 
 ECurrentWeapon ALSPlayerCharacter::GetCurrentWeapon() const
@@ -172,6 +175,13 @@ void ALSPlayerCharacter::StopSprint(const FInputActionValue& Value)
 	}
 }
 
+void ALSPlayerCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	CheckForDoorHover();
+}
+
 void ALSPlayerCharacter::Attack()
 {
 	Super::Attack();
@@ -208,5 +218,66 @@ void ALSPlayerCharacter::Reload(const FInputActionValue& Value)
 		CharacterStateComp->SetState(ECharacterState::Reload);
 		UE_LOG(LogTemp, Warning, TEXT("Reload attempt - State: %s"),
 			   *UEnum::GetValueAsString(CharacterStateComp->GetCurrentState()));
+	}
+}
+
+void ALSPlayerCharacter::CheckForDoorHover()
+{
+	ALSGameState* GS=Cast<ALSGameState>(GetWorld()->GetGameState());
+	if (!GS)	return;
+	
+	FVector CamLoc;
+	FRotator CamRot;
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(CamLoc, CamRot);
+
+	const float TraceDistance = 1000.f; // 10미터 이내만 검사
+	FVector TraceEnd = CamLoc + CamRot.Vector() * TraceDistance;
+
+	FHitResult Hit;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel(
+		Hit, CamLoc, TraceEnd, ECC_Visibility, Params
+	);
+
+	/*
+	DrawDebugLine(
+		GetWorld(),
+		CamLoc,
+		TraceEnd,
+		bHit ? FColor::Green : FColor::Red,
+		false,       // 지속 여부
+		1.0f,        // 표시 시간 (초)
+		0,           // 깊이 우선순위
+		2.0f         // 두께
+	);
+	*/
+	
+	if (bHit && Hit.GetComponent() && Hit.GetComponent()->ComponentHasTag("Door"))
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Door : Linetrace Hit"));
+		
+		FVector PlayerLoc = GetActorLocation();
+		//FVector HitLoc = Hit.ImpactPoint;
+		FVector DoorLoc = Hit.GetComponent()->GetComponentLocation();
+
+		float Distance = FVector::Dist(PlayerLoc, DoorLoc);
+		if (Distance <= MaxInteractWithDoorDistance)
+		{
+			UE_LOG(LogTemp,Warning,TEXT("Door : In Interaction Distance"));
+			
+			// 추가: 캐릭터의 정면 방향과 문 방향이 일치하는지 검사
+			FVector ToDoor = (DoorLoc - PlayerLoc).GetSafeNormal();
+			FVector Forward = GetActorForwardVector();
+
+			float Dot = FVector::DotProduct(Forward, ToDoor); // -1 ~ 1
+			// 1에 가까울수록 캐릭터가 정면으로 보고 있음 (예: 0.7 이상이면 정면)
+			if (Dot > 0.5f)
+			{
+				UE_LOG(LogTemp,Warning,TEXT("Door : Right Direction"));
+				GS->SetShopUse(true);
+			}
+		}
 	}
 }

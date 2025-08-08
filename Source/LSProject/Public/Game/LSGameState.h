@@ -13,5 +13,11 @@ UCLASS()
 class LSPROJECT_API ALSGameState : public AGameState
 {
 	GENERATED_BODY()
-	
+
+public:
+	ALSGameState();
+	FORCEINLINE void SetShopUse(bool bCanUse){bCanUseShop=bCanUse;}
+
+private:
+	bool bCanUseShop;
 };

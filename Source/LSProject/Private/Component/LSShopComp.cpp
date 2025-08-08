@@ -13,6 +13,8 @@ ULSShopComp::ULSShopComp()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	ShopItemData=CreateDefaultSubobject<UDataTable>(TEXT("ShopItemData"));
+
+	Inventory=nullptr;
 }
 
 

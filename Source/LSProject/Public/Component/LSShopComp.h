@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "LSShopComp.generated.h"
 
+class ULSInventoryComp;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnShopNotEnoughMoney);
 
 UCLASS(ClassGroup=(Custom) ,meta=(BlueprintSpawnableComponent))
@@ -28,5 +30,5 @@ protected:
 
 private:
 	//추후 플레이어 클래스로 이동
-	class ULSInventoryComp* Inventory;
+	ULSInventoryComp* Inventory;
 };

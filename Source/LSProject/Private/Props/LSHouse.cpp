@@ -13,6 +13,8 @@ ALSHouse::ALSHouse()
 	
 	BoxCollision=CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
 	BoxCollision->SetupAttachment(StaticMeshComponent);
+	BoxCollision->ComponentTags.Add(FName("Door"));
+	BoxCollision->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 }
 
 void ALSHouse::BeginPlay()

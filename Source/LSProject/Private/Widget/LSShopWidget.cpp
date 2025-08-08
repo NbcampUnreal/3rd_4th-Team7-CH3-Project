@@ -29,7 +29,7 @@ void ULSShopWidget::NativeOnInitialized()
 		NotEnoughMoneyText->SetVisibility(ESlateVisibility::Hidden);
 	}
 
-	DurationDisappear=2.0f;
+	DurationDisappear=1.0f;
 }
 
 void ULSShopWidget::NativeConstruct()
