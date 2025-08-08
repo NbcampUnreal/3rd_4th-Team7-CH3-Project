@@ -8,7 +8,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Component/LSShopComp.h"
-#include "Weapon/LSPlayerWeaponSystemComp.h"
+#include "Weapon/LSPlayerWeaponSystemComp.h" 
 
 ALSPlayerCharacter::ALSPlayerCharacter()
 {
@@ -33,8 +33,8 @@ ALSPlayerCharacter::ALSPlayerCharacter()
 	InvenComp = CreateDefaultSubobject<ULSInventoryComp>(TEXT("InventoryComponent"));
 	CharacterStateComp = CreateDefaultSubobject<ULSCharacterStateComp>(TEXT("CharacterStateComponent"));
 
-	// Weapon
-	WeaponSystem = CreateDefaultSubobject<ULSPlayerWeaponSystemComp>(TEXT("WeaponSystem"));
+	// Weapon 
+	WeaponSystem = CreateDefaultSubobject<ULSPlayerWeaponSystemComp>(TEXT("WeaponSystem")); 
 }
 
 ECurrentWeapon ALSPlayerCharacter::GetCurrentWeapon() const
@@ -98,23 +98,23 @@ void ALSPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 										  this, &ALSPlayerCharacter::Reload);
 			}
 
-			// Weapon
-			if (PlayerController->EquipPistol)
-			{
-				EnhancedInput->BindAction(PlayerController->EquipPistol, ETriggerEvent::Triggered,
-											this, &ALSPlayerCharacter::EquipPistol);
-			}
-			if (PlayerController->EquipShotgun)
-			{
-				EnhancedInput->BindAction(PlayerController->EquipShotgun, ETriggerEvent::Triggered,
-											this, &ALSPlayerCharacter::EquipShotgun);
-			}
-			if (PlayerController->EquipRifle)
-			{
-				EnhancedInput->BindAction(PlayerController->EquipRifle, ETriggerEvent::Triggered,
-											this, &ALSPlayerCharacter::EquipRifle);
-			}
-		}
+			// Weapon 
+			if (PlayerController->EquipPistol) 
+			{ 
+				EnhancedInput->BindAction(PlayerController->EquipPistol, ETriggerEvent::Triggered, 
+											this, &ALSPlayerCharacter::EquipPistol); 
+			} 
+			if (PlayerController->EquipShotgun) 
+			{ 
+				EnhancedInput->BindAction(PlayerController->EquipShotgun, ETriggerEvent::Triggered, 
+											this, &ALSPlayerCharacter::EquipShotgun); 
+			} 
+			if (PlayerController->EquipRifle) 
+			{ 
+				EnhancedInput->BindAction(PlayerController->EquipRifle, ETriggerEvent::Triggered, 
+											this, &ALSPlayerCharacter::EquipRifle); 
+			} 
+		} 
 	}
 }
 
@@ -232,26 +232,26 @@ void ALSPlayerCharacter::Reload(const FInputActionValue& Value)
 	}
 }
 
-// Weapon
-void ALSPlayerCharacter :: EquipPistol(const FInputActionValue& Value)
-{
-	if (WeaponSystem)
-	{
-		WeaponSystem->EquipPistol();
-	}
-}
-void ALSPlayerCharacter :: EquipShotgun(const FInputActionValue& Value)
-{
-	if (WeaponSystem)
-	{
-		WeaponSystem->EquipShotgun();
-	}
-}
-void ALSPlayerCharacter :: EquipRifle(const FInputActionValue& Value)
-{
-	if (WeaponSystem)
-	{
-		WeaponSystem->EquipRifle();
-	}
-}
+// Weapon 
+void ALSPlayerCharacter :: EquipPistol(const FInputActionValue& Value) 
+{ 
+	if (WeaponSystem) 
+	{ 
+		WeaponSystem->EquipPistol(); 
+	} 
+} 
+void ALSPlayerCharacter :: EquipShotgun(const FInputActionValue& Value) 
+{ 
+	if (WeaponSystem) 
+	{ 
+		WeaponSystem->EquipShotgun(); 
+	} 
+} 
+void ALSPlayerCharacter :: EquipRifle(const FInputActionValue& Value) 
+{ 
+	if (WeaponSystem) 
+	{ 
+		WeaponSystem->EquipRifle(); 
+	} 
+} 
 

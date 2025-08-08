@@ -31,23 +31,24 @@ protected:
 	UFUNCTION()
 	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
-private:
-
-	UPROPERTY()
-	TObjectPtr<ALSPlayerCharacter> OwnerCharacter;
-	UPROPERTY()
-	TObjectPtr<UAnimInstance> OwnerAnimInstance;
-
-	ECharacterState CurrentState;
-
-public:
-	bool CanMove() const;
-	bool CanJump() const;
-	bool CanFire() const;
-	bool CanReload() const;
-	ECharacterState GetCurrentState() const;
-	void SetState(ECharacterState NewState);
-
-private:
-	void StopCurrentMontage();
-};
+private: 
+ 
+	UPROPERTY() 
+	TObjectPtr<ALSPlayerCharacter> OwnerCharacter; 
+	UPROPERTY() 
+	TObjectPtr<UAnimInstance> OwnerAnimInstance; 
+ 
+	ECharacterState CurrentState; 
+ 
+public: 
+	bool CanMove() const; 
+	bool CanJump() const; 
+	bool CanFire() const; 
+	bool CanReload() const; 
+	ECharacterState GetCurrentState() const; 
+	void SetState(ECharacterState NewState); 
+  
+private: 
+	void StopCurrentMontage();   
+};  
+ 

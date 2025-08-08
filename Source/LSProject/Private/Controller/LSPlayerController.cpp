@@ -20,9 +20,9 @@ ALSPlayerController::ALSPlayerController() :
 	InGameHUDWidgetClass(nullptr),
 	MainMenuWidget(nullptr),
 	InGameHUDWidget(nullptr),
-	EquipPistol(nullptr),
-	EquipShotgun(nullptr),
-	EquipRifle(nullptr)
+	EquipPistol(nullptr), 
+	EquipShotgun(nullptr), 
+	EquipRifle(nullptr) 
 {
 }
 
