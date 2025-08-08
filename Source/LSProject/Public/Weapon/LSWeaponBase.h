@@ -8,6 +8,7 @@
 #include "UObject/ConstructorHelpers.h"
 #include "LSWeaponBase.generated.h"
 
+
 UCLASS()
 class LSPROJECT_API ALSWeaponBase : public ACharacter
 {

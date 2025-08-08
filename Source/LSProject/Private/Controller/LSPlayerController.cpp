@@ -21,6 +21,7 @@ ALSPlayerController::ALSPlayerController() :
 {
 }
 
+
 void ALSPlayerController::BeginPlay()
 {
 	Super::BeginPlay();

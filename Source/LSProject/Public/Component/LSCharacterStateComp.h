@@ -6,6 +6,7 @@
 
 class ALSPlayerCharacter;
 
+
 UENUM(BlueprintType)
 enum class ECharacterState : uint8
 {
