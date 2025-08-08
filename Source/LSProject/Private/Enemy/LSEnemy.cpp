@@ -105,9 +105,9 @@ void ALSEnemy::Death()
 
 void ALSEnemy::AddAbility(float AddHealth, float AddDamage)
 {
-	Health+=AddHealth;
+//	Health+=AddHealth;
 	AttackDamage+=AddDamage;
-	UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog]AddAbility SUCCEESS : AddHealth:%f, AddDamage:%f, NowHealth:%f, NowDamage:%f"),AddHealth,AddDamage,Health,AttackDamage)
+//	UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog]AddAbility SUCCEESS : AddHealth:%f, AddDamage:%f, NowHealth:%f, NowDamage:%f"),AddHealth,AddDamage,Health,AttackDamage)
 }
 
 void ALSEnemy::BeginPlay()
