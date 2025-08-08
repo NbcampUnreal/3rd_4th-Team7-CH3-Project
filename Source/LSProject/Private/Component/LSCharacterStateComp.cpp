@@ -8,6 +8,7 @@ ULSCharacterStateComp::ULSCharacterStateComp()
 	CurrentState = ECharacterState::Idle;
 }
 
+
 void ULSCharacterStateComp::BeginPlay()
 {
 	Super::BeginPlay();

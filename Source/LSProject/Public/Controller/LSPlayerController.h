@@ -41,6 +41,7 @@ public:
 	TSubclassOf<ULSShopWidget> ShopWidgetClass;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
 	TObjectPtr<ULSShopWidget> ShopWidgetInstance;
+
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<UUserWidget> MainMenuWidgetClass;

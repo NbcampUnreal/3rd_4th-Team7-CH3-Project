@@ -8,6 +8,7 @@
 #include "UObject/ConstructorHelpers.h"
 #include "LSWeaponBase.generated.h"
 
+
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnWeaponEquipped, int32, WeaponTypeID);
 
 UCLASS()

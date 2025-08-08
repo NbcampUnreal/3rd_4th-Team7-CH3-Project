@@ -86,6 +86,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	TArray<UAnimMontage*> ReloadMontageCollection;
 
+	
 	// Weapon
 	UPROPERTY()
 	ULSPlayerWeaponSystemComp* WeaponSystem;
