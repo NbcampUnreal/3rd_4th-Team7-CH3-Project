@@ -9,16 +9,16 @@ USTRUCT(BlueprintType)
 struct FLSEnemySpawnRow : public FTableRowBase
 {
 	GENERATED_BODY()
-public:
-	// UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	// int32 EnemyWave;
-	// UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	// ELSZombieType EnemyType;
-	// UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	// float SpawnRate;
-	// UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	// float AddHealth;
-	// UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	// float AddDamage;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 EnemyWave = 1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ELSZombieType EnemyType = ELSZombieType::Normal;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SpawnRate = 0.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AddHealth = 0.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AddDamage = 0.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<AActor> SpawnActor = nullptr;
 };

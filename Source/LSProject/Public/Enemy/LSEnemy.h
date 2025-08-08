@@ -27,8 +27,12 @@ public:
 	
 	virtual void Death() override;
 
+	void AddAbility(float AddHelth, float AddDamage);
+
 protected:
 	virtual void BeginPlay() override;
+
+	TTuple<int32, float, float> AddValueTuple;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Type)
 	ELSZombieType ZombieType;
