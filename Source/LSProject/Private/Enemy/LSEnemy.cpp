@@ -7,11 +7,14 @@
 
 ALSEnemy::ALSEnemy()
 {
+	WalkSpeed=300.0f;
+	ZombieType=ELSZombieType::Normal;
 	EnemyCoin=0;
 	AttackRange=30.0f;
 	AttackDamage=30.0f;
-	WalkSpeed=300.0f;
 	StartVectorZ=30.0f;
+	HitMontage=nullptr;
+	DeathMontage=nullptr;
 }
 
 void ALSEnemy::Attack()
@@ -72,8 +75,8 @@ float ALSEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& Damage
 	class AController* EventInstigator, AActor* DamageCauser)
 {
 	UE_LOG(LogTemp, Warning, TEXT("[LSEnemy] Fence Take Damaged"))
-	Health -= DamageAmount;
-	if (Health<=0.0f)
+	Health -= DamageAmount;//
+	if (Health<=0.0f)//EnemyTodo : IsNearlyZero
 	{
 		Death();
 	}
@@ -99,6 +102,13 @@ void ALSEnemy::Death()
 	Destroy();
 }
 
+void ALSEnemy::AddAbility(float AddHealth, float AddDamage)
+{
+	Health+=AddHealth;
+	AttackDamage+=AddDamage;
+	UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog]AddAbility SUCCEESS : AddHealth:%f, AddDamage:%f, NowHealth:%f, NowDamage:%f"),AddHealth,AddDamage,Health,AttackDamage)
+}
+
 void ALSEnemy::BeginPlay()
 {
 	Super::BeginPlay();
@@ -107,17 +117,19 @@ void ALSEnemy::BeginPlay()
 	
 	if (ZombieType == ELSZombieType::Fence)
 	{
-		UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] ZombieType is Fence"));
+		//UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] ZombieType is Fence"));
 		AAIController* AIController = Cast<AAIController>(GetController());
 		if (AIController)
 		{
-			UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] FenceZom AIController"));
+			//UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] FenceZom AIController"));
 			UBlackboardComponent* Blackboard = Cast<UBlackboardComponent>(AIController->GetBlackboardComponent());
 			if (Blackboard)
 			{
-				UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] BlackBoard Key Is Fence"));
+				//UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] BlackBoard Key Is Fence"));
 				Blackboard->SetValueAsBool("IsFenceZom",true);
 			}
 		}
 	}
+	
+	//UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] Zombie BeginPlay Is Finished"))
 }

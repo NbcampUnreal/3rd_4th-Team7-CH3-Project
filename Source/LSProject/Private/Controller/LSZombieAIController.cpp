@@ -11,24 +11,13 @@ ALSZombieAIController::ALSZombieAIController()
 	SetPerceptionComponent(*AIPerception);
 	
 	BlackboardComp = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackBoardComp"));
+	UE_LOG(LogTemp, Warning, TEXT("[LSEnemy] AIController is born"));
+
 }
 
 void ALSZombieAIController::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if (BlackboardComp)
-	{
-		BlackboardComp->SetValueAsBool(TEXT("IsCanGoToPlayer"), false);
-		BlackboardComp->SetValueAsVector(TEXT("ClosestFenceLocation"), FVector(0.0f, 0.0f, 0.0f));
-		UE_LOG(LogTemp, Warning, TEXT("[LSEnemy] Blackboard initialized successfully"));
-		StartBehaviorTree();
-	}
-
-	if (AIPerception)
-	{
-		AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &ALSZombieAIController::OnPerceptionUpdated);
-	}
 }
 
 //EnemyTodo : ForceInline
@@ -53,8 +42,21 @@ void ALSZombieAIController::StartBehaviorTree()
 void ALSZombieAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-
-	
+	if (BehaviorTreeAsset)
+	{
+		RunBehaviorTree(BehaviorTreeAsset);
+	}
+	if (BlackboardComp)
+	{
+		BlackboardComp->SetValueAsBool(TEXT("IsCanGoToPlayer"), false);
+		BlackboardComp->SetValueAsVector(TEXT("ClosestFenceLocation"), FVector(0.0f, 0.0f, 0.0f));
+		UE_LOG(LogTemp, Warning, TEXT("[LSEnemy] Blackboard initialized successfully"));
+		StartBehaviorTree();
+	}
+	if (AIPerception)
+	{
+		AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &ALSZombieAIController::OnPerceptionUpdated);
+	}
 }
 
 //EnemyTodo :
