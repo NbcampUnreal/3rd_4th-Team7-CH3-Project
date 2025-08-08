@@ -10,6 +10,7 @@ UENUM(BlueprintType)
 enum class ECharacterState : uint8
 {
 	Idle,
+	Equip,
 	Fire,
 	Reload,
 	Die
@@ -42,6 +43,7 @@ private:
 public:
 	bool CanMove() const;
 	bool CanJump() const;
+	bool CanEquip() const;
 	bool CanFire() const;
 	bool CanReload() const;
 	ECharacterState GetCurrentState() const;

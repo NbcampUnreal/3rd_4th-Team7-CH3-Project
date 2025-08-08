@@ -5,7 +5,7 @@
 ALSBoss::ALSBoss()
 {
 	AttackDamage = 30.0f;
-	Health = 300.0f;
+	//Health = 300.0f;
 	BossPhase=1;
 	IsBeatAble=false;
 }
@@ -37,29 +37,29 @@ float ALSBoss::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageE
 	class AController* EventInstigator, AActor* DamageCauser)
 {
 	if (!IsBeatAble) return 0.f;
-	Health-=DamageAmount;
-	if (Health <= 0.0f)
-	{
-		if (BossPhase==1)
-		{
-			StartSecondPhase();
-		}
-		else if (BossPhase==2)
-		{
-			Death();
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Boss Phase Is ERROR"))
-		}
-	}
+	//Health-=DamageAmount;
+	// if (Health <= 0.0f)
+	// {
+	// 	if (BossPhase==1)
+	// 	{
+	// 		StartSecondPhase();
+	// 	}
+	// 	else if (BossPhase==2)
+	// 	{
+	// 		Death();
+	// 	}
+	// 	else
+	// 	{
+	// 		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Boss Phase Is ERROR"))
+	// 	}
+	// }
 	return DamageAmount;
 }
 
 void ALSBoss::StartSecondPhase()
 {
 	BossPhase=2;
-	Health=500.0f;
+	//Health=500.0f;
 	UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Boss 2 PHASE START"));
 }
 

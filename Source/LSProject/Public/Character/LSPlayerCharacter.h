@@ -49,6 +49,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Store")
 	float MaxInteractWithDoorDistance;
+
+	float GetCurrentHealth() const;
+	float GetMaxHealth() const;
 	
 protected:
 	virtual void Tick(float DeltaTime) override;
@@ -74,6 +77,8 @@ protected:
 	void StopSprint(const FInputActionValue& Value);
 	UFUNCTION()
 	void Reload(const FInputActionValue& Value);
+	UFUNCTION()
+	void Equip();
 
 private:
 	ECurrentWeapon CurrentWeapon;
@@ -82,12 +87,17 @@ private:
 	UAnimMontage* FireMontage;
 	UPROPERTY()
 	UAnimMontage* ReloadMontage;
+	UPROPERTY()
+	UAnimMontage* EquipMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* DieMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	TArray<UAnimMontage*> FireMontageCollection;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	TArray<UAnimMontage*> ReloadMontageCollection;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	TArray<UAnimMontage*> EquipMontageCollection;
 	
 	void CheckForDoorHover();
+
 };

@@ -75,11 +75,12 @@ float ALSEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& Damage
 	class AController* EventInstigator, AActor* DamageCauser)
 {
 	UE_LOG(LogTemp, Warning, TEXT("[LSEnemy] Fence Take Damaged"))
-	Health -= DamageAmount;//
-	if (Health<=0.0f)//EnemyTodo : IsNearlyZero
-	{
-		Death();
-	}
+
+	// Health -= DamageAmount;
+	// if (Health<=0.0f)
+	// {
+	// 	Death();
+	// }
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
 

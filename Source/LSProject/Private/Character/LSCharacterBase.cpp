@@ -6,7 +6,9 @@ ALSCharacterBase::ALSCharacterBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	WalkSpeed = 600.0f;
-	Health = 300.0f;
+	MaxHealth = 300.0f;
+	CurrentHealth = MaxHealth;
+	
 }
 
 void ALSCharacterBase::BeginPlay()
