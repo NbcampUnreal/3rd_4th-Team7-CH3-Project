@@ -37,8 +37,14 @@ void ULSCharacterStateComp::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void ULSCharacterStateComp::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	if (bInterrupted) return;
-	
+
 	SetState(ECharacterState::Idle);
+
+	if (FMath::IsNearlyZero(OwnerCharacter->GetCurrentHealth()))
+	{
+		SetState(ECharacterState::Die);
+	}
+
 	UE_LOG(LogTemp, Warning, TEXT("Montage Ended"));
 }
 
@@ -52,10 +58,31 @@ bool ULSCharacterStateComp::CanJump() const
 	return CurrentState != ECharacterState::Die;
 }
 
+bool ULSCharacterStateComp::CanEquip() const
+{
+	switch (CurrentState)
+	{
+	case ECharacterState::Equip:
+		return false;
+	case ECharacterState::Fire:
+		return false;
+	case ECharacterState::Reload:
+		return false;
+	case ECharacterState::Die:
+		return false;
+	default:
+		return true;
+	}
+}
+
 bool ULSCharacterStateComp::CanFire() const
 {
 	switch (CurrentState)
 	{
+	case ECharacterState::Equip:
+		return false;
+	case ECharacterState::Fire:
+		return false;
 	case ECharacterState::Reload:
 		return false;
 	case ECharacterState::Die:
@@ -69,6 +96,8 @@ bool ULSCharacterStateComp::CanReload() const
 {
 	switch (CurrentState)
 	{
+	case ECharacterState::Equip:
+		return false;
 	case ECharacterState::Fire:
 		return false;
 	case ECharacterState::Reload:
@@ -88,7 +117,7 @@ ECharacterState ULSCharacterStateComp::GetCurrentState() const
 void ULSCharacterStateComp::SetState(ECharacterState NewState)
 {
 	if (CurrentState == NewState) return;
-	
+
 	CurrentState = NewState;
 	UE_LOG(LogTemp, Warning, TEXT("Set StateIN : %d"), CurrentState);
 }

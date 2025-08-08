@@ -23,7 +23,8 @@ ALSPlayerCharacter::ALSPlayerCharacter()
 	Camera->bUsePawnControlRotation = false;
 
 	WalkSpeed = 600.0f;
-	Health = 300.0f;
+	MaxHealth = 500.0f;
+	CurrentHealth = MaxHealth;
 	CurrentWeapon = ECurrentWeapon::None;
 
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
@@ -41,6 +42,16 @@ ECurrentWeapon ALSPlayerCharacter::GetCurrentWeapon() const
 void ALSPlayerCharacter::SetCurrentWeapon(ECurrentWeapon Weapon)
 {
 	CurrentWeapon = Weapon;
+}
+
+float ALSPlayerCharacter::GetCurrentHealth() const
+{
+	return CurrentHealth;
+}
+
+float ALSPlayerCharacter::GetMaxHealth() const
+{
+	return MaxHealth;
 }
 
 void ALSPlayerCharacter::Death()
@@ -100,6 +111,12 @@ void ALSPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 float ALSPlayerCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
                                      AController* EventInstigator, AActor* DamageCauser)
 {
+	CurrentHealth -= DamageAmount;
+	if (FMath::IsNearlyZero(CurrentHealth))
+	{
+		Death();
+	}
+
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
 
@@ -188,13 +205,12 @@ void ALSPlayerCharacter::Attack()
 		PlayAnimMontage(FireMontage);
 		CharacterStateComp->SetState(ECharacterState::Fire);
 		UE_LOG(LogTemp, Warning, TEXT("Fire attempt - State: %s"),
-		   *UEnum::GetValueAsString(CharacterStateComp->GetCurrentState()));
+		       *UEnum::GetValueAsString(CharacterStateComp->GetCurrentState()));
 	}
 }
 
 void ALSPlayerCharacter::Reload(const FInputActionValue& Value)
 {
-	
 	if (ReloadMontageCollection.IsEmpty()) return;
 	if (CurrentWeapon == ECurrentWeapon::None) return;
 	if (!CharacterStateComp->CanReload()) return;
@@ -207,6 +223,22 @@ void ALSPlayerCharacter::Reload(const FInputActionValue& Value)
 		PlayAnimMontage(ReloadMontage);
 		CharacterStateComp->SetState(ECharacterState::Reload);
 		UE_LOG(LogTemp, Warning, TEXT("Reload attempt - State: %s"),
-			   *UEnum::GetValueAsString(CharacterStateComp->GetCurrentState()));
+		       *UEnum::GetValueAsString(CharacterStateComp->GetCurrentState()));
+	}
+}
+
+void ALSPlayerCharacter::Equip()
+{
+	if (ReloadMontageCollection.IsEmpty()) return;
+	if (CharacterStateComp->CanEquip()) return;
+
+	const int32 Index = static_cast<int32>(CurrentWeapon) - 1;
+	
+	if (ReloadMontageCollection.IsValidIndex(Index))
+	{
+		EquipMontage = ReloadMontageCollection[Index];
+		PlayAnimMontage(EquipMontage);
+		CharacterStateComp->SetState(ECharacterState::Equip);
+		
 	}
 }

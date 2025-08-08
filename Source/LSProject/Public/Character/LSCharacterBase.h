@@ -16,7 +16,8 @@ public:
 
 protected:
 	float WalkSpeed;
-	float Health;
+	float CurrentHealth;
+	float MaxHealth;
 	
 	virtual void BeginPlay() override;
 	virtual void Attack() override;
