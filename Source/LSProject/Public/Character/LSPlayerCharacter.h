@@ -10,6 +10,7 @@ struct FInputActionValue;
 class ULSShopComp;
 class ULSInventoryComp;
 class ULSCharacterStateComp;
+class ULSPlayerWeaponSystemComp;
 
 UENUM(BlueprintType)
 enum class ECurrentWeapon : uint8
@@ -84,4 +85,14 @@ private:
 	TArray<UAnimMontage*> FireMontageCollection;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	TArray<UAnimMontage*> ReloadMontageCollection;
+
+	// Weapon
+	UPROPERTY()
+	ULSPlayerWeaponSystemComp* WeaponSystem;
+	UFUNCTION()
+	void EquipPistol(const FInputActionValue& Value);
+	UFUNCTION()
+	void EquipShotgun(const FInputActionValue& Value);
+	UFUNCTION()
+	void EquipRifle(const FInputActionValue& Value);
 };

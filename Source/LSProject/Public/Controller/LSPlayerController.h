@@ -50,6 +50,15 @@ public:
 	UUserWidget* MainMenuWidget;
 	UPROPERTY()
 	UUserWidget* InGameHUDWidget;
+
+	// Weapon
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UInputAction* EquipPistol;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UInputAction* EquipShotgun;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UInputAction* EquipRifle;
+	
 	UFUNCTION(BlueprintCallable)
 	void GameStart();
 	UFUNCTION(BlueprintCallable)

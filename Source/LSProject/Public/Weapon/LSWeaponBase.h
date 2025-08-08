@@ -8,13 +8,14 @@
 #include "UObject/ConstructorHelpers.h"
 #include "LSWeaponBase.generated.h"
 
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnWeaponEquipped, int32, WeaponTypeID);
+
 UCLASS()
-class LSPROJECT_API ALSWeaponBase : public ACharacter
+class LSPROJECT_API ALSWeaponBase : public AActor
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	ALSWeaponBase();
 
 protected:
@@ -23,7 +24,4 @@ protected:
 	USceneComponent* Scene;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item|Components")
 	UStaticMeshComponent* StaticMesh;
-
-
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 };

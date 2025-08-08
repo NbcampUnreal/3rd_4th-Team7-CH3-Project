@@ -8,6 +8,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Component/LSShopComp.h"
+#include "Weapon/LSPlayerWeaponSystemComp.h"
 
 ALSPlayerCharacter::ALSPlayerCharacter()
 {
@@ -31,6 +32,9 @@ ALSPlayerCharacter::ALSPlayerCharacter()
 	ShopComp = CreateDefaultSubobject<ULSShopComp>(TEXT("ShopComponent"));
 	InvenComp = CreateDefaultSubobject<ULSInventoryComp>(TEXT("InventoryComponent"));
 	CharacterStateComp = CreateDefaultSubobject<ULSCharacterStateComp>(TEXT("CharacterStateComponent"));
+
+	// Weapon
+	WeaponSystem = CreateDefaultSubobject<ULSPlayerWeaponSystemComp>(TEXT("WeaponSystem"));
 }
 
 ECurrentWeapon ALSPlayerCharacter::GetCurrentWeapon() const
@@ -62,36 +66,53 @@ void ALSPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 			if (PlayerController->MoveAction)
 			{
 				EnhancedInput->BindAction(PlayerController->MoveAction, ETriggerEvent::Triggered,
-				                          this, &ALSPlayerCharacter::Move);
+										  this, &ALSPlayerCharacter::Move);
 			}
 			if (PlayerController->LookAction)
 			{
 				EnhancedInput->BindAction(PlayerController->LookAction, ETriggerEvent::Triggered,
-				                          this, &ALSPlayerCharacter::Look);
+										  this, &ALSPlayerCharacter::Look);
 			}
 			if (PlayerController->JumpAction)
 			{
 				EnhancedInput->BindAction(PlayerController->JumpAction, ETriggerEvent::Triggered,
-				                          this, &ALSPlayerCharacter::StartJump);
+										  this, &ALSPlayerCharacter::StartJump);
 				EnhancedInput->BindAction(PlayerController->JumpAction, ETriggerEvent::Completed,
-				                          this, &ALSPlayerCharacter::StopJump);
+										  this, &ALSPlayerCharacter::StopJump);
 			}
 			if (PlayerController->SprintAction)
 			{
 				EnhancedInput->BindAction(PlayerController->SprintAction, ETriggerEvent::Triggered,
-				                          this, &ALSPlayerCharacter::StartSprint);
+										  this, &ALSPlayerCharacter::StartSprint);
 				EnhancedInput->BindAction(PlayerController->SprintAction, ETriggerEvent::Completed,
-				                          this, &ALSPlayerCharacter::StopSprint);
+										  this, &ALSPlayerCharacter::StopSprint);
 			}
 			if (PlayerController->AttackAction)
 			{
 				EnhancedInput->BindAction(PlayerController->AttackAction, ETriggerEvent::Started,
-				                          this, &ALSPlayerCharacter::Attack);
+										  this, &ALSPlayerCharacter::Attack);
 			}
 			if (PlayerController->ReloadAction)
 			{
 				EnhancedInput->BindAction(PlayerController->ReloadAction, ETriggerEvent::Started,
-				                          this, &ALSPlayerCharacter::Reload);
+										  this, &ALSPlayerCharacter::Reload);
+			}
+
+			// Weapon
+			if (PlayerController->EquipPistol)
+			{
+				EnhancedInput->BindAction(PlayerController->EquipPistol, ETriggerEvent::Triggered,
+											this, &ALSPlayerCharacter::EquipPistol);
+			}
+			if (PlayerController->EquipShotgun)
+			{
+				EnhancedInput->BindAction(PlayerController->EquipShotgun, ETriggerEvent::Triggered,
+											this, &ALSPlayerCharacter::EquipShotgun);
+			}
+			if (PlayerController->EquipRifle)
+			{
+				EnhancedInput->BindAction(PlayerController->EquipRifle, ETriggerEvent::Triggered,
+											this, &ALSPlayerCharacter::EquipRifle);
 			}
 		}
 	}
@@ -208,5 +229,28 @@ void ALSPlayerCharacter::Reload(const FInputActionValue& Value)
 		CharacterStateComp->SetState(ECharacterState::Reload);
 		UE_LOG(LogTemp, Warning, TEXT("Reload attempt - State: %s"),
 			   *UEnum::GetValueAsString(CharacterStateComp->GetCurrentState()));
+	}
+}
+
+// Weapon
+void ALSPlayerCharacter :: EquipPistol(const FInputActionValue& Value)
+{
+	if (WeaponSystem)
+	{
+		WeaponSystem->EquipPistol();
+	}
+}
+void ALSPlayerCharacter :: EquipShotgun(const FInputActionValue& Value)
+{
+	if (WeaponSystem)
+	{
+		WeaponSystem->EquipShotgun();
+	}
+}
+void ALSPlayerCharacter :: EquipRifle(const FInputActionValue& Value)
+{
+	if (WeaponSystem)
+	{
+		WeaponSystem->EquipRifle();
 	}
 }
