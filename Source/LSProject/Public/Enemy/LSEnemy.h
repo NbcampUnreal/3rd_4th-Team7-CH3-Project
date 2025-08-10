@@ -4,13 +4,15 @@
 #include "Character/LSCharacterBase.h"
 #include "LSEnemy.generated.h"
 
+class USphereComponent;
+
 UENUM(BlueprintType)
 enum class ELSZombieType : uint8
 {
-	Normal	UMETA(DisplayName = "Normal"),
-	Fence	UMETA(DisplayName = "Fence"),
-	Big		UMETA(DisplayName = "Big"),
-	Boss	UMETA(DisplayName = "Boss")
+	Normal,
+	Fence,
+	Big,
+	Boss
 };
 
 UCLASS()
@@ -32,11 +34,29 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	TTuple<int32, float, float> AddValueTuple;
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Overlap)
+	USphereComponent* SphereComponent;
+
+	UFUNCTION()
+	virtual void OnEnemyOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComponent,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult);
+
+	UFUNCTION()
+	virtual void OnEnemyEndOverlap(
+			UPrimitiveComponent* OverlappedComp,
+			AActor* OtherActor,
+			UPrimitiveComponent* OtherComp,
+			int32 OtherBodyIndex);
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Type)
 	ELSZombieType ZombieType;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Type)
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Coin)
 	int32 EnemyCoin;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Attack)

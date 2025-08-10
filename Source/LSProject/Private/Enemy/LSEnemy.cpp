@@ -2,8 +2,11 @@
 
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Chaos/DebugDrawCommand.h"
 #include "Kismet/GameplayStatics.h"
 #include "Game/LSPlayerState.h"
+#include "Components/SphereComponent.h"
+#include "Components/CapsuleComponent.h"
 
 ALSEnemy::ALSEnemy()
 {
@@ -15,6 +18,10 @@ ALSEnemy::ALSEnemy()
 	StartVectorZ=30.0f;
 	HitMontage=nullptr;
 	DeathMontage=nullptr;
+	SphereComponent=CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
+	SphereComponent->SetupAttachment(GetCapsuleComponent());
+	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ALSEnemy::OnEnemyOverlap);
+	SphereComponent->OnComponentEndOverlap.AddDynamic(this, &ALSEnemy::OnEnemyEndOverlap);
 }
 
 void ALSEnemy::Attack()
@@ -105,7 +112,7 @@ void ALSEnemy::Death()
 
 void ALSEnemy::AddAbility(float AddHealth, float AddDamage)
 {
-//	Health+=AddHealth;
+	CurrentHealth+=AddHealth;
 	AttackDamage+=AddDamage;
 //	UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog]AddAbility SUCCEESS : AddHealth:%f, AddDamage:%f, NowHealth:%f, NowDamage:%f"),AddHealth,AddDamage,Health,AttackDamage)
 }
@@ -122,11 +129,11 @@ void ALSEnemy::BeginPlay()
 		AAIController* AIController = Cast<AAIController>(GetController());
 		if (AIController)
 		{
-			//UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] FenceZom AIController"));
+			UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] FenceZom AIController"))
 			UBlackboardComponent* Blackboard = Cast<UBlackboardComponent>(AIController->GetBlackboardComponent());
 			if (Blackboard)
 			{
-				//UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] BlackBoard Key Is Fence"));
+				UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] BlackBoard Key Is Fence"))
 				Blackboard->SetValueAsBool("IsFenceZom",true);
 			}
 		}
@@ -134,3 +141,21 @@ void ALSEnemy::BeginPlay()
 	
 	//UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] Zombie BeginPlay Is Finished"))
 }
+
+void ALSEnemy::OnEnemyOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep,	const FHitResult& SweepResult)
+{
+	if (OtherActor && OtherActor == UGameplayStatics::GetPlayerPawn(GetWorld(),0))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Overlap Is SUCCEESS"))
+		Attack();
+	}
+}
+
+void ALSEnemy::OnEnemyEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,	int32 OtherBodyIndex)
+{
+	UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Overlap Is END"))
+	
+}
+

@@ -1,5 +1,6 @@
 #include "Enemy/LSEnemySpawnVolume.h"
 
+#include "AIController.h"
 #include "Enemy/LSEnemySpawnRow.h"
 #include "Components/BoxComponent.h"
 

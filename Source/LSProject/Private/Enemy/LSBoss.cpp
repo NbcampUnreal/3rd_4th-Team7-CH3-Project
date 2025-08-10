@@ -65,6 +65,7 @@ void ALSBoss::StartSecondPhase()
 
 void ALSBoss::Attack()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Boss Attack SUCCEESS"))
 	FVector StartLocation = GetActorLocation()+FVector(0.0f,0.0f,StartVectorZ);
 	FVector EndLocation = StartLocation+GetActorForwardVector()*AttackRange;
 	TArray<FHitResult> HitResults;

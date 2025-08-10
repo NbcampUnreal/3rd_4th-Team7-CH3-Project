@@ -42,6 +42,7 @@ void ALSZombieAIController::StartBehaviorTree()
 void ALSZombieAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
+	UE_LOG(LogTemp,Warning,TEXT("Pawn is 컨트롤러소유함")) 
 	if (BehaviorTreeAsset)
 	{
 		RunBehaviorTree(BehaviorTreeAsset);
@@ -72,5 +73,5 @@ void ALSZombieAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimu
 		// Blackboard에 정보 저장
 		BlackboardComp->SetValueAsObject(TEXT("TargetActor"), Actor);
 		UE_LOG(LogTemp, Warning, TEXT("[LSEnemy] Blackboard PerceptionUpdated successfully"));
-	}	
+	}
 }
