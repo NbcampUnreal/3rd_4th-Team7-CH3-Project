@@ -1,8 +1,8 @@
-#include "Enemy/LSBTTask_FindCloseFense.h"
+#include "AI/LSBTTask_FindCloseFense.h"
 
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Enemy/LSTestFence.h"
+#include "Props/LSTestFence.h"
 #include "Kismet/GameplayStatics.h"
 
 ULSBTTask_FindCloseFense::ULSBTTask_FindCloseFense()
@@ -30,7 +30,7 @@ EBTNodeResult::Type ULSBTTask_FindCloseFense::ExecuteTask(UBehaviorTreeComponent
 	{
 		return EBTNodeResult::Failed;
 	}
-	Comp.GetBlackboardComponent()->SetValueAsVector(TEXT("ClosestFenceLocation"),CloseFenceLocation);
+	Comp.GetBlackboardComponent()->SetValueAsVector(TEXT("MoveToLocation"),CloseFenceLocation);
 	return EBTNodeResult::Succeeded;
 }
 
@@ -46,7 +46,6 @@ FVector ULSBTTask_FindCloseFense::FindCloseFense(APawn* AIPawn) const
 	{
 		if (ALSTestFence* NowFence = Cast<ALSTestFence>(Actor))
 		{
-			//EnemyTodo : 좀비와 거리 비교
 			float NowDistance = FVector::DistSquared(NowFence->GetActorLocation(), AIPawn->GetActorLocation());
 			
 			if (NowDistance < MinDistance)

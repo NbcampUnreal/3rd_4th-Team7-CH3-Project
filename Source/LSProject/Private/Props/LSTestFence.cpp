@@ -1,4 +1,4 @@
-#include "Enemy/LSTestFence.h"
+#include "Props/LSTestFence.h"
 
 ALSTestFence::ALSTestFence()
 {

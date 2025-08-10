@@ -1,4 +1,4 @@
-#include "Enemy/LSBTTask_CanGoToPlayer.h"
+#include "AI/LSBTTask_CanGoToPlayer.h"
 
 #include "AIController.h"
 #include "NavigationSystem.h"
@@ -31,15 +31,12 @@ EBTNodeResult::Type ULSBTTask_CanGoToPlayer::ExecuteTask(UBehaviorTreeComponent&
 		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] PlayerPawn is NULL"));
 		return EBTNodeResult::Failed;
 	}
-	
 	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetCurrent(AIPawn->GetWorld());
 	if (!NavSystem)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] NavSystem is NULL"));
 		return EBTNodeResult::Failed;
 	}
-	
-	//EnemyTodo : Player에게 가는 길이 있는지 확인
 	
 	FVector PlayerLocation = PlayerPawn->GetActorLocation();
 	FNavLocation PlayerLocationNav;
@@ -57,7 +54,9 @@ EBTNodeResult::Type ULSBTTask_CanGoToPlayer::ExecuteTask(UBehaviorTreeComponent&
 			if (NavSystem->TestPathSync(Query))
 			{
 				UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Find Player Location is SUCCEEDED"));
-				Comp.GetBlackboardComponent()->SetValueAsVector(TEXT("PlayerLocation"), PlayerPawn->GetActorLocation());
+				Comp.GetBlackboardComponent()->SetValueAsVector(TEXT("MoveToLocation"), PlayerPawn->GetActorLocation());
+				AIController->MoveToActor(PlayerPawn,30.f,true);
+				
 				return EBTNodeResult::Succeeded;
 			}
 			UE_LOG(LogTemp,Warning,TEXT("Player Path Is None"));
