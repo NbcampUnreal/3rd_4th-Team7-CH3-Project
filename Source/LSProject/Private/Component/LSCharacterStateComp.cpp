@@ -82,8 +82,6 @@ bool ULSCharacterStateComp::CanFire() const
 	{
 	case ECharacterState::Equip:
 		return false;
-	case ECharacterState::Fire:
-		return false;
 	case ECharacterState::Reload:
 		return false;
 	case ECharacterState::Die:

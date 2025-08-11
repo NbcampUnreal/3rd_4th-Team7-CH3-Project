@@ -35,7 +35,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	UCameraComponent* Camera;
 
-	UFUNCTION(Blueprintpure, Category = "State")
+	UFUNCTION(BlueprintPure, Category = "State")
 	ECurrentWeapon GetCurrentWeapon() const;
 	UFUNCTION(BlueprintCallable, Category = "State")
 	void SetCurrentWeapon(ECurrentWeapon Weapon);
@@ -53,6 +53,7 @@ public:
 	float GetMaxHealth() const;
 	
 protected:
+	virtual void BeginPlay() override;
 	virtual void Attack() override;
 	virtual void Death() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
