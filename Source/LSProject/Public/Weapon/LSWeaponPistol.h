@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "Weapon/LSWeaponBase.h"
 #include "InputActionValue.h"
+#include "NiagaraSystem.h"                
+#include "NiagaraFunctionLibrary.h"
 #include "LSWeaponPistol.generated.h"
 
 class UInputAction;
@@ -22,15 +24,8 @@ public:
 	ALSWeaponPistol();
 
 protected:
-	virtual void BeginPlay() override;
-
-	UPROPERTY(EditAnywhere, Category="Input")
-	UInputMappingContext* WeaponMappingContext;
-	UPROPERTY(EditAnywhere, Category="Input")
-	UInputAction* IA_Fire;
-	UPROPERTY(EditAnywhere, Category="Input")
-	UInputAction* IA_EquipPistol;
-
+//	virtual void BeginPlay() override;
+	
 	void OnEquip(const FInputActionValue& Value);
 	void OnFire(const FInputActionValue& Value);
 
@@ -39,12 +34,12 @@ protected:
 	void PerformLineTrace();
 	void PlayFireEffects(FVector TraceEnd);
 
-	UPROPERTY(EditDefaultsOnly, Category="Weapon")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon")
 	float Damage;
-	UPROPERTY(EditDefaultsOnly, Category="Weapon")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon")
 	float FireRange;
-	UPROPERTY(EditDefaultsOnly, Category="Weapon")
-	UParticleSystem* MuzzleEffect;\
-	UPROPERTY(EditDefaultsOnly, Category="Weapon")
-	UParticleSystem* ImpactEffect;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon")
+	UNiagaraSystem* MuzzleEffect;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon")
+	UNiagaraSystem* ImpactEffect;
 };

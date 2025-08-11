@@ -14,6 +14,16 @@ ALSWeaponBase::ALSWeaponBase()
 	SetRootComponent(Scene);
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	StaticMesh->SetupAttachment(Scene); // 임시로
+	WeaponSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponStaticMesh"));
+	WeaponSkeletalMesh->SetupAttachment(Scene);
+/*
+	Damage = 20.0f;
+	FireRange = 100000.0f;
+	*/
 }
+
+
+
+
 
 

@@ -17,8 +17,9 @@ public class LSProject : ModuleRules
 			"EnhancedInput",
             "AIModule",
             "NavigationSystem",
-            "GameplayTasks"
-        });
+            "GameplayTasks",
+            "Niagara"
+		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "EnhancedInput" });
 

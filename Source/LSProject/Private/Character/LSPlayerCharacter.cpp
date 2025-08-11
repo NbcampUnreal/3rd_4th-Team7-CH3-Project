@@ -37,7 +37,7 @@ ALSPlayerCharacter::ALSPlayerCharacter()
 
 	MaxInteractWithDoorDistance=200.0f;
 	// Weapon 
-	WeaponSystem = CreateDefaultSubobject<ULSPlayerWeaponSystemComp>(TEXT("WeaponSystem")); 
+	WeaponSystemComp = CreateDefaultSubobject<ULSPlayerWeaponSystemComp>(TEXT("WeaponSystemComponent")); 
 }
 
 ECurrentWeapon ALSPlayerCharacter::GetCurrentWeapon() const
@@ -111,9 +111,10 @@ void ALSPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 										  this, &ALSPlayerCharacter::Reload);
 			}
 
-			// Weapon 
+			// Weapon
 			if (PlayerController->EquipPistol) 
-			{ 
+			{
+				UE_LOG(LogTemp, Warning, TEXT("피스톨 바인딩"));
 				EnhancedInput->BindAction(PlayerController->EquipPistol, ETriggerEvent::Triggered, 
 											this, &ALSPlayerCharacter::EquipPistol); 
 			} 
@@ -126,7 +127,14 @@ void ALSPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 			{ 
 				EnhancedInput->BindAction(PlayerController->EquipRifle, ETriggerEvent::Triggered, 
 											this, &ALSPlayerCharacter::EquipRifle); 
+			}
+			if (PlayerController->FireWeapon) 
+			{
+				UE_LOG(LogTemp, Warning, TEXT("binding"));
+				EnhancedInput->BindAction(PlayerController->FireWeapon, ETriggerEvent::Triggered, 
+											this, &ALSPlayerCharacter::FireWeapon); 
 			} 
+	
 		} 
 	}
 }
@@ -335,24 +343,34 @@ void ALSPlayerCharacter::CheckForDoorHover()
 }
 // Weapon 
 void ALSPlayerCharacter :: EquipPistol(const FInputActionValue& Value) 
-{ 
-	if (WeaponSystem) 
+{
+	UE_LOG(LogTemp, Warning, TEXT("Input 1 에 입장."));	
+	if (WeaponSystemComp) 
 	{ 
-		WeaponSystem->EquipPistol(); 
+		WeaponSystemComp->EquipPistol();
+		UE_LOG(LogTemp, Warning, TEXT("Input 1 & EquipPistol 눌러잇!"));
 	} 
 } 
 void ALSPlayerCharacter :: EquipShotgun(const FInputActionValue& Value) 
 { 
-	if (WeaponSystem) 
+	if (WeaponSystemComp) 
 	{ 
-		WeaponSystem->EquipShotgun(); 
+		WeaponSystemComp->EquipShotgun(); 
 	} 
 } 
 void ALSPlayerCharacter :: EquipRifle(const FInputActionValue& Value) 
 { 
-	if (WeaponSystem) 
+	if (WeaponSystemComp) 
 	{ 
-		WeaponSystem->EquipRifle(); 
+		WeaponSystemComp->EquipRifle(); 
 	} 
 } 
+
+void ALSPlayerCharacter::FireWeapon(const FInputActionValue& Value)
+{
+	if (WeaponSystemComp)
+	{
+		WeaponSystemComp->FireWeapon();
+	}
+}
 

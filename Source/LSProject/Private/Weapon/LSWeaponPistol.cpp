@@ -9,6 +9,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "NiagaraSystem.h"                
+#include "NiagaraFunctionLibrary.h"
+
 
 ALSWeaponPistol::ALSWeaponPistol()
 {
@@ -22,40 +25,6 @@ ALSWeaponPistol::ALSWeaponPistol()
 		UE_LOG(LogTemp, Warning, TEXT("물체 생성"));
 	}
 
-	Damage = 20.0f;
-	FireRange = 100000.0f;
-}
-
-void ALSWeaponPistol::BeginPlay()
-{
-	Super::BeginPlay();
-	
-	UE_LOG(LogTemp, Warning, TEXT("게임시작"));	
-
-	if (APlayerController* PC = Cast<APlayerController>(GetOwner()->GetInstigatorController()))
-	{
-		if (ULocalPlayer* LP = PC->GetLocalPlayer())
-		{
-			if (UEnhancedInputLocalPlayerSubsystem* Subsystem = LP->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
-			{
-				Subsystem->AddMappingContext(WeaponMappingContext, 1);
-			}
-		}
-
-		if (UEnhancedInputComponent* EIC = Cast<UEnhancedInputComponent>(PC->InputComponent))
-		{
-			EIC->BindAction(IA_EquipPistol, ETriggerEvent::Triggered, this, &ALSWeaponPistol::OnEquip);
-			EIC->BindAction(IA_Fire, ETriggerEvent::Triggered, this, &ALSWeaponPistol::OnFire);
-		}
-
-		UE_LOG(LogTemp, Warning, TEXT("바인딩"));
-	}
-}
-
-void ALSWeaponPistol::OnEquip(const FInputActionValue& Value)
-{
-	UE_LOG(LogTemp, Warning, TEXT("Equip 부르기"));
-	EquipWeapon();
 }
 
 void ALSWeaponPistol::OnFire(const FInputActionValue& Value)
@@ -64,27 +33,19 @@ void ALSWeaponPistol::OnFire(const FInputActionValue& Value)
 	PerformLineTrace();
 }
 
-
-void ALSWeaponPistol::EquipWeapon()
-{
-	if (ACharacter* CharacterOwner = Cast<ACharacter>(GetOwner()))
-	{
-		AttachToComponent(CharacterOwner->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("RightWeapon"));
-		UE_LOG(LogTemp, Warning, TEXT("장착"));
-	}
-}
-
 void ALSWeaponPistol::PerformLineTrace()
 {
 	AActor* MyOwner = GetOwner();
 	if (!MyOwner) return;
 
-	FVector EyeLocation;
-	FRotator EyeRotation;
-	MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
+	FVector MuzzleLocation = StaticMesh->GetSocketLocation(TEXT("Muzzle"));
+	FRotator MuzzleRotation = StaticMesh->GetSocketRotation(TEXT("Muzzle"));
+	UE_LOG(LogTemp, Warning, TEXT("머즐 위치 : %s"), *MuzzleLocation.ToString());
+//	MyOwner->GetActorEyesViewPoint(MuzzleLocation, MuzzleLocation);
 	
-	FVector ShotDirection = EyeRotation.Vector();
-	FVector TraceEnd = EyeLocation + (ShotDirection * FireRange);
+	FVector ShotDirection = MuzzleRotation.Vector();
+	FVector TraceStart = MuzzleLocation;
+	FVector TraceEnd = TraceStart + (ShotDirection * FireRange);
 
 	FHitResult Hit;
 	FCollisionQueryParams Params;
@@ -94,7 +55,7 @@ void ALSWeaponPistol::PerformLineTrace()
 
 	if (GetWorld()->LineTraceSingleByChannel(
 		Hit,
-		EyeLocation,
+		MuzzleLocation,
 		TraceEnd,
 		ECC_Visibility,
 		Params	
@@ -108,7 +69,12 @@ void ALSWeaponPistol::PerformLineTrace()
 
 		if (ImpactEffect)
 		{
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactEffect, Hit.ImpactPoint, Hit.ImpactNormal.Rotation());
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+				GetWorld(),
+				ImpactEffect,
+				Hit.ImpactPoint,
+				Hit.ImpactNormal.Rotation()
+			);
 		}
 
 		TraceEnd = Hit.ImpactPoint;
@@ -120,11 +86,19 @@ void ALSWeaponPistol::PerformLineTrace()
 
 void ALSWeaponPistol::PlayFireEffects(FVector TraceEnd)
 {
-	if (MuzzleEffect)
+	if (MuzzleEffect && StaticMesh)
 	{
-		UGameplayStatics::SpawnEmitterAttached(MuzzleEffect, StaticMesh, TEXT("MuzzleSocket"));
+		UNiagaraFunctionLibrary::SpawnSystemAttached(
+			MuzzleEffect,
+			StaticMesh,
+			TEXT("Muzzle"),
+			FVector::ZeroVector,
+			FRotator::ZeroRotator,
+			EAttachLocation::SnapToTarget,
+			true
+		);
 	}
-	DrawDebugPoint(GetWorld(), TraceEnd, 10.0f, FColor::Red, true); // test용이래!
+//	DrawDebugPoint(GetWorld(), TraceEnd, 10.0f, FColor::Red, true); // test용이래!
 }
 
 	

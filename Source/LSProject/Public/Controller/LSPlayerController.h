@@ -58,7 +58,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input") 
 	UInputAction* EquipShotgun; 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input") 
-	UInputAction* EquipRifle; 
+	UInputAction* EquipRifle;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UInputAction* FireWeapon;
 	
 	UFUNCTION(BlueprintCallable) 
 	void GameStart(); 
