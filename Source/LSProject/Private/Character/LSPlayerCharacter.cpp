@@ -60,6 +60,20 @@ float ALSPlayerCharacter::GetMaxHealth() const
 	return MaxHealth;
 }
 
+void ALSPlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (ALSPlayerController* PC = Cast<ALSPlayerController>(GetController()))
+	{
+		if (PC->PlayerCameraManager)
+		{
+			PC->PlayerCameraManager->ViewPitchMin = -70.0f;
+			PC->PlayerCameraManager->ViewPitchMax = 70.0f;
+		}
+	}
+}
+
 void ALSPlayerCharacter::Death()
 {
 	Super::Death();

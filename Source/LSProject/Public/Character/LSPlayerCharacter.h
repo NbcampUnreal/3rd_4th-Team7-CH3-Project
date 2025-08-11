@@ -56,6 +56,7 @@ public:
 	float GetMaxHealth() const;
 	
 protected:
+	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void Attack() override;
 	virtual void Death() override;
