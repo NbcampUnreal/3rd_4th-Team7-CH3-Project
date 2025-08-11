@@ -19,7 +19,8 @@ public class LSProject : ModuleRules
             "NavigationSystem",
             "GameplayTasks",
             "UMG"
-        });
+            "Niagara"
+		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "EnhancedInput" });
 

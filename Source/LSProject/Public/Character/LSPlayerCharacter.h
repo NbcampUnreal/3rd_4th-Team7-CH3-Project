@@ -100,15 +100,18 @@ private:
 	
 	void CheckForDoorHover();
 
-	
+
+public:
 	// Weapon 
-	UPROPERTY() 
-	ULSPlayerWeaponSystemComp* WeaponSystem; 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon") 
+	ULSPlayerWeaponSystemComp* WeaponSystemComp; 
 	UFUNCTION() 
 	void EquipPistol(const FInputActionValue& Value); 
 	UFUNCTION() 
 	void EquipShotgun(const FInputActionValue& Value); 
 	UFUNCTION() 
-	void EquipRifle(const FInputActionValue& Value);  
+	void EquipRifle(const FInputActionValue& Value);
+	UFUNCTION()
+	void FireWeapon(const FInputActionValue& Value);
 }; 
  

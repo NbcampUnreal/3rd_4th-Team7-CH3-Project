@@ -2,8 +2,8 @@
 
 #pragma once 
 
-#include "CoreMinimal.h" 
-#include "GameFramework/Character.h" 
+#include "CoreMinimal.h"
+#include "GameFramework/Actor.h"
 #include "Components/StaticMeshComponent.h"               
 #include "UObject/ConstructorHelpers.h" 
 #include "LSWeaponBase.generated.h" 
@@ -17,10 +17,18 @@ class LSPROJECT_API ALSWeaponBase : public AActor
 public: 
 	ALSWeaponBase(); 
 
-protected: 
+protected:
+	/*
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon State");
+	float Damage;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon State");
+	float FireRange;
+*/
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item|Components") 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon Components") 
 	USceneComponent* Scene; 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item|Components")  
-	UStaticMeshComponent* StaticMesh; 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon Components")  
+	UStaticMeshComponent* StaticMesh;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon Components")
+	USkeletalMeshComponent* WeaponSkeletalMesh;
 }; 

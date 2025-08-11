@@ -20,25 +20,35 @@ public:
 	ALSWeaponBase* CurrentWeapon; 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapons") 
-	TSubclassOf<ALSWeaponPistol> PistolClass; 
+	TSubclassOf<ALSWeaponBase> PistolClass; 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapons") 
-	TSubclassOf<ALSWeaponShotgun> ShotgunClass; 
+	TSubclassOf<ALSWeaponBase> ShotgunClass; 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapons") 
-	TSubclassOf< ALSWeaponRifle> RifleClass; 
-
+	TSubclassOf< ALSWeaponBase> RifleClass; 
+/*
 	UPROPERTY(EditAnywhere, Category="Weapons") 
 	UInputAction* IA_EquipPistol; 
 	UPROPERTY(EditAnywhere, Category="Weapons") 
 	UInputAction* IA_EquipShotgun; 
 	UPROPERTY(EditAnywhere, Category="Weapons") 
 	UInputAction* IA_EquipRifle; 
-
+*/
 	UPROPERTY(EditAnywhere, Category="Weapons") 
-	TSubclassOf<ALSWeaponBase> WeaponToSpawn; 
+	TSubclassOf<ALSWeaponBase> WeaponToSpawn;
 
-	void EquipWeapon(int WeaponType); 
-	void EquipPistol(); 
-	void EquipShotgun(); 
-	void EquipRifle(); 
+	
+	UFUNCTION()
+	void EquipWeapon(int WeaponType);
+	UFUNCTION()
+	void EquipPistol();
+	UFUNCTION()
+	void EquipShotgun();
+	UFUNCTION()
+	void EquipRifle();
+	UFUNCTION()
+	void FireWeapon();
+
+protected:
+	virtual void BeginPlay() override;
 }; 
  
