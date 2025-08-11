@@ -18,7 +18,7 @@ public class LSProject : ModuleRules
             "AIModule",
             "NavigationSystem",
             "GameplayTasks",
-            "UMG"
+            "UMG",
             "Niagara"
 		});
 
