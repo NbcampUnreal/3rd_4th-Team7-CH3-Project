@@ -1,8 +1,8 @@
 #include "Enemy/LSEnemy.h"
 
 #include "AIController.h"
+#include "AI/NavigationSystemBase.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Chaos/DebugDrawCommand.h"
 #include "Kismet/GameplayStatics.h"
 #include "Game/LSPlayerState.h"
 #include "Components/SphereComponent.h"
@@ -26,11 +26,11 @@ ALSEnemy::ALSEnemy()
 
 void ALSEnemy::Attack()
 {
-	FVector StartLocation = GetActorLocation()+FVector(0.0f,0.0f,StartVectorZ);
-	FVector EndLocation = StartLocation+ GetActorForwardVector() * AttackRange;
-	TArray<FHitResult> Hits;
-
-	FCollisionShape CollisionShape = FCollisionShape::MakeSphere(50.0f);
+	AAIController* AIController = Cast<AAIController>(GetController());
+	if (AIController)
+	{
+		AIController->StopMovement();
+	}
 
 	UAnimInstance* Anim = GetMesh()->GetAnimInstance();
 
@@ -39,43 +39,6 @@ void ALSEnemy::Attack()
 		Anim->StopAllMontages(0.5f);
 		Anim->Montage_Play(HitMontage, 1.f);
 	}
-
-	bool bHit = GetWorld()->SweepMultiByChannel(
-		Hits,
-		StartLocation,
-		EndLocation,
-		FQuat::Identity,
-		ECC_Pawn,
-		CollisionShape
-	);
-
-	//EnemyTodo : SphereTrace랑 LineTrace랑 둘 다 Hit 합치기
-	DrawDebugLine(GetWorld(),StartLocation,EndLocation,FColor::Red,false, 3.0f);
-	DrawDebugSphere(GetWorld(), StartLocation, CollisionShape.GetSphereRadius(), 16, FColor::Red,false, 2.0f);
-	if (bHit)
-	{
-		for(const FHitResult& Hit : Hits)
-		{
-			if (AActor* HitActor = Hit.GetActor())
-			{
-				if (HitActor->ActorHasTag("Player") || HitActor->ActorHasTag("Fence"))
-				{
-					UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Enemy Attack is Perfect Completed"));
-					if (HitActor->ActorHasTag("Player"))
-					{
-						UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog]  is Player "));
-					}
-					UGameplayStatics::ApplyDamage(
-						HitActor,
-						AttackDamage,
-						GetController(),
-						this,
-						UDamageType::StaticClass()
-					);
-				}
-			}
-		}
-	}
 }
 
 float ALSEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
@@ -83,11 +46,11 @@ float ALSEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& Damage
 {
 	UE_LOG(LogTemp, Warning, TEXT("[LSEnemy] Fence Take Damaged"))
 
-	// Health -= DamageAmount;
-	// if (Health<=0.0f)
-	// {
-	// 	Death();
-	// }
+	CurrentHealth -= DamageAmount;
+	if (CurrentHealth<=0.0f)
+	{
+		Death();
+	}
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
 
@@ -138,12 +101,72 @@ void ALSEnemy::BeginPlay()
 			}
 		}
 	}
-	
-	//UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] Zombie BeginPlay Is Finished"))
 }
 
+void ALSEnemy::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}
+
+void ALSEnemy::HitAttack()
+{
+	FCollisionShape CollisionShape = FCollisionShape::MakeSphere(50.0f);
+	FVector StartLocation = GetActorLocation()+FVector(0.0f,0.0f,StartVectorZ);
+	FVector EndLocation = StartLocation+ GetActorForwardVector() * AttackRange;
+	TArray<FHitResult> Hits;
+
+	bool bHit = GetWorld()->SweepMultiByChannel(
+		Hits,
+		StartLocation,
+		EndLocation,
+		FQuat::Identity,
+		ECC_Pawn,
+		CollisionShape
+	);
+	
+	//EnemyTodo : SphereTrace랑 LineTrace랑 둘 다 Hit 합치기
+	DrawDebugLine(GetWorld(),StartLocation,EndLocation,FColor::Red,false, 3.0f);
+	DrawDebugSphere(GetWorld(), StartLocation, CollisionShape.GetSphereRadius(), 16, FColor::Red,false, 2.0f);
+	if (bHit)
+	{
+		for(const FHitResult& Hit : Hits)
+		{
+			if (AActor* HitActor = Hit.GetActor())
+			{
+				if (HitActor->ActorHasTag("Player"))
+				{
+					UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Enemy Attack is Perfect Completed"));					
+					UGameplayStatics::ApplyDamage(
+						HitActor,
+						AttackDamage,
+						GetController(),
+						this,
+						UDamageType::StaticClass()
+					);
+				}
+				else if (HitActor->ActorHasTag("Fence"))
+				{
+					//사운드 재생
+					if (FenceSound)
+					{
+						UGameplayStatics::PlaySoundAtLocation(this, FenceSound, GetActorLocation());
+					}
+					UGameplayStatics::ApplyDamage(
+						HitActor,
+						AttackDamage,
+						GetController(),
+						this,
+						UDamageType::StaticClass()
+					);
+				}
+			}
+		}
+	}
+}
+
+
 void ALSEnemy::OnEnemyOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep,	const FHitResult& SweepResult)
+                              UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep,	const FHitResult& SweepResult)
 {
 	if (OtherActor && OtherActor == UGameplayStatics::GetPlayerPawn(GetWorld(),0))
 	{
@@ -156,6 +179,5 @@ void ALSEnemy::OnEnemyEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* Ot
 	UPrimitiveComponent* OtherComp,	int32 OtherBodyIndex)
 {
 	UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Overlap Is END"))
-	
 }
 

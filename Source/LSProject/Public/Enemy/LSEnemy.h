@@ -22,17 +22,21 @@ class LSPROJECT_API ALSEnemy : public ALSCharacterBase
 
 public:
 	ALSEnemy();
+	UFUNCTION(BlueprintCallable)
 	virtual void Attack() override;
-	
+
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 	class AController* EventInstigator, AActor* DamageCauser) override;
-	
+
 	virtual void Death() override;
 
 	void AddAbility(float AddHelth, float AddDamage);
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+
+	void HitAttack();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Overlap)
 	USphereComponent* SphereComponent;
@@ -55,17 +59,20 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Type)
 	ELSZombieType ZombieType;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Coin)
+
+	UPROPERTY(EditAnywhere, BluePrintReadWrite, Category=Coin)
 	int32 EnemyCoin;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Attack)
+
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = Attack)
 	float AttackRange;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Attack)
 	float AttackDamage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Attack)
 	float StartVectorZ;
 
+	UPROPERTY(EditAnywhere, Blueprintable, Category="Sound")
+	USoundBase* FenceSound;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Montage")
 	UAnimMontage* HitMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Montage")
