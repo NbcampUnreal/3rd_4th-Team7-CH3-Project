@@ -3,7 +3,7 @@
 #pragma once 
 
 #include "CoreMinimal.h" 
-#include "GameFramework/PlayerController.h" 
+#include "GameFramework/PlayerController.h"
 #include "LSPlayerController.generated.h" 
 
 class UInputMappingContext; 
@@ -13,6 +13,9 @@ class ULSShopWidget;
 class UUserWidget; 
 class UWBP_MainMenu; 
 class UWBP_InGameHUD; 
+
+class UTextBlock;
+class UProgressBar;
 
 UCLASS() 
 class LSPROJECT_API ALSPlayerController : public APlayerController 
@@ -50,7 +53,10 @@ public:
 	UPROPERTY() 
 	UUserWidget* MainMenuWidget; 
 	UPROPERTY() 
-	UUserWidget* InGameHUDWidget; 
+	UUserWidget* InGameHUDWidget;
+
+	UFUNCTION(BlueprintPure, Category="HUD")
+	UUserWidget* GetHUDWidget() const;
 
 	// Weapon
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input") 
@@ -70,4 +76,5 @@ protected:
 
 private:
 	void ShowShopWidget();
-};
+
+};  

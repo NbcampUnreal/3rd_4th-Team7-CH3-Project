@@ -78,3 +78,9 @@ void ALSDayNightController::Tick(float DeltaTime)
 	SkyMID->SetScalarParameterValue(TEXT("SunHeight"), SunHeight);
 }
 
+int32 ALSDayNightController::GetRemainSecond() const
+{
+	const float PhaseDuration = bIsDayPhase ? DayDuration : NightDuration;
+	const float Remain = FMath::Max(0.f,PhaseDuration - ElapsedPhaseTime);
+	return FMath::CeilToInt(Remain);
+} 

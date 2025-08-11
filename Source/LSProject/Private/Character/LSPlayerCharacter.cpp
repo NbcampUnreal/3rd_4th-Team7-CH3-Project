@@ -9,7 +9,10 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Component/LSShopComp.h"
 #include "Game/LSGameState.h"
-#include "Weapon/LSPlayerWeaponSystemComp.h" 
+#include "Weapon/LSPlayerWeaponSystemComp.h"
+#include "Blueprint/UserWidget.h"
+#include "Components/ProgressBar.h"
+
 
 ALSPlayerCharacter::ALSPlayerCharacter()
 {
@@ -66,6 +69,35 @@ void ALSPlayerCharacter::Death()
 
 	PlayAnimMontage(DieMontage);
 	CharacterStateComp->SetState(ECharacterState::Die);
+
+	if (!bShowGameOver)
+	{
+		bShowGameOver = true;
+
+		if (ALSPlayerController* PC = Cast<ALSPlayerController>(GetController()))
+		{
+			if (UUserWidget* HUD = PC->GetHUDWidget())
+			{
+				if (HUD->IsInViewport())
+					HUD->RemoveFromParent();
+			}
+
+			if (!GameOverWidgetInstance && GameOverWidgetClass)
+			{
+				GameOverWidgetInstance = CreateWidget<UUserWidget>(PC, GameOverWidgetClass);
+			}
+			if (GameOverWidgetInstance && !GameOverWidgetInstance->IsInViewport())
+			{
+				GameOverWidgetInstance->AddToViewport(100);
+			}
+
+			FInputModeUIOnly Mode;
+			if (GameOverWidgetInstance) Mode.SetWidgetToFocus(GameOverWidgetInstance->TakeWidget());
+			PC->SetInputMode(Mode);
+			PC->bShowMouseCursor = true;
+			PC->SetPause(true);
+		}
+	}
 }
 
 void ALSPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -135,11 +167,11 @@ float ALSPlayerCharacter::TakeDamage(float DamageAmount, struct FDamageEvent con
                                      AController* EventInstigator, AActor* DamageCauser)
 {
 	CurrentHealth -= DamageAmount;
+	UpdateHealthBar(static_cast<int32>(CurrentHealth),static_cast<int32>(MaxHealth));
 	if (FMath::IsNearlyZero(CurrentHealth))
 	{
 		Death();
 	}
-
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
 
@@ -356,3 +388,22 @@ void ALSPlayerCharacter :: EquipRifle(const FInputActionValue& Value)
 	} 
 } 
 
+void ALSPlayerCharacter::UpdateHealthBar(int32 Current, int32 Max)
+{
+	if (ALSPlayerController* PC = Cast<ALSPlayerController>(GetController()))
+	{
+		if (!HUDHealthBar)
+		{
+			if (UUserWidget* HUD = PC->GetHUDWidget())
+			{
+				HUDHealthBar = Cast<UProgressBar>(HUD->GetWidgetFromName(TEXT("HealthBar")));
+			}
+		}
+
+		if (HUDHealthBar)
+		{
+			const float pct = (Max > 0) ? static_cast<float>(Current) / static_cast<float>(Max) : 0.f;
+			HUDHealthBar->SetPercent(FMath::Clamp(pct, 0.f, 1.f));
+		}
+	}
+}
