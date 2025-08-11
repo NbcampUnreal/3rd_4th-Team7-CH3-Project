@@ -35,7 +35,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	UCameraComponent* Camera;
 
-	UFUNCTION(Blueprintpure, Category = "State")
+	UFUNCTION(BlueprintPure, Category = "State")
 	ECurrentWeapon GetCurrentWeapon() const;
 	UFUNCTION(BlueprintCallable, Category = "State")
 	void SetCurrentWeapon(ECurrentWeapon Weapon);
