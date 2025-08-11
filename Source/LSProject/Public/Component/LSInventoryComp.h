@@ -19,7 +19,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	void AddToInven(const FName& Input);
+	void AddToInven(const FName& Input,int32 Amount);
 
 	//추후 삭제
 	UFUNCTION(Blueprintable)

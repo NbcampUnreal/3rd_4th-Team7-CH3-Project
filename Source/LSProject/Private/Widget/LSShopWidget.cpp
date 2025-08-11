@@ -9,6 +9,7 @@
 #include "Components/TextBlock.h"
 #include "Component/LSShopComp.h"
 #include "Components/Image.h"
+#include "Controller/LSPlayerController.h"
 #include "Game/LSPlayerState.h"
 
 void ULSShopWidget::NativeOnInitialized()
@@ -36,6 +37,8 @@ void ULSShopWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	SetKeyboardFocus();
+	
 	if (!WeaponContainer||!AttachmentContainer||!ItemContainer)	return;
 	
 	const FString Context = TEXT("ULSStoreWidget::NativeConstruct");
@@ -87,6 +90,30 @@ void ULSShopWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	{
 		CoinText->SetText(FText::AsNumber(PS->GetCoin()));
 	}
+}
+
+FReply ULSShopWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	if (InKeyEvent.GetKey() == EKeys::F)
+	{
+		ALSPlayerController* PC =Cast<ALSPlayerController>(GetWorld()->GetFirstPlayerController());
+		if (PC)
+		{
+			PC->HideShopWidget();
+		}
+
+		UE_LOG(LogTemp,Warning,TEXT("ULSShopWidget::NativeOnKeyDown"));
+		
+		return FReply::Handled();
+	}
+
+	return Super::NativeOnKeyDown(InGeometry, InKeyEvent);
+}
+
+ULSShopWidget::ULSShopWidget(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	bIsFocusable = true;
 }
 
 void ULSShopWidget::HandleBuyClicked(const FName& Name)

@@ -27,6 +27,9 @@ protected:
 	
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+
+	ULSShopWidget(const FObjectInitializer& ObjectInitializer);
 public:
 	UPROPERTY(EditDefaultsOnly, Category="Store")
 	UDataTable* ShopItemTable;
@@ -35,13 +38,13 @@ public:
 	TSubclassOf<ULSBuyButtonWidget> BuyButtonWidgetClass;
 
 	UPROPERTY(meta=(BindWidget))
-	UPanelWidget* WeaponContainer;
+	TObjectPtr<UPanelWidget> WeaponContainer;
 
 	UPROPERTY(meta=(BindWidget))
-	UPanelWidget* AttachmentContainer;
+	TObjectPtr<UPanelWidget> AttachmentContainer;
 
 	UPROPERTY(meta=(BindWidget))
-	UPanelWidget* ItemContainer;
+	TObjectPtr<UPanelWidget> ItemContainer;
 
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UTextBlock> CoinText;

@@ -1,5 +1,6 @@
 #include "System/LSDayNightController.h"
 #include "Components/StaticMeshComponent.h"
+#include "Game/LSGameState.h"
 
 ALSDayNightController::ALSDayNightController()
 {
@@ -48,6 +49,12 @@ void ALSDayNightController::Tick(float DeltaTime)
 	if (PhaseProgress >= 1.0f)
 	{
 		bIsDayPhase = !bIsDayPhase;
+
+		if (ALSGameState* GS=GetWorld()->GetGameState<ALSGameState>())
+		{
+			GS->SetDay(bIsDayPhase);
+		}
+		
 		ElapsedPhaseTime = 0.f;
 
 		if (!bIsDayPhase)

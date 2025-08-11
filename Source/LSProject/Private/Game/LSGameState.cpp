@@ -5,5 +5,17 @@
 
 ALSGameState::ALSGameState()
 {
-	bCanUseShop=false;
+	bIsCharacterOverlappedWithDoor=false;
+	bIsDay=true;
+	//bIShowingShopUI=false;
+}
+
+bool ALSGameState::bGetCanOpenShopUI()
+{
+	if (bIsCharacterOverlappedWithDoor && bIsDay)
+	{
+		return true;
+	}
+	
+	return false;
 }

@@ -58,7 +58,7 @@ void ULSShopComp::BuyItem(const FName& ItemName)
 					CurCoin-=ItemPrice;
 					PlayerState->SetCoin(CurCoin);
 					//PC->Player->Inventory->AddtoInven(ItemName)
-					Inventory->AddToInven(ItemName);
+					Inventory->AddToInven(ItemName,Row->Number);
 				}
 				else
 				{

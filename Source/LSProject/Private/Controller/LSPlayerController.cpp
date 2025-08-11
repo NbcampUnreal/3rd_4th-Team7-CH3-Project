@@ -12,6 +12,7 @@ ALSPlayerController::ALSPlayerController() :
 	SprintAction(nullptr),
 	AttackAction(nullptr),
 	ReloadAction(nullptr),
+	OpenShopAction(nullptr),
 	ShopWidgetClass(nullptr),
 	ShopWidgetInstance(nullptr),
 	MainMenuWidgetClass(nullptr),
@@ -58,7 +59,7 @@ void ALSPlayerController::BeginPlay()
 
 void ALSPlayerController::ShowShopWidget()
 {
-	if (ShopWidgetClass)
+	if (!ShopWidgetInstance&& ShopWidgetClass)
 	{
 		ShopWidgetInstance = CreateWidget<ULSShopWidget>(this, ShopWidgetClass);
 		if (ShopWidgetInstance)
@@ -68,8 +69,23 @@ void ALSPlayerController::ShowShopWidget()
 			//FInputModeGameAndUI InputMode;
 			SetInputMode(InputMode);
 			bShowMouseCursor = true;
-			ShopWidgetInstance->SetVisibility(ESlateVisibility::Visible);
+
+			UE_LOG(LogTemp, Warning, TEXT("Show SHOP WIDGET"));
 		}
+	}
+}
+
+void ALSPlayerController::HideShopWidget()
+{
+	if (ShopWidgetInstance)
+	{
+		ShopWidgetInstance->RemoveFromParent();
+		FInputModeGameOnly InputMode;
+		SetInputMode(InputMode);
+		bShowMouseCursor = false;
+		ShopWidgetInstance=nullptr;
+		
+		UE_LOG(LogTemp, Warning, TEXT("Hide SHOP WIDGET"));
 	}
 }
 

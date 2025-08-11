@@ -13,7 +13,7 @@
 
 ALSPlayerCharacter::ALSPlayerCharacter()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
@@ -34,8 +34,7 @@ ALSPlayerCharacter::ALSPlayerCharacter()
 	ShopComp = CreateDefaultSubobject<ULSShopComp>(TEXT("ShopComponent"));
 	InvenComp = CreateDefaultSubobject<ULSInventoryComp>(TEXT("InventoryComponent"));
 	CharacterStateComp = CreateDefaultSubobject<ULSCharacterStateComp>(TEXT("CharacterStateComponent"));
-
-	MaxInteractWithDoorDistance=200.0f;
+	
 	// Weapon 
 	WeaponSystem = CreateDefaultSubobject<ULSPlayerWeaponSystemComp>(TEXT("WeaponSystem")); 
 }
@@ -110,6 +109,11 @@ void ALSPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 				EnhancedInput->BindAction(PlayerController->ReloadAction, ETriggerEvent::Started,
 										  this, &ALSPlayerCharacter::Reload);
 			}
+			if (PlayerController->OpenShopAction) 
+			{ 
+				EnhancedInput->BindAction(PlayerController->OpenShopAction, ETriggerEvent::Started, 
+											this, &ALSPlayerCharacter::OpenShopUI); 
+			} 
 
 			// Weapon 
 			if (PlayerController->EquipPistol) 
@@ -126,7 +130,7 @@ void ALSPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 			{ 
 				EnhancedInput->BindAction(PlayerController->EquipRifle, ETriggerEvent::Triggered, 
 											this, &ALSPlayerCharacter::EquipRifle); 
-			} 
+			}
 		} 
 	}
 }
@@ -212,12 +216,6 @@ void ALSPlayerCharacter::StopSprint(const FInputActionValue& Value)
 	}
 }
 
-void ALSPlayerCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	CheckForDoorHover();
-}
 
 void ALSPlayerCharacter::Attack()
 {
@@ -273,11 +271,24 @@ void ALSPlayerCharacter::Equip()
 	}
 }
 
-void ALSPlayerCharacter::CheckForDoorHover()
+void ALSPlayerCharacter::OpenShopUI()
 {
-	ALSGameState* GS=Cast<ALSGameState>(GetWorld()->GetGameState());
+	ALSGameState* GS=GetWorld()->GetGameState<ALSGameState>();
 	if (!GS)	return;
 	
+	if (ALSPlayerController* PC=Cast<ALSPlayerController>(GetController()))
+	{
+		if (GS->bGetCanOpenShopUI())
+		{
+			PC->ShowShopWidget();	
+		}
+	}
+
+}
+
+void ALSPlayerCharacter::CheckForDoorHover()
+{
+	/*
 	FVector CamLoc;
 	FRotator CamRot;
 	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(CamLoc, CamRot);
@@ -293,7 +304,7 @@ void ALSPlayerCharacter::CheckForDoorHover()
 		Hit, CamLoc, TraceEnd, ECC_Visibility, Params
 	);
 
-	/*
+	
 	DrawDebugLine(
 		GetWorld(),
 		CamLoc,
@@ -304,7 +315,7 @@ void ALSPlayerCharacter::CheckForDoorHover()
 		0,           // 깊이 우선순위
 		2.0f         // 두께
 	);
-	*/
+	
 	
 	if (bHit && Hit.GetComponent() && Hit.GetComponent()->ComponentHasTag("Door"))
 	{
@@ -313,7 +324,7 @@ void ALSPlayerCharacter::CheckForDoorHover()
 		FVector PlayerLoc = GetActorLocation();
 		//FVector HitLoc = Hit.ImpactPoint;
 		FVector DoorLoc = Hit.GetComponent()->GetComponentLocation();
-
+		
 		float Distance = FVector::Dist(PlayerLoc, DoorLoc);
 		if (Distance <= MaxInteractWithDoorDistance)
 		{
@@ -325,13 +336,19 @@ void ALSPlayerCharacter::CheckForDoorHover()
 
 			float Dot = FVector::DotProduct(Forward, ToDoor); // -1 ~ 1
 			// 1에 가까울수록 캐릭터가 정면으로 보고 있음 (예: 0.7 이상이면 정면)
+
+			ALSGameState* GS=Cast<ALSGameState>(GetWorld()->GetGameState());
+			if (!GS)	return;
+			
 			if (Dot > 0.5f)
 			{
 				UE_LOG(LogTemp,Warning,TEXT("Door : Right Direction"));
-				GS->SetShopUse(true);
+				GS->SetDoorOverlapped(true);
 			}
 		}
 	}
+
+	*/
 }
 // Weapon 
 void ALSPlayerCharacter :: EquipPistol(const FInputActionValue& Value) 

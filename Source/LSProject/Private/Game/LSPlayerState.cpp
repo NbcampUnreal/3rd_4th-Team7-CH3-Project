@@ -6,5 +6,5 @@
 ALSPlayerState::ALSPlayerState()
 {
 	//추후 수정
-	Coin=500;
+	Coin=1000;
 }

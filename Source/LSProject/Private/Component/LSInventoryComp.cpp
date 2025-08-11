@@ -12,11 +12,11 @@ void ULSInventoryComp::BeginPlay()
 	Super::BeginPlay();
 }
 
-void ULSInventoryComp::AddToInven(const FName& Input)
+void ULSInventoryComp::AddToInven(const FName& Input,int32 Amount)
 {
-	MyItems.FindOrAdd(Input)++;
-
-	//
+	int32& NewValue=MyItems.FindOrAdd(Input);
+	NewValue=NewValue+Amount;
+	
 	ShowInven();
 }
 

@@ -35,13 +35,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input") 
 	UInputAction* AttackAction; 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input") 
-	UInputAction* ReloadAction; 
+	UInputAction* ReloadAction;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input") 
+	UInputAction* OpenShopAction;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI") 
 	TSubclassOf<ULSShopWidget> ShopWidgetClass; 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI") 
 	TObjectPtr<ULSShopWidget> ShopWidgetInstance; 
-
+	void ShowShopWidget();
+	void HideShopWidget();
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI") 
 	TSubclassOf<UUserWidget> MainMenuWidgetClass; 
@@ -69,5 +72,5 @@ protected:
 	virtual void BeginPlay() override; 
 
 private:
-	void ShowShopWidget();
+	
 };

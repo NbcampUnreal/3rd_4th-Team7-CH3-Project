@@ -48,15 +48,11 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="StateComp")
 	TObjectPtr<ULSCharacterStateComp> CharacterStateComp;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Store")
-	float MaxInteractWithDoorDistance;
-
+	
 	float GetCurrentHealth() const;
 	float GetMaxHealth() const;
 	
 protected:
-	virtual void Tick(float DeltaTime) override;
 	virtual void Attack() override;
 	virtual void Death() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -81,6 +77,8 @@ protected:
 	void Reload(const FInputActionValue& Value);
 	UFUNCTION()
 	void Equip();
+	UFUNCTION()
+	void OpenShopUI();
 
 private:
 	ECurrentWeapon CurrentWeapon;

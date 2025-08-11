@@ -16,8 +16,18 @@ class LSPROJECT_API ALSGameState : public AGameState
 
 public:
 	ALSGameState();
-	FORCEINLINE void SetShopUse(bool bCanUse){bCanUseShop=bCanUse;}
+	FORCEINLINE void SetDoorOverlapped(bool bIsOverlapped){bIsCharacterOverlappedWithDoor=bIsOverlapped;}
+	FORCEINLINE void SetDay(bool bDay){bIsDay=bDay;}
+	//FORCEINLINE void SetShowShopUI(bool bIsShowing){bIShowingShopUI=bIsShowing;}
+
+	FORCEINLINE bool GetDoorOverlapped() const {return bIsCharacterOverlappedWithDoor;}
+	FORCEINLINE bool GetDay() const {return bIsDay;}
+	//FORCEINLINE bool GetShowShopUI() const {return bIShowingShopUI;}
+
+	bool bGetCanOpenShopUI();
 
 private:
-	bool bCanUseShop;
+	bool bIsCharacterOverlappedWithDoor;
+	bool bIsDay;
+	//bool bIShowingShopUI;
 };

@@ -4,9 +4,11 @@
 #include "Game/LSGameMode.h"
 #include "Game/LSPlayerState.h"
 #include "Controller/LSPlayerController.h"
+#include "Game/LSGameState.h"
 
 ALSGameMode::ALSGameMode()
 {
 	PlayerStateClass = ALSPlayerState::StaticClass();
 	PlayerControllerClass = ALSPlayerController::StaticClass();
+	GameStateClass=ALSGameState::StaticClass();
 }
