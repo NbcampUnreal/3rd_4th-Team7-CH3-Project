@@ -6,9 +6,10 @@
 #include "GameFramework/GameState.h"
 #include "LSGameState.generated.h"
 
-/**
- * 
- */
+class ALSDayNightController;
+class UTextBlock;
+
+
 UCLASS()
 class LSPROJECT_API ALSGameState : public AGameState
 {
@@ -26,8 +27,21 @@ public:
 
 	bool bGetCanOpenShopUI();
 
+	virtual void BeginPlay() override;
+	
+	UFUNCTION()
+	void UpdateHUD();
+
 private:
 	bool bIsCharacterOverlappedWithDoor;
 	bool bIsDay;
 	//bool bIShowingShopUI;
+	bool bCanUseShop;
+
+	FTimerHandle HUDUpdateTimerHandle;
+	UPROPERTY() ALSDayNightController* DayNightCtrl = nullptr;
+
+	UPROPERTY() UTextBlock* DayTextBlock = nullptr;
+	UPROPERTY() UTextBlock* TimeTextBlock = nullptr;
+	
 };

@@ -17,7 +17,13 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable, Category = "DayNight")
-	int32 GetCurrentDay () const { return CurrentDay;}
+	int32 GetCurrentDay() const { return CurrentDay;}
+
+	UFUNCTION(BlueprintCallable, Category = "DayNight")
+	bool IsDayPhase() const { return bIsDayPhase;}
+
+	UFUNCTION(BlueprintCallable, Category = "DayNight")
+	int32 GetRemainSecond() const ;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="DayNight")
@@ -37,10 +43,10 @@ protected:
 
 private:
 	int32 CurrentDay = 1;
-	float ElapsedPhaseTime = 0.f; //
+	float ElapsedPhaseTime = 0.f; 
 	bool bIsDayPhase = true;
 	float SunYaw =  -180.f;
 
 	UMaterialInstanceDynamic* SkyMID = nullptr;
 	
-};
+};  

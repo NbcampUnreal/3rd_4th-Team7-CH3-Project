@@ -13,6 +13,9 @@ class ULSCharacterStateComp;
 
 class ULSPlayerWeaponSystemComp;
 
+class UUserWidget;
+class UProgressBar;
+
 UENUM(BlueprintType)
 enum class ECurrentWeapon : uint8
 {
@@ -51,6 +54,9 @@ public:
 	
 	float GetCurrentHealth() const;
 	float GetMaxHealth() const;
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void UpdateHealthBar(int32 Current, int32 Max);
 	
 protected:
 	virtual void BeginPlay() override;
@@ -114,5 +120,16 @@ public:
 	void EquipRifle(const FInputActionValue& Value);
 	UFUNCTION()
 	void FireWeapon(const FInputActionValue& Value);
+
+
+	UPROPERTY(EditAnywhere, Category="UI")
+	TSubclassOf<UUserWidget> GameOverWidgetClass;
+	UPROPERTY()
+	UUserWidget* GameOverWidgetInstance = nullptr;
+	UPROPERTY()
+	UProgressBar* HUDHealthBar =nullptr;
+	UPROPERTY()
+	bool bShowGameOver = false;
+	
 }; 
  

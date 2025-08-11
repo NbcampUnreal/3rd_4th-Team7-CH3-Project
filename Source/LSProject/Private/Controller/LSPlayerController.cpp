@@ -3,6 +3,7 @@
 #include "Widget/LSShopWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Components/ProgressBar.h"
 
 ALSPlayerController::ALSPlayerController() :
 	InputMappingContext(nullptr),
@@ -113,4 +114,9 @@ void ALSPlayerController::GameStart()
 void ALSPlayerController::GameQuit()
 {
 	UKismetSystemLibrary::QuitGame(this, this, EQuitPreference::Quit, true);
+}
+
+UUserWidget* ALSPlayerController::GetHUDWidget() const
+{
+	return InGameHUDWidget;
 }
