@@ -2,9 +2,6 @@
 
 #include "CoreMinimal.h" 
 #include "Weapon/LSWeaponBase.h" 
-#include "Weapon/LSWeaponPistol.h"  
-#include "Weapon/LSWeaponShotgun.h" 
-#include "Weapon/LSWeaponRifle.h" 
 #include "Components/ActorComponent.h" 
 #include "LSPlayerWeaponSystemComp.generated.h" 
 
@@ -14,28 +11,19 @@ class LSPROJECT_API ULSPlayerWeaponSystemComp : public UActorComponent
 	GENERATED_BODY() 
 
 public: 
-	ULSPlayerWeaponSystemComp(); 
-
-	UPROPERTY() 
-	ALSWeaponBase* CurrentWeapon; 
-
+	ULSPlayerWeaponSystemComp();
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapons") 
 	TSubclassOf<ALSWeaponBase> PistolClass; 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapons") 
 	TSubclassOf<ALSWeaponBase> ShotgunClass; 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapons") 
 	TSubclassOf< ALSWeaponBase> RifleClass; 
-/*
-	UPROPERTY(EditAnywhere, Category="Weapons") 
-	UInputAction* IA_EquipPistol; 
-	UPROPERTY(EditAnywhere, Category="Weapons") 
-	UInputAction* IA_EquipShotgun; 
-	UPROPERTY(EditAnywhere, Category="Weapons") 
-	UInputAction* IA_EquipRifle; 
-*/
 	UPROPERTY(EditAnywhere, Category="Weapons") 
 	TSubclassOf<ALSWeaponBase> WeaponToSpawn;
 
+	UPROPERTY() 
+	ALSWeaponBase* CurrentWeapon; 
 	
 	UFUNCTION()
 	void EquipWeapon(int WeaponType);
@@ -47,6 +35,8 @@ public:
 	void EquipRifle();
 	UFUNCTION()
 	void FireWeapon();
+
+	bool PerformLineTrace(float Damage, float FireRange, FHitResult& OutHit);
 
 protected:
 	virtual void BeginPlay() override;

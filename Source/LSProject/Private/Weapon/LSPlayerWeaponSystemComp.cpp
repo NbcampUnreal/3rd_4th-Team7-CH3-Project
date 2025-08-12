@@ -5,6 +5,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Components/SkeletalMeshComponent.h" 
 #include "Weapon/LSWeaponBase.h"
+#include "Weapon/LSWeaponPistol.h"
 #include "Kismet/GameplayStatics.h"
 
 ULSPlayerWeaponSystemComp::ULSPlayerWeaponSystemComp() 
@@ -18,14 +19,12 @@ ULSPlayerWeaponSystemComp::ULSPlayerWeaponSystemComp()
 void ULSPlayerWeaponSystemComp::BeginPlay()
 {
 	Super::BeginPlay();
-
 	EquipWeapon(1);
 }
 
  
 void ULSPlayerWeaponSystemComp::EquipWeapon(int WeaponType) 
 {
-	UE_LOG(LogTemp, Error, TEXT("위치 체크"));
 	// 기존 무기 제거 
 	if (CurrentWeapon) 
 	{ 
@@ -46,47 +45,31 @@ void ULSPlayerWeaponSystemComp::EquipWeapon(int WeaponType)
 		break; 
 	default: 
 		return; 
-	} 
+	}
 
-	if (WeaponToSpawn) 
-	{ 
-		UWorld* World = GetWorld(); 
-		if (!World) return; 
- 
-		AActor* OwnerActor = GetOwner(); 
-		if (!OwnerActor) return; 
-		 
-		CurrentWeapon = World->SpawnActor<ALSWeaponBase>(WeaponToSpawn);
-		if (!CurrentWeapon)
-		{
-			return;
-		}
-		if (CurrentWeapon) 
-		{ 
-			CurrentWeapon->SetOwner(OwnerActor); 
- 
-			ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner()); 
-			if (OwnerCharacter && CurrentWeapon) 
-			{ 
-				USkeletalMeshComponent* MeshComp = OwnerCharacter->GetMesh(); 
-				if (MeshComp) 
-				{ 
-					CurrentWeapon->AttachToComponent( 
-					MeshComp, 
-					FAttachmentTransformRules::SnapToTargetIncludingScale, 
-					FName("RightWeapon") 
-					); 
-				} 
-			} 
-		} 
-	} 
+	if (!WeaponToSpawn) return;
+
+	ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner());
+	if (!OwnerCharacter) return;
+
+	UWorld* World = GetWorld();
+	if (!World) return;
+
+	CurrentWeapon = World->SpawnActor<ALSWeaponBase>(WeaponToSpawn);
+	if (!CurrentWeapon) return;
+
+	CurrentWeapon->SetOwner(OwnerCharacter);
+	if (USkeletalMeshComponent* MeshComp = OwnerCharacter->GetMesh())
+	{
+		CurrentWeapon->AttachToComponent(MeshComp, FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("RightWeapon"));
+	}
+
 } 
+
 
 void ULSPlayerWeaponSystemComp::EquipPistol() 
 { 
 	EquipWeapon(1);
-
-	UE_LOG(LogTemp, Warning, TEXT("Input 1 & EquipPistol UpLoading!"));
 } 
 
 void ULSPlayerWeaponSystemComp::EquipShotgun() 
@@ -102,47 +85,59 @@ void ULSPlayerWeaponSystemComp::EquipRifle()
 void ULSPlayerWeaponSystemComp::FireWeapon()
 {
 	if (!CurrentWeapon) return;
+	CurrentWeapon->OnFire();
+}
 
+bool ULSPlayerWeaponSystemComp::PerformLineTrace(float Damage, float FireRange, FHitResult& OutHit)
+{
 	ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner());
-	if (!OwnerCharacter) return;
+	if (!OwnerCharacter) return false;
+
+	UStaticMeshComponent* WeaponMesh = CurrentWeapon->FindComponentByClass<UStaticMeshComponent>();
+	if (!WeaponMesh) return false;
 
 	APlayerController* PC = Cast<APlayerController>(OwnerCharacter->GetController());
-	if (!PC) return;
+	if (!PC) return false;
 
-	FVector CameraLoc;
-	FRotator CameraRot;
-	PC->GetPlayerViewPoint(CameraLoc, CameraRot);
+	FVector MuzzleLocation = WeaponMesh->GetSocketLocation("Muzzle");
+	FRotator MuzzleRotation = WeaponMesh->GetSocketRotation("Muzzle");
 
-	FVector TraceStart = CameraLoc;
-	FVector TraceEnd = CameraLoc + (CameraRot.Vector() * 10000.0f);
+	FVector TraceStart = MuzzleLocation;
+	FVector TraceEnd = TraceStart + (MuzzleRotation.Vector() * FireRange);
 
-	FHitResult HitResult;
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(OwnerCharacter);
-	Params.AddIgnoredActor(CurrentWeapon);
+	if (CurrentWeapon) Params.AddIgnoredActor(CurrentWeapon);
 	Params.bTraceComplex = true;
 
 	bool bHit = GetWorld()->LineTraceSingleByChannel(
-		HitResult,
+		OutHit,
 		TraceStart,
 		TraceEnd,
 		ECC_Visibility,
 		Params
 	);
+	
+#if WITH_EDITOR
+	DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, 3.0f, 5, 1.0f);
+	FVector MuzzleForwardVector = WeaponMesh->GetSocketTransform("Muzzle").GetUnitAxis(EAxis::X);
+	DrawDebugCoordinateSystem(GetWorld(), MuzzleLocation, WeaponMesh->GetSocketRotation("Muzzle"), 20.f, false, 5.f);
+	DrawDebugLine(GetWorld(), MuzzleLocation, TraceEnd, FColor::Green, false, 5.f, 0, 2.f);
+#endif
 
-	DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, 3.0f, 5.0f);
-
-	if (bHit && HitResult.GetActor())
+	if (bHit && OutHit.GetActor())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Hit Actor : %s"), *HitResult.GetActor()->GetName());
-
+		UE_LOG(LogTemp, Warning, TEXT("라인트레이스 명중: %s"), *OutHit.GetActor()->GetName());
+		
 		UGameplayStatics::ApplyDamage(
-			HitResult.GetActor(),
-			20.0f,
+			OutHit.GetActor(),
+			Damage,
 			PC,
 			OwnerCharacter,
 			nullptr
 		);
 	}
+
+	return bHit;
 	
 }
