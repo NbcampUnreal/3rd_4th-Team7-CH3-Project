@@ -10,7 +10,7 @@ void ULSAttackNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase
 		ALSEnemy* Enemy = Cast<ALSEnemy>(Actor);
 		if (Enemy)
 		{
-			Enemy->Attack();
+			Enemy->HitAttack();
 		}
 	}
 }

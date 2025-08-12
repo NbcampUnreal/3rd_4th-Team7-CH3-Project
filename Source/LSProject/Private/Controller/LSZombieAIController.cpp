@@ -3,7 +3,6 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Perception/AIPerceptionComponent.h"
-//#include "BehaviorTree/BehaviorTreeComponent.h"
 
 ALSZombieAIController::ALSZombieAIController()
 {
@@ -18,12 +17,6 @@ ALSZombieAIController::ALSZombieAIController()
 void ALSZombieAIController::BeginPlay()
 {
 	Super::BeginPlay();
-}
-
-//EnemyTodo : ForceInline
-UBlackboardComponent* ALSZombieAIController::GetBlackBoardComp() const
-{
-	return BlackboardComp;
 }
 
 void ALSZombieAIController::StartBehaviorTree()
@@ -42,7 +35,7 @@ void ALSZombieAIController::StartBehaviorTree()
 void ALSZombieAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-	UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog]Pawn is 컨트롤러소유함")) 
+	UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog]Pawn is 컨트롤러소유함"))
 	if (BehaviorTreeAsset)
 	{
 		RunBehaviorTree(BehaviorTreeAsset);
@@ -60,7 +53,7 @@ void ALSZombieAIController::OnPossess(APawn* InPawn)
 	}
 }
 
-//EnemyTodo : 
+//EnemyTodo : 일단 무시
 void ALSZombieAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
 	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);

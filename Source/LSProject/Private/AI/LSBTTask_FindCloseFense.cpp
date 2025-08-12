@@ -8,28 +8,32 @@
 ULSBTTask_FindCloseFense::ULSBTTask_FindCloseFense()
 {
 	NodeName = "FindCloseFense";
+	CachedAIController=nullptr;
+	CachedAIPawn=nullptr;
 }
 
 EBTNodeResult::Type ULSBTTask_FindCloseFense::ExecuteTask(UBehaviorTreeComponent& Comp, uint8* NodeMemory)
 {
-	AAIController* AIController = Comp.GetAIOwner();
-	if (!AIController)
+	
+	if (!CachedAIController)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Controller is Not Found in FindCloseFence"))
+		CachedAIController = Comp.GetAIOwner();
+		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] BTTask : Controller is Not Found"))
 	}
 	
-	APawn* AIPawn = AIController->GetPawn();
-	UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] AIPawn Name : %s"), *AIPawn->GetName())
-	if (!AIPawn)
+	if (!CachedAIPawn)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] AIPawn is Not Found in FindCloseFence"))
+		CachedAIPawn = CachedAIController->GetPawn();
+		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] BTTask : AIPawn is Not Found"))
 	}
 	
-	FVector CloseFenceLocation =  FindCloseFense(AIPawn);
+	FVector CloseFenceLocation =  FindCloseFense(CachedAIPawn);
 	if (CloseFenceLocation==FVector::ZeroVector)
 	{
+		//UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] BTTask : FindCloseFence is Not Found"))
 		return EBTNodeResult::Failed;
 	}
+	UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] BTTask : FindCloseFence is SUCCESS"))
 	Comp.GetBlackboardComponent()->SetValueAsVector(TEXT("MoveToLocation"),CloseFenceLocation);
 	return EBTNodeResult::Succeeded;
 }

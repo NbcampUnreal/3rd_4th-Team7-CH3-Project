@@ -1,21 +1,23 @@
 #include "Enemy/LSEnemy.h"
 
 #include "AIController.h"
-#include "AI/NavigationSystemBase.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Game/LSPlayerState.h"
 #include "Components/SphereComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 ALSEnemy::ALSEnemy()
 {
-	WalkSpeed=300.0f;
+	WalkSpeed=300.f;
 	ZombieType=ELSZombieType::Normal;
 	EnemyCoin=0;
-	AttackRange=30.0f;
-	AttackDamage=30.0f;
-	StartVectorZ=30.0f;
+	AttackRange=30.f;
+	AttackDamage=30.f;
+	StartVectorZ=30.f;
+	StartVectorY=0.f;
+	StartVectorX=30.f;
 	HitMontage=nullptr;
 	DeathMontage=nullptr;
 	SphereComponent=CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
@@ -29,7 +31,7 @@ void ALSEnemy::Attack()
 	AAIController* AIController = Cast<AAIController>(GetController());
 	if (AIController)
 	{
-		AIController->StopMovement();
+		AIController->StopMovement(); //EnemyTodo : 리팩토링 요망
 	}
 
 	UAnimInstance* Anim = GetMesh()->GetAnimInstance();
@@ -83,8 +85,6 @@ void ALSEnemy::AddAbility(float AddHealth, float AddDamage)
 void ALSEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	FString EnumZombieType = UEnum::GetValueAsString(ZombieType);
-	UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] ZombieType : %s"), *EnumZombieType)
 	
 	if (ZombieType == ELSZombieType::Fence)
 	{
@@ -106,12 +106,18 @@ void ALSEnemy::BeginPlay()
 void ALSEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if(IsRotation == true)
+	{
+		SetDeltaRotation(DeltaTime);
+	}
 }
 
+//montage의 notify에서 실행됨
 void ALSEnemy::HitAttack()
 {
 	FCollisionShape CollisionShape = FCollisionShape::MakeSphere(50.0f);
-	FVector StartLocation = GetActorLocation()+FVector(0.0f,0.0f,StartVectorZ);
+	FVector LocalOffset(StartVectorX, StartVectorY, StartVectorZ);
+	FVector StartLocation = GetActorTransform().TransformPosition(LocalOffset);
 	FVector EndLocation = StartLocation+ GetActorForwardVector() * AttackRange;
 	TArray<FHitResult> Hits;
 
@@ -123,10 +129,8 @@ void ALSEnemy::HitAttack()
 		ECC_Pawn,
 		CollisionShape
 	);
-	
-	//EnemyTodo : SphereTrace랑 LineTrace랑 둘 다 Hit 합치기
-	DrawDebugLine(GetWorld(),StartLocation,EndLocation,FColor::Red,false, 3.0f);
-	DrawDebugSphere(GetWorld(), StartLocation, CollisionShape.GetSphereRadius(), 16, FColor::Red,false, 2.0f);
+
+	DrawDebugSphere(GetWorld(), StartLocation, CollisionShape.GetSphereRadius(), 16, FColor::Red,false, 0.5f);
 	if (bHit)
 	{
 		for(const FHitResult& Hit : Hits)
@@ -135,7 +139,7 @@ void ALSEnemy::HitAttack()
 			{
 				if (HitActor->ActorHasTag("Player"))
 				{
-					UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Enemy Attack is Perfect Completed"));					
+					UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Enemy Attack is Perfect Completed"));
 					UGameplayStatics::ApplyDamage(
 						HitActor,
 						AttackDamage,
@@ -149,6 +153,7 @@ void ALSEnemy::HitAttack()
 					//사운드 재생
 					if (FenceSound)
 					{
+						UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Enemy Attack is Perfect Completed"));					
 						UGameplayStatics::PlaySoundAtLocation(this, FenceSound, GetActorLocation());
 					}
 					UGameplayStatics::ApplyDamage(
@@ -164,20 +169,50 @@ void ALSEnemy::HitAttack()
 	}
 }
 
-
 void ALSEnemy::OnEnemyOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                               UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep,	const FHitResult& SweepResult)
 {
-	if (OtherActor && OtherActor == UGameplayStatics::GetPlayerPawn(GetWorld(),0))
+	Player = UGameplayStatics::GetPlayerPawn(GetWorld(),0);
+	if (!OtherActor || !Player)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Overlap Is SUCCEESS"))
-		Attack();
+		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Overlap Is Failed"))
+	}
+	if (OtherActor==Player)
+	{
+		GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &ALSEnemy::Attack, 1.7f, true, 0.0f);
+		IsRotation = true;
 	}
 }
 
 void ALSEnemy::OnEnemyEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp,	int32 OtherBodyIndex)
 {
-	UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Overlap Is END"))
+	Player = UGameplayStatics::GetPlayerPawn(GetWorld(),0);
+	if (!OtherActor || !Player)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Overlap Is Failed"))
+	}
+	if (OtherActor==Player)
+	{
+		GetWorldTimerManager().ClearTimer(AttackTimerHandle);
+	}
 }
 
+void ALSEnemy::SetDeltaRotation(float DeltaSeconds)
+{
+	if (!Player)
+	{
+		Player = UGameplayStatics::GetPlayerPawn(GetWorld(),0);
+	}
+	FRotator NowRotation =  GetActorRotation();
+	FRotator LookRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Player->GetActorLocation());
+
+	FRotator GoRotation = FMath::RInterpTo(NowRotation, LookRotation, DeltaSeconds, 3.f);
+
+	SetActorRotation(FRotator(0.f, GoRotation.Yaw, 0.f));
+
+	if	(FMath::Abs(FMath::FindDeltaAngleDegrees(LookRotation.Yaw,GetActorRotation().Yaw))<= 1.f)
+	{
+		IsRotation=false;
+	}
+}

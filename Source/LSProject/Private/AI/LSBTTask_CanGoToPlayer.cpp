@@ -53,7 +53,6 @@ EBTNodeResult::Type ULSBTTask_CanGoToPlayer::ExecuteTask(UBehaviorTreeComponent&
 		{
 			if (NavSystem->TestPathSync(Query))
 			{
-				UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Find Player Location is SUCCEEDED"));
 				Comp.GetBlackboardComponent()->SetValueAsVector(TEXT("MoveToLocation"), PlayerPawn->GetActorLocation());
 				AIController->MoveToActor(PlayerPawn,30.f,true);
 				

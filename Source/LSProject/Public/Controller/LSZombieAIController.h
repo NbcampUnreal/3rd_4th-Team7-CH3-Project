@@ -15,7 +15,11 @@ class LSPROJECT_API ALSZombieAIController : public AAIController
 public:
 	ALSZombieAIController();
 
-	UBlackboardComponent* GetBlackBoardComp() const;
+	FORCEINLINE
+	UBlackboardComponent* GetBlackBoardComp() const
+	{
+		return BlackboardComp;
+	}
 
 	void StartBehaviorTree();
 	
