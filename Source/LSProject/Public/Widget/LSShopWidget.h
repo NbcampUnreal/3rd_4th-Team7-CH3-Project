@@ -19,7 +19,7 @@ UCLASS(Abstract, Blueprintable)
 class LSPROJECT_API ULSShopWidget : public UUserWidget
 {
 	GENERATED_BODY()
-
+	
 protected:
 	virtual void NativeOnInitialized() override;
 	
@@ -29,8 +29,9 @@ protected:
 
 	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 
-	ULSShopWidget(const FObjectInitializer& ObjectInitializer);
 public:
+	ULSShopWidget(const FObjectInitializer& ObjectInitializer);
+	
 	UPROPERTY(EditDefaultsOnly, Category="Store")
 	UDataTable* ShopItemTable;
 

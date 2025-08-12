@@ -19,11 +19,9 @@ public:
 	ALSGameState();
 	FORCEINLINE void SetDoorOverlapped(bool bIsOverlapped){bIsCharacterOverlappedWithDoor=bIsOverlapped;}
 	FORCEINLINE void SetDay(bool bDay){bIsDay=bDay;}
-	//FORCEINLINE void SetShowShopUI(bool bIsShowing){bIShowingShopUI=bIsShowing;}
 
 	FORCEINLINE bool GetDoorOverlapped() const {return bIsCharacterOverlappedWithDoor;}
 	FORCEINLINE bool GetDay() const {return bIsDay;}
-	//FORCEINLINE bool GetShowShopUI() const {return bIShowingShopUI;}
 
 	bool bGetCanOpenShopUI();
 
@@ -43,5 +41,6 @@ private:
 
 	UPROPERTY() UTextBlock* DayTextBlock = nullptr;
 	UPROPERTY() UTextBlock* TimeTextBlock = nullptr;
+	UPROPERTY() UTextBlock* ShopPressTextBlock = nullptr;
 	
 };

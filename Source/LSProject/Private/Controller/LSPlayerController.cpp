@@ -1,6 +1,7 @@
 #include "Controller/LSPlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include "Widget/LSShopWidget.h"
+#include "Widget/LSInventoryWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Components/ProgressBar.h"
@@ -14,8 +15,11 @@ ALSPlayerController::ALSPlayerController() :
 	AttackAction(nullptr),
 	ReloadAction(nullptr),
 	OpenShopAction(nullptr),
+	OpenInvenAction(nullptr),
 	ShopWidgetClass(nullptr),
 	ShopWidgetInstance(nullptr),
+	InvenWidgetClass(nullptr),
+	InvenWidgetInstance(nullptr),
 	MainMenuWidgetClass(nullptr),
 	InGameHUDWidgetClass(nullptr),
 	MainMenuWidget(nullptr),
@@ -57,6 +61,7 @@ void ALSPlayerController::BeginPlay()
 			bShowMouseCursor = true;
 		}
 	}
+	
 }
 
 void ALSPlayerController::ShowShopWidget()
@@ -89,6 +94,30 @@ void ALSPlayerController::HideShopWidget()
 		
 		UE_LOG(LogTemp, Warning, TEXT("Hide SHOP WIDGET"));
 	}
+}
+
+void ALSPlayerController::ShowInvenWidget()
+{
+	if (!InvenWidgetClass)	return;
+	
+	InvenWidgetInstance = CreateWidget<ULSInventoryWidget>( this, InvenWidgetClass);
+	InvenWidgetInstance->AddToViewport();
+	InvenWidgetInstance->SetVisibility(ESlateVisibility::Visible);
+	FInputModeGameAndUI InputMode;
+	InputMode.SetHideCursorDuringCapture(false);
+	SetInputMode(InputMode);
+	bShowMouseCursor = true;
+}
+
+void ALSPlayerController::HideInvenWidget()
+{
+	if (!InvenWidgetInstance)	return;
+	
+	InvenWidgetInstance->RemoveFromParent();
+	FInputModeGameOnly InputMode;
+	SetInputMode(InputMode);
+	bShowMouseCursor = false;
+	ShopWidgetInstance=nullptr;
 }
 
 void ALSPlayerController::GameStart()

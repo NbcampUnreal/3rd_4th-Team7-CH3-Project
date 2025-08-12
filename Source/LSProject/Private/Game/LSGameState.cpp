@@ -57,8 +57,9 @@ void ALSGameState::UpdateHUD()
 		DayTextBlock = Cast<UTextBlock>(HUD->GetWidgetFromName(TEXT("DayText")));
 	if (!TimeTextBlock)
 		TimeTextBlock = Cast<UTextBlock>(HUD->GetWidgetFromName(TEXT("TimeText")));
-	if (!DayTextBlock || !TimeTextBlock) return; 
-
+	if (!ShopPressTextBlock)
+		ShopPressTextBlock = Cast<UTextBlock>(HUD->GetWidgetFromName(TEXT("ShopPressText")));
+	if (!DayTextBlock || !TimeTextBlock || ! ShopPressTextBlock) return;
 	
 	//데이 텍스트 업데이트
 	const int32 Day = DayNightCtrl->GetCurrentDay();
@@ -70,4 +71,13 @@ void ALSGameState::UpdateHUD()
 	const int32 S = Secs % 60;
 	const FString Phase = DayNightCtrl->IsDayPhase() ? TEXT("낮") : TEXT("밤");
 	TimeTextBlock->SetText(FText::FromString(FString::Printf(TEXT("%s %02d:%02d"), *Phase, M, S)));
+	
+	if (bIsDay && bIsCharacterOverlappedWithDoor)
+	{
+		ShopPressTextBlock->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		ShopPressTextBlock->SetVisibility(ESlateVisibility::Hidden);	
+	}
 }

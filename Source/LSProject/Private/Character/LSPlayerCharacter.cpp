@@ -12,6 +12,7 @@
 #include "Weapon/LSPlayerWeaponSystemComp.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/ProgressBar.h"
+#include "Widget/LSInventoryWidget.h"
 
 
 ALSPlayerCharacter::ALSPlayerCharacter()
@@ -36,6 +37,7 @@ ALSPlayerCharacter::ALSPlayerCharacter()
 
 	ShopComp = CreateDefaultSubobject<ULSShopComp>(TEXT("ShopComponent"));
 	InvenComp = CreateDefaultSubobject<ULSInventoryComp>(TEXT("InventoryComponent"));
+	bIsInvenUIActive=false;
 	CharacterStateComp = CreateDefaultSubobject<ULSCharacterStateComp>(TEXT("CharacterStateComponent"));
 	
 	// Weapon 
@@ -159,6 +161,16 @@ void ALSPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 			{ 
 				EnhancedInput->BindAction(PlayerController->OpenShopAction, ETriggerEvent::Started, 
 											this, &ALSPlayerCharacter::OpenShopUI); 
+			}
+			if (PlayerController->OpenInvenAction) 
+			{ 
+				EnhancedInput->BindAction(PlayerController->OpenInvenAction, ETriggerEvent::Started, 
+											this, &ALSPlayerCharacter::StartInvenUI); 
+			}
+			if (PlayerController->OpenInvenAction) 
+			{ 
+				EnhancedInput->BindAction(PlayerController->OpenInvenAction, ETriggerEvent::Completed, 
+											this, &ALSPlayerCharacter::EndInvenUI); 
 			} 
 
 			// Weapon
@@ -226,6 +238,8 @@ void ALSPlayerCharacter::Move(const FInputActionValue& Value)
 
 void ALSPlayerCharacter::Look(const FInputActionValue& Value)
 {
+	if (bIsInvenUIActive)	return;
+	
 	FVector2D LookInput = Value.Get<FVector2D>();
 
 	AddControllerYawInput(LookInput.X);
@@ -337,73 +351,28 @@ void ALSPlayerCharacter::OpenShopUI()
 			PC->ShowShopWidget();	
 		}
 	}
-
 }
 
-void ALSPlayerCharacter::CheckForDoorHover()
+void ALSPlayerCharacter::StartInvenUI()
 {
-	/*
-	FVector CamLoc;
-	FRotator CamRot;
-	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(CamLoc, CamRot);
+	ALSPlayerController* PC=Cast<ALSPlayerController>(GetController());
+	if (!PC)	return;
 
-	const float TraceDistance = 1000.f; // 10미터 이내만 검사
-	FVector TraceEnd = CamLoc + CamRot.Vector() * TraceDistance;
+	PC->ShowInvenWidget();
 
-	FHitResult Hit;
-	FCollisionQueryParams Params;
-	Params.AddIgnoredActor(this);
-
-	bool bHit = GetWorld()->LineTraceSingleByChannel(
-		Hit, CamLoc, TraceEnd, ECC_Visibility, Params
-	);
-
-	
-	DrawDebugLine(
-		GetWorld(),
-		CamLoc,
-		TraceEnd,
-		bHit ? FColor::Green : FColor::Red,
-		false,       // 지속 여부
-		1.0f,        // 표시 시간 (초)
-		0,           // 깊이 우선순위
-		2.0f         // 두께
-	);
-	
-	
-	if (bHit && Hit.GetComponent() && Hit.GetComponent()->ComponentHasTag("Door"))
-	{
-		UE_LOG(LogTemp,Warning,TEXT("Door : Linetrace Hit"));
-		
-		FVector PlayerLoc = GetActorLocation();
-		//FVector HitLoc = Hit.ImpactPoint;
-		FVector DoorLoc = Hit.GetComponent()->GetComponentLocation();
-		
-		float Distance = FVector::Dist(PlayerLoc, DoorLoc);
-		if (Distance <= MaxInteractWithDoorDistance)
-		{
-			UE_LOG(LogTemp,Warning,TEXT("Door : In Interaction Distance"));
-			
-			// 추가: 캐릭터의 정면 방향과 문 방향이 일치하는지 검사
-			FVector ToDoor = (DoorLoc - PlayerLoc).GetSafeNormal();
-			FVector Forward = GetActorForwardVector();
-
-			float Dot = FVector::DotProduct(Forward, ToDoor); // -1 ~ 1
-			// 1에 가까울수록 캐릭터가 정면으로 보고 있음 (예: 0.7 이상이면 정면)
-
-			ALSGameState* GS=Cast<ALSGameState>(GetWorld()->GetGameState());
-			if (!GS)	return;
-			
-			if (Dot > 0.5f)
-			{
-				UE_LOG(LogTemp,Warning,TEXT("Door : Right Direction"));
-				GS->SetDoorOverlapped(true);
-			}
-		}
-	}
-
-	*/
+	bIsInvenUIActive=true;
 }
+
+void ALSPlayerCharacter::EndInvenUI()
+{
+	ALSPlayerController* PC=Cast<ALSPlayerController>(GetController());
+	if (!PC)	return;
+
+	PC->HideInvenWidget();
+
+	bIsInvenUIActive=false;
+}
+
 // Weapon 
 void ALSPlayerCharacter :: EquipPistol(const FInputActionValue& Value) 
 {

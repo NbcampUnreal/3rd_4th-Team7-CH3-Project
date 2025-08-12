@@ -30,7 +30,7 @@ void ULSShopWidget::NativeOnInitialized()
 		NotEnoughMoneyText->SetVisibility(ESlateVisibility::Hidden);
 	}
 
-	DurationDisappear=1.0f;
+	bIsFocusable = true;
 }
 
 void ULSShopWidget::NativeConstruct()
@@ -113,6 +113,8 @@ FReply ULSShopWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEve
 ULSShopWidget::ULSShopWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	ShopItemTable=nullptr;
+	DurationDisappear=1.0f;
 	bIsFocusable = true;
 }
 

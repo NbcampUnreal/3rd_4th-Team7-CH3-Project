@@ -16,17 +16,17 @@ struct FLSShopItemRow : public FTableRowBase
 	
 public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	FName Name;
+	FName Name=TEXT("None");
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	int32 Price;
+	int32 Price=0;
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	FName ShopCategory;
+	FName ShopCategory=("None");
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UTexture2D* Icon;
+	UTexture2D* Icon=nullptr;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	int32 Number;
+	int32 Number=0;
 };
