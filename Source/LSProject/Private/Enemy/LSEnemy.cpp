@@ -7,6 +7,7 @@
 #include "Game/LSPlayerState.h"
 #include "Components/SphereComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Game/LSGameState.h"
 
 ALSEnemy::ALSEnemy()
 {
@@ -69,6 +70,12 @@ void ALSEnemy::Death()
 	if (GameState)
 	{
 		GameState->SetCoin(EnemyCoin);
+	}
+
+	
+	if (ALSGameState* GS = GetWorld() ? GetWorld()->GetGameState<ALSGameState>() : nullptr)
+	{
+		GS->OnEnemyKilled();
 	}
 	Destroy();
 }
