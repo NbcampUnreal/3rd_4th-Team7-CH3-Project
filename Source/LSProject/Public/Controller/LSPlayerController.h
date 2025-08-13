@@ -77,6 +77,13 @@ public:
 	void GameQuit(); 
 
 protected: 
-	virtual void BeginPlay() override; 
+	virtual void BeginPlay() override;
+
+private:
+	//시작맵에서 카메라 고정도하고 메뉴도 UI온리로 표시할거
+	void ShowMainMenuWidget();
+	void LockToStartMapCamera();
+	
+	void SetupMainMapPlay(); //메인맵표시 허드랑 입력까지 GameOnly로
 
 };  
