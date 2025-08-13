@@ -55,22 +55,6 @@ void ALSPlayerController::BeginPlay()
 			}
 		}
 	}
-
-	
-	if (IsLocalController() && MainMenuWidgetClass)
-	{
-		MainMenuWidget = CreateWidget<UUserWidget>( this, MainMenuWidgetClass);
-		if (MainMenuWidget)
-		{
-			MainMenuWidget->AddToViewport();
-
-			FInputModeUIOnly InputMode;
-			InputMode.SetWidgetToFocus(MainMenuWidget->TakeWidget());
-			SetInputMode(InputMode);
-			bShowMouseCursor = true;
-		}
-	}
-
 }
 
 void ALSPlayerController::ShowShopWidget()
