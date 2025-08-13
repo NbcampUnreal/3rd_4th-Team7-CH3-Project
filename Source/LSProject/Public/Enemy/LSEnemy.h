@@ -22,7 +22,7 @@ class LSPROJECT_API ALSEnemy : public ALSCharacterBase
 
 public:
 	ALSEnemy();
-	UFUNCTION(BlueprintCallable)
+	
 	virtual void Attack() override;
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,

@@ -19,19 +19,6 @@ void ALSZombieAIController::BeginPlay()
 	Super::BeginPlay();
 }
 
-void ALSZombieAIController::StartBehaviorTree()
-{
-	if (BehaviorTreeAsset)
-	{
-		RunBehaviorTree(BehaviorTreeAsset);
-		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] BehaviorTreeAsset is start"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] BehaviorTreeAsset NOT START"));
-	}
-}
-
 void ALSZombieAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
@@ -45,7 +32,6 @@ void ALSZombieAIController::OnPossess(APawn* InPawn)
 		BlackboardComp->SetValueAsBool(TEXT("IsCanGoToPlayer"), false);
 		BlackboardComp->SetValueAsVector(TEXT("ClosestFenceLocation"), FVector(0.0f, 0.0f, 0.0f));
 		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Blackboard initialized successfully"));
-		StartBehaviorTree();
 	}
 	if (AIPerception)
 	{

@@ -21,8 +21,6 @@ public:
 		return BlackboardComp;
 	}
 
-	void StartBehaviorTree();
-	
 protected:
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void BeginPlay() override;
@@ -37,6 +35,8 @@ protected:
 	UAIPerceptionComponent* AIPerception;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
 	UBlackboardComponent* BlackboardComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
+	UBlackboardComponent* BossBlackboardComp;
 	
 	
 };

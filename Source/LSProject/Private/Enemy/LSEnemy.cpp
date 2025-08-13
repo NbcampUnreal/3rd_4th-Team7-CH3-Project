@@ -35,7 +35,6 @@ void ALSEnemy::Attack()
 	}
 
 	UAnimInstance* Anim = GetMesh()->GetAnimInstance();
-
 	if (Anim && HitMontage)
 	{
 		Anim->StopAllMontages(0.5f);

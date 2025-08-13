@@ -4,6 +4,8 @@
 #include "GameFramework/Actor.h"
 #include "LSTestFence.generated.h"
 
+class UBoxComponent;
+
 UCLASS()
 class LSPROJECT_API ALSTestFence : public AActor
 {
@@ -19,7 +21,30 @@ protected:
 	USceneComponent* Scene;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="StaticMeshComp")
 	UStaticMeshComponent* StaticMesh;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="BoxComp")
+	UBoxComponent* BoxCollision;
+
+	UFUNCTION()
+	virtual void OnFenceOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComponent,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult);
+
+	UFUNCTION()
+	virtual void OnFenceEndOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComponent,
+		int32 OtherBodyIndex);
+
+	UPROPERTY()
+	AActor* Player=nullptr;
 	
 private:
+
 	float Health;
 };
+
