@@ -109,7 +109,6 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	TArray<UAnimMontage*> EquipMontageCollection;
 
-	bool bIsInvenUIActive;
 public:
 	// Weapon 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon") 

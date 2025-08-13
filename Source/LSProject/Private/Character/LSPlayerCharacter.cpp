@@ -37,7 +37,6 @@ ALSPlayerCharacter::ALSPlayerCharacter()
 
 	ShopComp = CreateDefaultSubobject<ULSShopComp>(TEXT("ShopComponent"));
 	InvenComp = CreateDefaultSubobject<ULSInventoryComp>(TEXT("InventoryComponent"));
-	bIsInvenUIActive=false;
 	CharacterStateComp = CreateDefaultSubobject<ULSCharacterStateComp>(TEXT("CharacterStateComponent"));
 	
 	// Weapon 
@@ -238,8 +237,6 @@ void ALSPlayerCharacter::Move(const FInputActionValue& Value)
 
 void ALSPlayerCharacter::Look(const FInputActionValue& Value)
 {
-	if (bIsInvenUIActive)	return;
-	
 	FVector2D LookInput = Value.Get<FVector2D>();
 
 	AddControllerYawInput(LookInput.X);
@@ -359,8 +356,6 @@ void ALSPlayerCharacter::StartInvenUI()
 	if (!PC)	return;
 
 	PC->ShowInvenWidget();
-
-	bIsInvenUIActive=true;
 }
 
 void ALSPlayerCharacter::EndInvenUI()
@@ -369,8 +364,6 @@ void ALSPlayerCharacter::EndInvenUI()
 	if (!PC)	return;
 
 	PC->HideInvenWidget();
-
-	bIsInvenUIActive=false;
 }
 
 // Weapon 
