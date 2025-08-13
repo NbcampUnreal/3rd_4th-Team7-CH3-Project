@@ -65,8 +65,11 @@ void ALSGameState::UpdateHUD()
 		CoinTextBlock = Cast<UTextBlock>(HUD->GetWidgetFromName(TEXT("CoinText")));
 	if (!KillTextBlock)
 		KillTextBlock = Cast<UTextBlock>(HUD->GetWidgetFromName(TEXT("KillText")));
-	if (!DayTextBlock || !TimeTextBlock) return; 
-
+	if (!ShopPressTextBlock)
+		ShopPressTextBlock = Cast<UTextBlock>(HUD->GetWidgetFromName(TEXT("ShopPressText")));
+	if (!DayTextBlock || !TimeTextBlock || ! ShopPressTextBlock) return;
+	
+	//데이 텍스트 업데이트
 	const int32 Day = DayNightCtrl->GetCurrentDay();
 	DayTextBlock->SetText(FText::FromString(FString::Printf(TEXT("Day %d"), Day)));
 
@@ -215,4 +218,13 @@ void ALSGameState::OnEnemyKilled()
 		}
 	}
 	UpdateHUD();
+	
+	if (bIsDay && bIsCharacterOverlappedWithDoor)
+	{
+		ShopPressTextBlock->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		ShopPressTextBlock->SetVisibility(ESlateVisibility::Hidden);	
+	}
 }

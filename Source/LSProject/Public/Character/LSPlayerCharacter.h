@@ -86,7 +86,11 @@ protected:
 	void Equip();
 	UFUNCTION()
 	void OpenShopUI();
-
+	UFUNCTION()
+	void StartInvenUI();
+	UFUNCTION()
+	void EndInvenUI();
+	
 private:
 	ECurrentWeapon CurrentWeapon;
 	
@@ -104,9 +108,6 @@ private:
 	TArray<UAnimMontage*> ReloadMontageCollection;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	TArray<UAnimMontage*> EquipMontageCollection;
-	
-	void CheckForDoorHover();
-
 
 public:
 	// Weapon 

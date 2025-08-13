@@ -20,12 +20,14 @@ protected:
 	virtual void NativeConstruct() override;
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Store")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inven")
 	TSubclassOf<ULSInvenSlot> InvenSlotClass;
 
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UPanelWidget> InvenContainer;
-
+	
+	UPROPERTY(EditDefaultsOnly, Category="Inven")
+	UDataTable* InventoryTable;
 private:
 	void LayoutInUI();
 };

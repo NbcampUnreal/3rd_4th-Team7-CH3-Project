@@ -8,7 +8,8 @@
 
 class UInputMappingContext; 
 class UInputAction; 
-class ULSShopWidget; 
+class ULSShopWidget;
+class ULSInventoryWidget;
 
 class UUserWidget; 
 class UWBP_MainMenu; 
@@ -41,13 +42,21 @@ public:
 	UInputAction* ReloadAction;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input") 
 	UInputAction* OpenShopAction;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input") 
+	UInputAction* OpenInvenAction;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI") 
 	TSubclassOf<ULSShopWidget> ShopWidgetClass; 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI") 
 	TObjectPtr<ULSShopWidget> ShopWidgetInstance; 
 	void ShowShopWidget();
 	void HideShopWidget();
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI") 
+	TSubclassOf<ULSInventoryWidget> InvenWidgetClass; 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI") 
+	TObjectPtr<ULSInventoryWidget> InvenWidgetInstance; 
+	void ShowInvenWidget();
+	void HideInvenWidget();
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI") 
 	TSubclassOf<UUserWidget> MainMenuWidgetClass; 

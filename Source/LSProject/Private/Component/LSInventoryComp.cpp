@@ -20,6 +20,16 @@ void ULSInventoryComp::AddToInven(const FName& Input,int32 Amount)
 	ShowInven();
 }
 
+int32 ULSInventoryComp::CountItem(const FName& Input)
+{
+	if (MyItems.Contains(Input))
+	{
+		return MyItems[Input];
+	}
+
+	return 0;
+}
+
 void ULSInventoryComp::ShowInven()
 {
 	if (MyItems.Num() ==0)	return;

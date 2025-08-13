@@ -22,13 +22,24 @@ class LSPROJECT_API ULSInvenSlot : public UUserWidget
 {
 	GENERATED_BODY()
 
+protected:
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+
+	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
+	
+	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 public:
 	UPROPERTY(meta=(BindWidget))
-	UTextBlock* Name;
+	UTextBlock* NameText;
 
 	UPROPERTY(meta=(BindWidget))
-	int32 Count;
+	UTextBlock* CountText;
 
 	UPROPERTY(meta=(BindWidget))
-	UImage* Image;
+	UImage* IconImage;
+
+	FORCEINLINE void SetType(FName Category){Type=Category;}
+	
+private:
+	FName Type;
 };

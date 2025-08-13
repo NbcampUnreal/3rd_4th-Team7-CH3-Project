@@ -21,7 +21,7 @@ public:
 	void BuyItem(const FName& ItemName);
 	void SellItem();
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
 	UDataTable* ShopItemData;
 
 	FOnShopNotEnoughMoney OnShopNotEnoughMoney;
@@ -30,5 +30,6 @@ protected:
 
 private:
 	//추후 플레이어 클래스로 이동
+	UPROPERTY()
 	ULSInventoryComp* Inventory;
 };
