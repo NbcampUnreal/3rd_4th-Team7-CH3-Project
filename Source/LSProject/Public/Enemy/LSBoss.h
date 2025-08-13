@@ -10,9 +10,10 @@ class LSPROJECT_API ALSBoss : public ALSEnemy
 	GENERATED_BODY()
 public:
 	ALSBoss();
-	virtual void Attack() override;
 
 protected:
+	virtual void Attack() override;
+	
 	virtual void BeginPlay() override;
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override; 
@@ -24,6 +25,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Phase, meta = (AllowPrivateAccess = "true"))
 	int32 BossPhase;
+	
 	bool IsBeatAble;
 	
 	UPROPERTY(EditAnywhere)

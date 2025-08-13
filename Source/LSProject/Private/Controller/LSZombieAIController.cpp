@@ -3,7 +3,6 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Perception/AIPerceptionComponent.h"
-//#include "BehaviorTree/BehaviorTreeComponent.h"
 
 ALSZombieAIController::ALSZombieAIController()
 {
@@ -20,29 +19,10 @@ void ALSZombieAIController::BeginPlay()
 	Super::BeginPlay();
 }
 
-//EnemyTodo : ForceInline
-UBlackboardComponent* ALSZombieAIController::GetBlackBoardComp() const
-{
-	return BlackboardComp;
-}
-
-void ALSZombieAIController::StartBehaviorTree()
-{
-	if (BehaviorTreeAsset)
-	{
-		RunBehaviorTree(BehaviorTreeAsset);
-		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] BehaviorTreeAsset is start"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] BehaviorTreeAsset NOT START"));
-	}
-}
-
 void ALSZombieAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-	UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog]Pawn is 컨트롤러소유함")) 
+	UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog]Pawn is 컨트롤러소유함"))
 	if (BehaviorTreeAsset)
 	{
 		RunBehaviorTree(BehaviorTreeAsset);
@@ -52,7 +32,6 @@ void ALSZombieAIController::OnPossess(APawn* InPawn)
 		BlackboardComp->SetValueAsBool(TEXT("IsCanGoToPlayer"), false);
 		BlackboardComp->SetValueAsVector(TEXT("ClosestFenceLocation"), FVector(0.0f, 0.0f, 0.0f));
 		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Blackboard initialized successfully"));
-		StartBehaviorTree();
 	}
 	if (AIPerception)
 	{
@@ -60,7 +39,7 @@ void ALSZombieAIController::OnPossess(APawn* InPawn)
 	}
 }
 
-//EnemyTodo : 
+//EnemyTodo : 일단 무시
 void ALSZombieAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
 	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);

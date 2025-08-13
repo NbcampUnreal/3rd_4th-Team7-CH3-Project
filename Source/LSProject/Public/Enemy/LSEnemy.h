@@ -22,7 +22,7 @@ class LSPROJECT_API ALSEnemy : public ALSCharacterBase
 
 public:
 	ALSEnemy();
-	UFUNCTION(BlueprintCallable)
+	
 	virtual void Attack() override;
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
@@ -31,15 +31,16 @@ public:
 	virtual void Death() override;
 
 	void AddAbility(float AddHelth, float AddDamage);
+	void HitAttack();
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
-	void HitAttack();
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Overlap)
 	USphereComponent* SphereComponent;
+
+	FTimerHandle AttackTimerHandle;
 
 	UFUNCTION()
 	virtual void OnEnemyOverlap(
@@ -69,6 +70,10 @@ protected:
 	float AttackDamage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Attack)
 	float StartVectorZ;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Attack)
+	float StartVectorY;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Attack)
+	float StartVectorX;
 
 	UPROPERTY(EditAnywhere, Blueprintable, Category="Sound")
 	USoundBase* FenceSound;
@@ -77,4 +82,11 @@ protected:
 	UAnimMontage* HitMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Montage")
 	UAnimMontage* DeathMontage;
+
+	bool IsRotation=false;
+	void SetDeltaRotation(float DeltaSeconds);
+
+	UPROPERTY()
+	AActor* Player=nullptr;
+	
 };

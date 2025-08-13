@@ -7,28 +7,16 @@
 ULSBTTask_RotationToTarget::ULSBTTask_RotationToTarget()
 {
 	NodeName="Rotation To Target";
-	bNotifyTick=true;
 }
 
 EBTNodeResult::Type ULSBTTask_RotationToTarget::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	
-	// AAIController* AIController=OwnerComp.GetAIOwner();
-	// if (!AIController) return EBTNodeResult::Failed;
-	//
-	// APawn* AIPawn = AIController->GetPawn();
-	// if (!AIPawn) return EBTNodeResult::Failed;
-	//
-	// UBlackboardComponent* Blackboard = AIController->GetBlackboardComponent();
-	// if (!Blackboard) return EBTNodeResult::Failed;
-	//
-	// //EnemyTodo : 부드럽게 Rotation
-	// FVector TargetLocation = Blackboard->GetValueAsVector(TEXT("MoveToLocation"));
-	// FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(AIPawn->GetActorLocation(), TargetLocation);
-	//
-	// FRotator Rotation= FMath::RInterpTo(AIPawn->GetActorRotation(), LookAtRotation, GetWorld()->GetTimeSeconds(), 0.5f);
-	//
-	// AIPawn->SetActorRotation(FRotator(0.0f, Rotation.Yaw, 0.0f));
+	Controller = OwnerComp.GetAIOwner();
+	if (!Controller) return EBTNodeResult::Failed;
+	AIPawn = Controller->GetPawn();
+	if (!AIPawn) return EBTNodeResult::Failed;
+	Blackboard = Controller->GetBlackboardComponent();
+	if (!Blackboard) return EBTNodeResult::Failed;
 
 	return EBTNodeResult::Succeeded;
 }
@@ -37,21 +25,19 @@ void ULSBTTask_RotationToTarget::TickTask(UBehaviorTreeComponent& OwnerComp, uin
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
-	AAIController* Controller = OwnerComp.GetAIOwner();
-	if (!Controller) return ;
-	APawn* AIPawn = Controller->GetPawn();
-	if (!AIPawn) return ;
-	UBlackboardComponent* Blackboard = Controller->GetBlackboardComponent();
-	if (!Blackboard) return ;
+	if (!Controller || !AIPawn || !Blackboard) return;
+
 	FVector TargetLocation = Blackboard->GetValueAsVector(TEXT("MoveToLocation"));
-	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(AIPawn->GetActorLocation(), TargetLocation);
-	FRotator Rotation= FMath::RInterpTo(AIPawn->GetActorRotation(), LookAtRotation, GetWorld()->GetTimeSeconds(), 0.5f);
+	FRotator GoToRotation = UKismetMathLibrary::FindLookAtRotation(AIPawn->GetActorLocation(), TargetLocation);
 
-	AIPawn->SetActorRotation(FRotator(0.0f, Rotation.Yaw, 0.0f));
+	FRotator ActorRotation = AIPawn->GetActorRotation();
 
-	if (FMath::IsNearlyEqual(LookAtRotation.Yaw , AIPawn->GetActorRotation().Yaw))
+	FRotator Rotation= FMath::RInterpTo(ActorRotation, GoToRotation, DeltaSeconds, 5.f);
+	
+	AIPawn->SetActorRotation(FRotator(ActorRotation.Pitch, Rotation.Yaw, ActorRotation.Roll));
+
+	if	(FMath::FindDeltaAngleDegrees(GoToRotation.Yaw,AIPawn->GetActorRotation().Yaw)<= 1.f)
 	{
-	bNotifyTaskFinished = true;
-		
+		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}
 }
