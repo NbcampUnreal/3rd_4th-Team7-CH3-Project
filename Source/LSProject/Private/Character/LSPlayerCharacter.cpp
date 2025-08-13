@@ -12,6 +12,7 @@
 #include "Weapon/LSPlayerWeaponSystemComp.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/ProgressBar.h"
+#include "Weapon/LSWeaponBase.h"
 
 
 ALSPlayerCharacter::ALSPlayerCharacter()
@@ -27,7 +28,7 @@ ALSPlayerCharacter::ALSPlayerCharacter()
 	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
 	Camera->bUsePawnControlRotation = false;
 
-	WalkSpeed = 600.0f;
+	WalkSpeed = 300.0f;
 	MaxHealth = 500.0f;
 	CurrentHealth = MaxHealth;
 	CurrentWeapon = ECurrentWeapon::None;
@@ -37,8 +38,6 @@ ALSPlayerCharacter::ALSPlayerCharacter()
 	ShopComp = CreateDefaultSubobject<ULSShopComp>(TEXT("ShopComponent"));
 	InvenComp = CreateDefaultSubobject<ULSInventoryComp>(TEXT("InventoryComponent"));
 	CharacterStateComp = CreateDefaultSubobject<ULSCharacterStateComp>(TEXT("CharacterStateComponent"));
-	
-	// Weapon 
 	WeaponSystemComp = CreateDefaultSubobject<ULSPlayerWeaponSystemComp>(TEXT("WeaponSystemComponent")); 
 }
 
@@ -159,32 +158,7 @@ void ALSPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 			{ 
 				EnhancedInput->BindAction(PlayerController->OpenShopAction, ETriggerEvent::Started, 
 											this, &ALSPlayerCharacter::OpenShopUI); 
-			} 
-
-			// Weapon
-			if (PlayerController->EquipPistol) 
-			{
-				UE_LOG(LogTemp, Warning, TEXT("피스톨 바인딩"));
-				EnhancedInput->BindAction(PlayerController->EquipPistol, ETriggerEvent::Triggered, 
-											this, &ALSPlayerCharacter::EquipPistol); 
-			} 
-			if (PlayerController->EquipShotgun) 
-			{ 
-				EnhancedInput->BindAction(PlayerController->EquipShotgun, ETriggerEvent::Triggered, 
-											this, &ALSPlayerCharacter::EquipShotgun); 
-			} 
-			if (PlayerController->EquipRifle) 
-			{ 
-				EnhancedInput->BindAction(PlayerController->EquipRifle, ETriggerEvent::Triggered, 
-											this, &ALSPlayerCharacter::EquipRifle); 
 			}
-			if (PlayerController->FireWeapon) 
-			{
-				UE_LOG(LogTemp, Warning, TEXT("binding"));
-				EnhancedInput->BindAction(PlayerController->FireWeapon, ETriggerEvent::Triggered, 
-											this, &ALSPlayerCharacter::FireWeapon); 
-			} 
-	
 		} 
 	}
 }
@@ -258,7 +232,7 @@ void ALSPlayerCharacter::StartSprint(const FInputActionValue& Value)
 {
 	if (GetCharacterMovement())
 	{
-		GetCharacterMovement()->MaxWalkSpeed = WalkSpeed * 1.5f;
+		GetCharacterMovement()->MaxWalkSpeed = WalkSpeed * 2.0f;
 	}
 }
 
@@ -286,8 +260,8 @@ void ALSPlayerCharacter::Attack()
 		FireMontage = FireMontageCollection[Index];
 		PlayAnimMontage(FireMontage);
 		CharacterStateComp->SetState(ECharacterState::Fire);
-		UE_LOG(LogTemp, Warning, TEXT("Fire attempt - State: %s"),
-		       *UEnum::GetValueAsString(CharacterStateComp->GetCurrentState()));
+
+		WeaponSystemComp->CurrentWeapon->Fire();
 	}
 }
 
@@ -304,24 +278,23 @@ void ALSPlayerCharacter::Reload(const FInputActionValue& Value)
 		ReloadMontage = ReloadMontageCollection[Index];
 		PlayAnimMontage(ReloadMontage);
 		CharacterStateComp->SetState(ECharacterState::Reload);
-		UE_LOG(LogTemp, Warning, TEXT("Reload attempt - State: %s"),
-		       *UEnum::GetValueAsString(CharacterStateComp->GetCurrentState()));
 	}
 }
 
 void ALSPlayerCharacter::Equip()
 {
-	if (ReloadMontageCollection.IsEmpty()) return;
-	if (CharacterStateComp->CanEquip()) return;
+	if (EquipMontageCollection.IsEmpty()) return;
+	if (!CharacterStateComp->CanEquip()) return;
 
 	const int32 Index = static_cast<int32>(CurrentWeapon) - 1;
 	
-	if (ReloadMontageCollection.IsValidIndex(Index))
+	if (EquipMontageCollection.IsValidIndex(Index))
 	{
-		EquipMontage = ReloadMontageCollection[Index];
+		EquipMontage = EquipMontageCollection[Index];
 		PlayAnimMontage(EquipMontage);
 		CharacterStateComp->SetState(ECharacterState::Equip);
-		
+
+		WeaponSystemComp->EquipWeapon(Index);
 	}
 }
 
@@ -403,38 +376,6 @@ void ALSPlayerCharacter::CheckForDoorHover()
 	}
 
 	*/
-}
-// Weapon 
-void ALSPlayerCharacter :: EquipPistol(const FInputActionValue& Value) 
-{
-	UE_LOG(LogTemp, Warning, TEXT("Input 1 에 입장."));	
-	if (WeaponSystemComp) 
-	{ 
-		WeaponSystemComp->EquipPistol();
-		UE_LOG(LogTemp, Warning, TEXT("Input 1 & EquipPistol 눌러잇!"));
-	} 
-} 
-void ALSPlayerCharacter :: EquipShotgun(const FInputActionValue& Value) 
-{ 
-	if (WeaponSystemComp) 
-	{ 
-		WeaponSystemComp->EquipShotgun(); 
-	} 
-} 
-void ALSPlayerCharacter :: EquipRifle(const FInputActionValue& Value) 
-{ 
-	if (WeaponSystemComp) 
-	{ 
-		WeaponSystemComp->EquipRifle(); 
-	} 
-} 
-
-void ALSPlayerCharacter::FireWeapon(const FInputActionValue& Value)
-{
-	if (WeaponSystemComp)
-	{
-		WeaponSystemComp->FireWeapon();
-	}
 }
 
 void ALSPlayerCharacter::UpdateHealthBar(int32 Current, int32 Max)

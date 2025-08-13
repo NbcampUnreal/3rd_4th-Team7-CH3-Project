@@ -1,9 +1,11 @@
 #pragma once 
 
 #include "CoreMinimal.h" 
-#include "Weapon/LSWeaponBase.h" 
 #include "Components/ActorComponent.h" 
 #include "LSPlayerWeaponSystemComp.generated.h" 
+
+class ALSPlayerCharacter;
+class ALSWeaponBase;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) ) 
 class LSPROJECT_API ULSPlayerWeaponSystemComp : public UActorComponent 
@@ -13,32 +15,27 @@ class LSPROJECT_API ULSPlayerWeaponSystemComp : public UActorComponent
 public: 
 	ULSPlayerWeaponSystemComp();
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapons") 
-	TSubclassOf<ALSWeaponBase> PistolClass; 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapons") 
-	TSubclassOf<ALSWeaponBase> ShotgunClass; 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapons") 
-	TSubclassOf< ALSWeaponBase> RifleClass; 
-	UPROPERTY(EditAnywhere, Category="Weapons") 
-	TSubclassOf<ALSWeaponBase> WeaponToSpawn;
+protected:
+	virtual void BeginPlay() override;
 
-	UPROPERTY() 
-	ALSWeaponBase* CurrentWeapon; 
+private:
+	UPROPERTY()
+	TObjectPtr<ALSPlayerCharacter> OwnerCharacter;
+	
+public:
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	TArray<TSubclassOf<ALSWeaponBase>> WeaponClass;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
+	TObjectPtr<ALSWeaponBase> CurrentWeapon;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
+	bool IsArmedWeapon;
 	
 	UFUNCTION()
-	void EquipWeapon(int WeaponType);
-	UFUNCTION()
-	void EquipPistol();
-	UFUNCTION()
-	void EquipShotgun();
-	UFUNCTION()
-	void EquipRifle();
-	UFUNCTION()
-	void FireWeapon();
+	void EquipWeapon(int Index);
 
 	bool PerformLineTrace(float Damage, float FireRange, FHitResult& OutHit);
 
-protected:
-	virtual void BeginPlay() override;
+	
 }; 
  

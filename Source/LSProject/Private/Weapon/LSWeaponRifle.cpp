@@ -8,11 +8,11 @@ ALSWeaponRifle::ALSWeaponRifle()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	
-	static ConstructorHelpers::FObjectFinder<UStaticMesh>StaticMeshAsset(TEXT("/Game/Weapons/Rifle/Mesh/SM_Rifle.SM_Rifle"));
-	if (StaticMeshAsset.Succeeded())
-	{
-		StaticMesh->SetStaticMesh(StaticMeshAsset.Object);
-	}
+}
+
+void ALSWeaponRifle::Fire()
+{
+	Super::Fire();
 }
 
 

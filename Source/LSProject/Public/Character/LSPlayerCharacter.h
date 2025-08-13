@@ -10,9 +10,7 @@ struct FInputActionValue;
 class ULSShopComp;
 class ULSInventoryComp;
 class ULSCharacterStateComp;
-
 class ULSPlayerWeaponSystemComp;
-
 class UUserWidget;
 class UProgressBar;
 
@@ -52,11 +50,17 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="StateComp")
 	TObjectPtr<ULSCharacterStateComp> CharacterStateComp;
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon") 
+	TObjectPtr<ULSPlayerWeaponSystemComp> WeaponSystemComp;
+	
 	float GetCurrentHealth() const;
 	float GetMaxHealth() const;
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void UpdateHealthBar(int32 Current, int32 Max);
+
+	UFUNCTION(BlueprintCallable, Category = "State")
+	void Equip();
 	
 protected:
 	virtual void BeginPlay() override;
@@ -82,8 +86,7 @@ protected:
 	void StopSprint(const FInputActionValue& Value);
 	UFUNCTION()
 	void Reload(const FInputActionValue& Value);
-	UFUNCTION()
-	void Equip();
+	
 	UFUNCTION()
 	void OpenShopUI();
 
@@ -106,20 +109,8 @@ private:
 	TArray<UAnimMontage*> EquipMontageCollection;
 	
 	void CheckForDoorHover();
+	
 
-
-public:
-	// Weapon 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon") 
-	ULSPlayerWeaponSystemComp* WeaponSystemComp; 
-	UFUNCTION() 
-	void EquipPistol(const FInputActionValue& Value); 
-	UFUNCTION() 
-	void EquipShotgun(const FInputActionValue& Value); 
-	UFUNCTION() 
-	void EquipRifle(const FInputActionValue& Value);
-	UFUNCTION()
-	void FireWeapon(const FInputActionValue& Value);
 
 
 	UPROPERTY(EditAnywhere, Category="UI")

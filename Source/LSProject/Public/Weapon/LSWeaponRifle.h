@@ -17,4 +17,7 @@ class LSPROJECT_API ALSWeaponRifle : public ALSWeaponBase
 	
 public:
 	ALSWeaponRifle();
+
+protected:
+	virtual void Fire() override;
 };
