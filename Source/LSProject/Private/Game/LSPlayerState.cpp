@@ -8,3 +8,8 @@ ALSPlayerState::ALSPlayerState()
 	//추후 수정
 	Coin=1000;
 }
+
+void ALSPlayerState::AddZombieKill(int32 Delta)
+{
+	ZombieNum = FMath::Max(0, ZombieNum + Delta);
+}

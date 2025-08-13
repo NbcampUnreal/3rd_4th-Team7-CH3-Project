@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -8,7 +6,7 @@
 
 class ALSDayNightController;
 class UTextBlock;
-
+class ALSEnemySpawnVolume;
 
 UCLASS()
 class LSPROJECT_API ALSGameState : public AGameState
@@ -28,10 +26,12 @@ public:
 	bool bGetCanOpenShopUI();
 
 	virtual void BeginPlay() override;
-	
+    
 	UFUNCTION()
 	void UpdateHUD();
 
+	UFUNCTION()
+	void OnEnemyKilled();
 private:
 	bool bIsCharacterOverlappedWithDoor;
 	bool bIsDay;
@@ -43,5 +43,31 @@ private:
 
 	UPROPERTY() UTextBlock* DayTextBlock = nullptr;
 	UPROPERTY() UTextBlock* TimeTextBlock = nullptr;
+	UPROPERTY() UTextBlock* CoinTextBlock = nullptr;
+	UPROPERTY() UTextBlock* KillTextBlock = nullptr;
+
+	UPROPERTY()
+	TArray<TWeakObjectPtr<ALSEnemySpawnVolume>> SpawnVolumes;
+	
+	FTimerHandle SpawnTimerHandle;
+	
+	UPROPERTY(EditAnywhere, Category="Wave")
+	float SpawnInterval = 0.1f;
+
+	UPROPERTY(EditAnywhere, Category="Wave")
+	TArray<int32> DaySpawnBudget = {0, 14, 25, 35, 45, 1}; //총 120으로
+	
+	bool  bPrevIsDay = true;
+	int32 PrevDay = 1;
+	
+	bool  bWaveActive = false;
+	bool  bBossWave   = false;
+	int32 RemainingToSpawn = 0;
+	int32 AliveEnemies     = 0;
+	
+	void TryRegisterSpawnVolumes();
+	void StartNightWave(int32 Day);
+	void EndWave();
+	void SpawnTick();
 	
 };
