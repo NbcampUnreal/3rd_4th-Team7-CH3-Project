@@ -69,16 +69,6 @@ public:
 
 	UFUNCTION(BlueprintPure, Category="HUD")
 	UUserWidget* GetHUDWidget() const;
-
-	// Weapon
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input") 
-	UInputAction* EquipPistol; 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input") 
-	UInputAction* EquipShotgun; 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input") 
-	UInputAction* EquipRifle;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	UInputAction* FireWeapon;
 	
 	UFUNCTION(BlueprintCallable) 
 	void GameStart(); 

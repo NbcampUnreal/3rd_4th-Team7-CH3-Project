@@ -13,43 +13,38 @@
 ALSWeaponPistol::ALSWeaponPistol()
 {
 	PrimaryActorTick.bCanEverTick = false;
-	
-	static ConstructorHelpers::FObjectFinder<UStaticMesh>StaticMeshAsset(TEXT("/Game/Weapons/Pistol/Mesh/SM_Pistol.SM_Pistol"));
-	if (StaticMeshAsset.Succeeded())
-	{
-		StaticMesh->SetStaticMesh(StaticMeshAsset.Object);
-	}
-
 }
 
-void ALSWeaponPistol::OnFire()
+void ALSWeaponPistol::Fire()
 {
-	ULSPlayerWeaponSystemComp* WeaponComp = GetOwner() ? GetOwner()->FindComponentByClass<ULSPlayerWeaponSystemComp>() : nullptr;
-	if (!WeaponComp) return;
-
-	FHitResult Hit;
-	bool bHit = WeaponComp->PerformLineTrace(Damage, FireRange, Hit);
-
-	if (MuzzleEffect && StaticMesh)
-	{
-		UNiagaraFunctionLibrary::SpawnSystemAttached(
-			MuzzleEffect,
-			StaticMesh,
-			TEXT("Muzzle"),
-			FVector::ZeroVector,
-			FRotator::ZeroRotator,
-			EAttachLocation::SnapToTarget,
-			true
-		);
-	}
-
-	if (bHit && ImpactEffect)
-	{
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(
-			GetWorld(),
-			ImpactEffect,
-			Hit.ImpactPoint,
-			Hit.ImpactNormal.Rotation()
-		);
-	}
+	Super::Fire();
+	
+	// ULSPlayerWeaponSystemComp* WeaponComp = GetOwner() ? GetOwner()->FindComponentByClass<ULSPlayerWeaponSystemComp>() : nullptr;
+	// if (!WeaponComp) return;
+	//
+	// FHitResult Hit;
+	// bool bHit = WeaponComp->PerformLineTrace(Damage, FireRange, Hit);
+	//
+	// if (MuzzleEffect && StaticMesh)
+	// {
+	// 	UNiagaraFunctionLibrary::SpawnSystemAttached(
+	// 		MuzzleEffect,
+	// 		StaticMesh,
+	// 		TEXT("Muzzle"),
+	// 		FVector::ZeroVector,
+	// 		FRotator::ZeroRotator,
+	// 		EAttachLocation::SnapToTarget,
+	// 		true
+	// 	);
+	// }
+	//
+	// if (bHit && ImpactEffect)
+	// {
+	// 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+	// 		GetWorld(),
+	// 		ImpactEffect,
+	// 		Hit.ImpactPoint,
+	// 		Hit.ImpactNormal.Rotation()
+	// 	);
+	// }
 }
