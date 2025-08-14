@@ -111,7 +111,15 @@ void ALSGameState::UpdateHUD()
 			PrevDay    = Day;
 		}
 	}
-	
+
+	if (bGetCanOpenShopUI())
+	{
+		ShopPressTextBlock->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		ShopPressTextBlock->SetVisibility((ESlateVisibility::Hidden));
+	}
 }
 void ALSGameState::TryRegisterSpawnVolumes()
 {
@@ -218,13 +226,4 @@ void ALSGameState::OnEnemyKilled()
 		}
 	}
 	UpdateHUD();
-	
-	if (bIsDay && bIsCharacterOverlappedWithDoor)
-	{
-		ShopPressTextBlock->SetVisibility(ESlateVisibility::Visible);
-	}
-	else
-	{
-		ShopPressTextBlock->SetVisibility(ESlateVisibility::Hidden);	
-	}
 }
