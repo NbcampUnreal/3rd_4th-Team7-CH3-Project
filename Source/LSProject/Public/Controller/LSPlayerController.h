@@ -44,6 +44,8 @@ public:
 	UInputAction* OpenShopAction;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input") 
 	UInputAction* OpenInvenAction;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input") 
+	UInputAction* RestoreFenceAction;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI") 
 	TSubclassOf<ULSShopWidget> ShopWidgetClass; 

@@ -81,8 +81,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Montage")
 	UAnimMontage* HitMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Montage")
+	UAnimMontage* TakeDamageMontage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Montage")
 	UAnimMontage* DeathMontage;
 
+	UPROPERTY()
+	UAnimInstance* CachedAnim;
+	
 	bool IsRotation=false;
 	void SetDeltaRotation(float DeltaSeconds);
 

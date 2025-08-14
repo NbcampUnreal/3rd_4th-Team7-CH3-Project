@@ -93,6 +93,9 @@ protected:
 	void StartInvenUI();
 	UFUNCTION()
 	void EndInvenUI();
+
+	UFUNCTION()
+	void RestoreFence();
 	
 private:
 	ECurrentWeapon CurrentWeapon;

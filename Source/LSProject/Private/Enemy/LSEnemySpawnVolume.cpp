@@ -10,13 +10,13 @@ ALSEnemySpawnVolume::ALSEnemySpawnVolume()
 	RootComponent=SceneComponent;
 	BoxComponent=CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
 	BoxComponent->SetupAttachment(RootComponent);
-	TempWave = 3;
+	TempWave = 1;
 }
 
 void ALSEnemySpawnVolume::BeginPlay()
 {
 	Super::BeginPlay();
-	//SpawnEnemy(TempWave);
+	SpawnEnemy(TempWave);
 }
 
 void ALSEnemySpawnVolume::SpawnEnemy(int32 NowWave)

@@ -19,6 +19,7 @@ ALSPlayerController::ALSPlayerController() :
 	ReloadAction(nullptr),
 	OpenShopAction(nullptr),
 	OpenInvenAction(nullptr),
+	RestoreFenceAction(nullptr),
 	ShopWidgetClass(nullptr),
 	ShopWidgetInstance(nullptr),
 	InvenWidgetClass(nullptr),
