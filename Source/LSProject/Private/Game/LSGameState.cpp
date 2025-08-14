@@ -5,10 +5,12 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/TextBlock.h"
 #include "EngineUtils.h"                
+#include "InterchangeResult.h"
 #include "Enemy/LSEnemySpawnVolume.h"
 #include "Enemy/LSBoss.h"
 #include "Components/BoxComponent.h"
 #include "Game/LSPlayerState.h"
+#include "Character/LSPlayerCharacter.h"
 
 
 
@@ -50,7 +52,19 @@ bool ALSGameState::bGetCanOpenShopUI()
 void ALSGameState::UpdateHUD()
 {
 	if (!DayNightCtrl) return;
+	if (HasAuthority())
+	{
+		const bool bIsDayNow = DayNightCtrl->IsDayPhase();
+		const int32 DayNow = DayNightCtrl->GetCurrentDay();
+		if (bIsDayNow != bPrevIsDay || DayNow != PrevDay)
+		{
+			if (!bIsDayNow)   StartNightWave(DayNow); // 밤 시작
+			else              EndWave();           // 낮 시작(스폰 정지)
 
+			bPrevIsDay = bIsDayNow;
+			PrevDay    = DayNow;
+		}
+	}
 	auto* PC = Cast<ALSPlayerController>(GetWorld()->GetFirstPlayerController());
 	if (!PC) return;
 
@@ -96,22 +110,8 @@ void ALSGameState::UpdateHUD()
 		if (ALSPlayerState* PS = PC->GetPlayerState<ALSPlayerState>())
 			Kills = PS->GetZombieNum();
 
-		KillTextBlock->SetText(FText::FromString(FString::Printf(TEXT("Kills : %d / 120"), Kills)));
+		KillTextBlock->SetText(FText::FromString(FString::Printf(TEXT("Kills : %d / 100"), Kills)));
 	}
-	if (HasAuthority())
-	{
-		const bool bIsDayNow = DayNightCtrl->IsDayPhase();
-		
-		if (bIsDayNow != bPrevIsDay || Day != PrevDay)
-		{
-			if (!bIsDayNow)   StartNightWave(Day); // 밤 시작
-			else              EndWave();           // 낮 시작(스폰 정지)
-
-			bPrevIsDay = bIsDayNow;
-			PrevDay    = Day;
-		}
-	}
-	
 }
 void ALSGameState::TryRegisterSpawnVolumes()
 {
@@ -176,6 +176,7 @@ void ALSGameState::EndWave()
 	bWaveActive = false;
 	bBossWave   = false;
 	RemainingToSpawn = 0;
+	DespawnRemainZombie();
 }
 
 void ALSGameState::SpawnTick()
@@ -215,6 +216,21 @@ void ALSGameState::OnEnemyKilled()
 		if (ALSPlayerState* PS = Cast<ALSPlayerState>(PC->PlayerState))
 		{
 			PS->AddZombieKill();
+			const int32 Kills = PS->GetZombieNum();
+			if (Kills >= 100)
+			{
+				if (ALSPlayerCharacter* PlayerCharacter = Cast<ALSPlayerCharacter>(PC->GetPawn()))
+				{
+					const bool bAlive = (PlayerCharacter->GetCurrentHealth() > 0.f);
+					if (bAlive)
+					{
+						if (ALSPlayerController* LSPC = Cast<ALSPlayerController>(PC))
+						{
+							LSPC->ShowGameClearWidget();
+						}
+					}
+				}
+			}
 		}
 	}
 	UpdateHUD();
@@ -227,4 +243,26 @@ void ALSGameState::OnEnemyKilled()
 	{
 		ShopPressTextBlock->SetVisibility(ESlateVisibility::Hidden);	
 	}
+}
+void ALSGameState::DespawnRemainZombie()
+{
+	if (!HasAuthority()) return;
+
+	int32 Removed = 0;
+	for (TActorIterator<ALSEnemy> It(GetWorld()); It; ++It)
+	{
+		ALSEnemy* Enemy = *It;
+		if (!Enemy) continue;
+		if (Enemy->IsA(ALSBoss::StaticClass()))
+		{
+			continue;
+		}
+		Enemy->GetWorldTimerManager().ClearAllTimersForObject(Enemy);
+
+		Enemy->Destroy();
+		++Removed;
+	}
+
+	AliveEnemies     = 0;
+	RemainingToSpawn = 0;
 }

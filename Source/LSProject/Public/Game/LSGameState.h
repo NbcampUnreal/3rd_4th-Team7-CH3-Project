@@ -54,7 +54,7 @@ private:
 	float SpawnInterval = 0.1f;
 
 	UPROPERTY(EditAnywhere, Category="Wave")
-	TArray<int32> DaySpawnBudget = {0, 14, 25, 35, 45, 1}; //총 120으로
+	TArray<int32> DaySpawnBudget = {0, 9, 20, 30, 40, 1}; //총 100으로
 	
 	bool  bPrevIsDay = true;
 	int32 PrevDay = 1;
@@ -68,5 +68,6 @@ private:
 	void StartNightWave(int32 Day);
 	void EndWave();
 	void SpawnTick();
+	void DespawnRemainZombie();
 	
 };
