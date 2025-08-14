@@ -112,19 +112,6 @@ void ALSGameState::UpdateHUD()
 
 		KillTextBlock->SetText(FText::FromString(FString::Printf(TEXT("Kills : %d / 100"), Kills)));
 	}
-	if (HasAuthority())
-	{
-		const bool bIsDayNow = DayNightCtrl->IsDayPhase();
-		
-		if (bIsDayNow != bPrevIsDay || Day != PrevDay)
-		{
-			if (!bIsDayNow)   StartNightWave(Day); // 밤 시작
-			else              EndWave();           // 낮 시작(스폰 정지)
-
-			bPrevIsDay = bIsDayNow;
-			PrevDay    = Day;
-		}
-	}
 
 	if (bGetCanOpenShopUI())
 	{
