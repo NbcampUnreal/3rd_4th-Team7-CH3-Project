@@ -22,7 +22,7 @@ protected:
 public:
 	void AddToInven(const FName& Input,int32 Amount);
 	int32 CountItem(const FName& Input);
-	void equip(const FName& Input);
+	void Equip(const FName& Input);
 	void Unequip();
 	void ChangeWeaponSlot(const FName& NewWeapon);
 	FORCEINLINE FName GetMyWeapon() const {return MyWeaponName;}
@@ -34,5 +34,5 @@ private:
 	FName MyWeaponName;
 	
 	ECurrentWeapon ChangeWeaponNameToEnum(const FName& Input);
-	void ChangeWeapon();
+	void EquipWeapon();
 };

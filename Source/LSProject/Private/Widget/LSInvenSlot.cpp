@@ -27,8 +27,6 @@ void ULSInvenSlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPoin
 	
 	ULSInvenRowObject* RowObject=NewObject<ULSInvenRowObject>();
 	RowObject->NameText=NameText;
-	RowObject->CountText=CountText;
-	RowObject->IconImage=IconImage;
 	RowObject->Type=Type;
 
 	UDragDropOperation* Op=NewObject<UDragDropOperation>();
@@ -64,31 +62,35 @@ bool ULSInvenSlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEven
 	if (!InvenComp)	return false;
 
 	UE_LOG(LogTemp, Warning, TEXT("Slot name: %s"), *SlotName.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("To Type: %s"), *Type.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("from Type: %s"), *RowObj->Type.ToString());
 	
+	//인벤슬롯->무기슬롯
 	if (SlotName=="Weapon" && RowObj->Type=="Weapon")
 	{
-		NameText=RowObj->NameText;
-		CountText=RowObj->CountText;
-		IconImage=RowObj->IconImage;
-		Type=RowObj->Type;
-
 		UE_LOG(LogTemp, Warning, TEXT("My Weapon Type: %s"), *Type.ToString());
 		
-		FText TextName=NameText->GetText();
+		FText TextName=RowObj->NameText->GetText();
 		FString TextAsString=TextName.ToString();
 		FName TextAsName(*TextAsString);
 		
-		//같은 무기일 경우 예외처리
+		//예외:같은 무기일 경우
 		if (InvenComp->GetMyWeapon()==TextAsName)	return false;
 
-		//인벤토리로 복구
+		//무기->무기
 		if (Type=="Weapon")
 		{
-			InvenComp->Unequip();
+			InvenComp->ChangeWeaponSlot(TextAsName);
 		}
-		
-		//원래 있던 슬롯에서 -1
-		InvenComp->equip(TextAsName);
+		//무기->빈
+		else
+		{
+			InvenComp->Equip(TextAsName);
+		}
+
+		//정보 바뀜
+		NameText=RowObj->NameText;
+		Type=RowObj->Type;
 		
 		//Update Layout
 		if (!PC->GetInvenWidget())	return false;
@@ -96,23 +98,20 @@ bool ULSInvenSlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEven
 		
 		return true;
 	}
-	
+
+	//->인벤슬롯
 	if (SlotName=="Inventory")
 	{
-		UE_LOG(LogTemp, Warning, TEXT("To Type: %s"), *Type.ToString());
-		UE_LOG(LogTemp, Warning, TEXT("from Type: %s"), *RowObj->Type.ToString());
-		
+		//무기->무기
 		if (Type=="Weapon" && RowObj->Type=="Weapon")
 		{
-			NameText=RowObj->NameText;
-			CountText=RowObj->CountText;
-			IconImage=RowObj->IconImage;
-			Type=RowObj->Type;
-
 			FText TextName=NameText->GetText();
 			FString TextAsString=TextName.ToString();
 			FName TextAsName(*TextAsString);
 			InvenComp->ChangeWeaponSlot(TextAsName);
+
+			NameText=RowObj->NameText;
+			Type=RowObj->Type;
 			
 			if (!PC->GetInvenWidget())	return false;
 			PC->GetInvenWidget()->OnUpdateInvenUI.Broadcast();
@@ -121,11 +120,10 @@ bool ULSInvenSlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEven
 		}
 	}
 
+	//->빈 슬롯
 	if (SlotName==FName(TEXT("Empty")))
 	{
 		NameText=RowObj->NameText;
-		CountText=RowObj->CountText;
-		IconImage=RowObj->IconImage;
 		Type=RowObj->Type;
 		
 		InvenComp->Unequip();

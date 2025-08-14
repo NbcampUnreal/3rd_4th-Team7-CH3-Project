@@ -1,6 +1,7 @@
 
 #include "Component/LSInventoryComp.h"
 #include "Character/LSPlayerCharacter.h"
+#include "Weapon/LSPlayerWeaponSystemComp.h"
 
 ULSInventoryComp::ULSInventoryComp()
 {
@@ -30,7 +31,7 @@ int32 ULSInventoryComp::CountItem(const FName& Input)
 	return 0;
 }
 
-void ULSInventoryComp::equip(const FName& Input)
+void ULSInventoryComp::Equip(const FName& Input)
 {
 	if (!MyItems.Contains(Input))	return;
 
@@ -39,7 +40,7 @@ void ULSInventoryComp::equip(const FName& Input)
 
 	MyWeaponName=Input;
 
-	ChangeWeapon();
+	EquipWeapon();
 }
 
 void ULSInventoryComp::Unequip()
@@ -53,9 +54,21 @@ void ULSInventoryComp::Unequip()
 		MyItems.Add(MyWeaponName, 1);
 	}
 	
-	MyWeaponName=TEXT("None");
+	AActor* Owner = GetOwner();
+	if (!Owner) return;
 
-	ChangeWeapon();
+	ALSPlayerCharacter* Character=Cast<ALSPlayerCharacter>(Owner);
+	if (!Character) return;
+
+	ULSPlayerWeaponSystemComp* OtherComp = Character->FindComponentByClass<ULSPlayerWeaponSystemComp>();
+	if (!OtherComp) return;
+
+	//애니메이션
+	MyWeaponName=TEXT("None");
+	EquipWeapon();
+
+	//무기 삭제
+	OtherComp->UnEquipWeapon();
 }
 
 void ULSInventoryComp::ChangeWeaponSlot(const FName& NewWeapon)
@@ -64,7 +77,7 @@ void ULSInventoryComp::ChangeWeaponSlot(const FName& NewWeapon)
 	
 	MyWeaponName=NewWeapon;
 
-	equip(MyWeaponName);
+	Equip(MyWeaponName);
 }
 
 
@@ -85,7 +98,7 @@ ECurrentWeapon ULSInventoryComp::ChangeWeaponNameToEnum(const FName& Input)
 	return static_cast<ECurrentWeapon>(Value);
 }
 
-void ULSInventoryComp::ChangeWeapon()
+void ULSInventoryComp::EquipWeapon()
 {
 	AActor* Owner=GetOwner();
 	if (!Owner)	return;
