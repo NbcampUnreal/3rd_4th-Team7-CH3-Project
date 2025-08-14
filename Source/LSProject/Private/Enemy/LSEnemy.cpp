@@ -35,19 +35,32 @@ void ALSEnemy::Attack()
 		AIController->StopMovement(); //EnemyTodo : 리팩토링 요망
 	}
 
-	UAnimInstance* Anim = GetMesh()->GetAnimInstance();
-	if (Anim && HitMontage)
+	if (!CachedAnim)
 	{
-		Anim->StopAllMontages(0.5f);
-		Anim->Montage_Play(HitMontage, 1.f);
+		CachedAnim=GetMesh()->GetAnimInstance();
+	}
+	if (CachedAnim && HitMontage)
+	{
+		CachedAnim->StopAllMontages(0.5f);
+		CachedAnim->Montage_Play(HitMontage, 1.f);
 	}
 }
 
 float ALSEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 	class AController* EventInstigator, AActor* DamageCauser)
 {
-	UE_LOG(LogTemp, Warning, TEXT("[LSEnemy] Fence Take Damaged"))
-
+	if (!CachedAnim)
+	{
+		CachedAnim = GetMesh()->GetAnimInstance();
+	}
+	if (CachedAnim)
+	{
+		CachedAnim->StopAllMontages(0.5f);
+		if (TakeDamageMontage)
+		{
+			PlayAnimMontage(TakeDamageMontage,1.0f);
+		}
+	}
 	CurrentHealth -= DamageAmount;
 	if (CurrentHealth<=0.0f)
 	{
@@ -58,22 +71,26 @@ float ALSEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& Damage
 
 void ALSEnemy::Death()
 {
-	UAnimInstance* Anim = GetMesh()->GetAnimInstance();
-	if (Anim)
+	if (!CachedAnim)
 	{
-		Anim->StopAllMontages(0.5f);
+		CachedAnim=GetMesh()->GetAnimInstance();
+	}
+	if (CachedAnim)
+	{
+		CachedAnim->StopAllMontages(0.5f);
 		if (DeathMontage)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Zombie Is Death"))
 			PlayAnimMontage(DeathMontage,1.0f);
 		}
 	}
+
 	ALSPlayerState* GameState = Cast<ALSPlayerState>(GetPlayerState());
 	if (GameState)
 	{
 		GameState->SetCoin(EnemyCoin);
 	}
 
-	
 	if (ALSGameState* GS = GetWorld() ? GetWorld()->GetGameState<ALSGameState>() : nullptr)
 	{
 		GS->OnEnemyKilled();
@@ -85,7 +102,6 @@ void ALSEnemy::AddAbility(float AddHealth, float AddDamage)
 {
 	CurrentHealth+=AddHealth;
 	AttackDamage+=AddDamage;
-//	UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog]AddAbility SUCCEESS : AddHealth:%f, AddDamage:%f, NowHealth:%f, NowDamage:%f"),AddHealth,AddDamage,Health,AttackDamage)
 }
 
 void ALSEnemy::BeginPlay()
@@ -118,7 +134,7 @@ void ALSEnemy::Tick(float DeltaTime)
 	}
 }
 
-//montage의 notify에서 실행됨
+//montage의 notify에서 호출됨
 void ALSEnemy::HitAttack()
 {
 	FCollisionShape CollisionShape = FCollisionShape::MakeSphere(50.0f);
@@ -132,7 +148,7 @@ void ALSEnemy::HitAttack()
 		StartLocation,
 		EndLocation,
 		FQuat::Identity,
-		ECC_Pawn,
+		ECC_Visibility,
 		CollisionShape
 	);
 
@@ -176,7 +192,7 @@ void ALSEnemy::HitAttack()
 }
 
 void ALSEnemy::OnEnemyOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-                              UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep,	const FHitResult& SweepResult)
+                              UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	Player = UGameplayStatics::GetPlayerPawn(GetWorld(),0);
 	if (!OtherActor || !Player)
@@ -204,6 +220,7 @@ void ALSEnemy::OnEnemyEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* Ot
 	}
 }
 
+//잘 안 됨...
 void ALSEnemy::SetDeltaRotation(float DeltaSeconds)
 {
 	if (!Player)

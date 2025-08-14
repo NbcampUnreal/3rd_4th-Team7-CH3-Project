@@ -5,6 +5,8 @@
 #include "LSTestFence.generated.h"
 
 class UBoxComponent;
+class UWidgetComponent;
+class ALSNullFence;
 
 UCLASS()
 class LSPROJECT_API ALSTestFence : public AActor
@@ -13,6 +15,8 @@ class LSPROJECT_API ALSTestFence : public AActor
 	
 public:
 	ALSTestFence();
+
+	virtual void BeginPlay() override;
 	
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 	
@@ -23,7 +27,14 @@ protected:
 	UStaticMeshComponent* StaticMesh;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="BoxComp")
 	UBoxComponent* BoxCollision;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="HUD_Health")
+	UWidgetComponent* HealthBar;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="HUD_Health")
+	UUserWidget* HealthBarWidget;
 
+	void UpdateCurrentHealth();
+	
 	UFUNCTION()
 	virtual void OnFenceOverlap(
 		UPrimitiveComponent* OverlappedComponent,
@@ -42,9 +53,13 @@ protected:
 
 	UPROPERTY()
 	AActor* Player=nullptr;
-	
-private:
 
-	float Health;
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category="Spawn")
+	TSubclassOf<ALSNullFence> BPNullFenceClass;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="SceneComp")
+	float MaxHealth;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="SceneComp")
+	float CurrentHealth;
 };
 

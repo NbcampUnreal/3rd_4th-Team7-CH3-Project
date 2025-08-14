@@ -14,6 +14,7 @@
 #include "Components/ProgressBar.h"
 #include "Widget/LSInventoryWidget.h"
 #include "Weapon/LSWeaponBase.h"
+#include "Props/LSNullFence.h" //Static함수로 만들어서 가져올까 그냥?
 
 
 ALSPlayerCharacter::ALSPlayerCharacter()
@@ -152,7 +153,12 @@ void ALSPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 			{ 
 				EnhancedInput->BindAction(PlayerController->OpenInvenAction, ETriggerEvent::Completed, 
 											this, &ALSPlayerCharacter::EndInvenUI); 
-			} 
+			}
+			if (PlayerController->RestoreFenceAction) 
+			{ 
+				EnhancedInput->BindAction(PlayerController->RestoreFenceAction, ETriggerEvent::Triggered, 
+											this, &ALSPlayerCharacter::RestoreFence); 
+			}
 		} 
 	}
 }
@@ -336,6 +342,11 @@ void ALSPlayerCharacter::EndInvenUI()
 	if (!PC)	return;
 
 	PC->HideInvenWidget();
+}
+
+void ALSPlayerCharacter::RestoreFence()
+{
+	ALSNullFence::RestoreOverlappedFence(GetWorld());
 }
 
 void ALSPlayerCharacter::UpdateHealthBar(float Current, float Max)
