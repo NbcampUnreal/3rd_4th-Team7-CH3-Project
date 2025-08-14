@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "LSTestFence.h"
 #include "GameFramework/Actor.h"
 #include "LSNullFence.generated.h"
 
@@ -31,18 +32,21 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, Category = "Fence")
 	void OnOverlapStartEvent(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, Category = "Fence")
 	void OnOverlapEndEvent(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex);
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category="Spawn")
-	TSubclassOf<ALSNullFence> BPFenceClass;
+	TSubclassOf<ALSTestFence> BPFenceClass;
 	
 	UPROPERTY()
 	AActor* Player=nullptr;
+
+	UPROPERTY()
+	int32 UseCoin;
 
 	bool IsOverlaped;
 

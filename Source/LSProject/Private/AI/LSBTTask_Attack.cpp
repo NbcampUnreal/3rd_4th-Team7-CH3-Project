@@ -25,7 +25,6 @@ EBTNodeResult::Type ULSBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& Comp, 
 	}
 	if(ALSEnemy* Enemy = Cast<ALSEnemy>(AIPawn))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] BTTask_Attack : Enemy Attack() Is Called"))
 		Enemy->Attack();
 	}
 	

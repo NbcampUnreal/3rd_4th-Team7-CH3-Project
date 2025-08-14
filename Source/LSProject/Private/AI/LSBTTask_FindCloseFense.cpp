@@ -33,7 +33,6 @@ EBTNodeResult::Type ULSBTTask_FindCloseFense::ExecuteTask(UBehaviorTreeComponent
 		//UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] BTTask : FindCloseFence is Not Found"))
 		return EBTNodeResult::Failed;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] BTTask : FindCloseFence is SUCCESS"))
 	Comp.GetBlackboardComponent()->SetValueAsVector(TEXT("MoveToLocation"),CloseFenceLocation);
 	return EBTNodeResult::Succeeded;
 }

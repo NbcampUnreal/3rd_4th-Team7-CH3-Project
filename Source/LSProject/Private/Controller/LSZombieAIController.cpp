@@ -10,8 +10,6 @@ ALSZombieAIController::ALSZombieAIController()
 	SetPerceptionComponent(*AIPerception);
 	
 	BlackboardComp = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackBoardComp"));
-	UE_LOG(LogTemp, Warning, TEXT("[LSEnemy] AIController is born"));
-
 }
 
 void ALSZombieAIController::BeginPlay()
@@ -22,7 +20,6 @@ void ALSZombieAIController::BeginPlay()
 void ALSZombieAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-	UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog]Pawn is 컨트롤러소유함"))
 	if (BehaviorTreeAsset)
 	{
 		RunBehaviorTree(BehaviorTreeAsset);
@@ -31,7 +28,6 @@ void ALSZombieAIController::OnPossess(APawn* InPawn)
 	{
 		BlackboardComp->SetValueAsBool(TEXT("IsCanGoToPlayer"), false);
 		BlackboardComp->SetValueAsVector(TEXT("ClosestFenceLocation"), FVector(0.0f, 0.0f, 0.0f));
-		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Blackboard initialized successfully"));
 	}
 	if (AIPerception)
 	{
@@ -51,6 +47,5 @@ void ALSZombieAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimu
 	{
 		// Blackboard에 정보 저장
 		BlackboardComp->SetValueAsObject(TEXT("TargetActor"), Actor);
-		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Blackboard PerceptionUpdated successfully"));
 	}
 }

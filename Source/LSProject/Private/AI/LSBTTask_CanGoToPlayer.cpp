@@ -8,7 +8,6 @@
 ULSBTTask_CanGoToPlayer::ULSBTTask_CanGoToPlayer()
 {
 	NodeName = "Is CanGoTo Player";
-	UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] LSBTTask CanGoToPlayer is Created"));
 }
 
 EBTNodeResult::Type ULSBTTask_CanGoToPlayer::ExecuteTask(UBehaviorTreeComponent& Comp, uint8* NodeMemory)
@@ -58,11 +57,8 @@ EBTNodeResult::Type ULSBTTask_CanGoToPlayer::ExecuteTask(UBehaviorTreeComponent&
 				
 				return EBTNodeResult::Succeeded;
 			}
-			UE_LOG(LogTemp,Warning,TEXT("Player Path Is None"));
 		}
-		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] NavSystem->Valid Query if false"));
 		return EBTNodeResult::Failed;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Player Not Find"));
 	return EBTNodeResult::Failed;
 }

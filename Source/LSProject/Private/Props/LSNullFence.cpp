@@ -1,6 +1,7 @@
 #include "Props/LSNullFence.h"
 
 #include "Components/WidgetComponent.h"
+#include "Game/LSPlayerState.h"
 #include "Kismet/GameplayStatics.h"
 
 ALSNullFence::ALSNullFence()
@@ -16,9 +17,9 @@ ALSNullFence::ALSNullFence()
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
 	WidgetComponent->SetupAttachment(Root);
 
+	UseCoin = 50;
 	IsOverlaped=false;
 	
-	UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] ALSNullFence"));
 }
 
 void ALSNullFence::BeginPlay()
@@ -71,12 +72,22 @@ void ALSNullFence::OnOverlapEndEvent(UPrimitiveComponent* OverlappedComponent, A
 void ALSNullFence::RestoreFence()
 {
 	if (!IsOverlaped || !BPFenceClass) return;
-	GetWorld()->SpawnActor<AActor>(
+	if (GetWorld()->SpawnActor<AActor>(
 		BPFenceClass,
 		GetActorLocation(),
 		GetActorRotation()
-	);
-	
+	))
+	{
+		if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
+		{
+			if (APlayerState* PlayerState = PlayerController->GetPlayerState<APlayerState>())
+			{
+				ALSPlayerState* LSPlayerState = Cast<ALSPlayerState>(PlayerState);
+				LSPlayerState->AddCoin(-UseCoin);
+				Destroy();
+			}
+		}
+	}
 }
 
 void ALSNullFence::RestoreOverlappedFence(UWorld* World)

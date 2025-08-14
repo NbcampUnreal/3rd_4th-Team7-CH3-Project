@@ -13,3 +13,8 @@ void ALSPlayerState::AddZombieKill(int32 Delta)
 {
 	ZombieNum = FMath::Max(0, ZombieNum + Delta);
 }
+
+void ALSPlayerState::AddCoin(int32 NewCoin)
+{
+	Coin+=NewCoin;
+}
