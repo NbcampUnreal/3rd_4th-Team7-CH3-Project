@@ -39,7 +39,8 @@ ALSPlayerCharacter::ALSPlayerCharacter()
 	ShopComp = CreateDefaultSubobject<ULSShopComp>(TEXT("ShopComponent"));
 	InvenComp = CreateDefaultSubobject<ULSInventoryComp>(TEXT("InventoryComponent"));
 	CharacterStateComp = CreateDefaultSubobject<ULSCharacterStateComp>(TEXT("CharacterStateComponent"));
-	WeaponSystemComp = CreateDefaultSubobject<ULSPlayerWeaponSystemComp>(TEXT("WeaponSystemComponent")); 
+	WeaponSystemComp = CreateDefaultSubobject<ULSPlayerWeaponSystemComp>(TEXT("WeaponSystemComponent"));
+	Tags.AddUnique("Player");
 }
 
 ECurrentWeapon ALSPlayerCharacter::GetCurrentWeapon() const
@@ -83,33 +84,14 @@ void ALSPlayerCharacter::Death()
 	PlayAnimMontage(DieMontage);
 	CharacterStateComp->SetState(ECharacterState::Die);
 
-	if (!bShowGameOver)
+	if (ALSPlayerController* PC = Cast<ALSPlayerController>(GetController()))
 	{
-		bShowGameOver = true;
-
-		if (ALSPlayerController* PC = Cast<ALSPlayerController>(GetController()))
+		if (GetCharacterMovement())
 		{
-			if (UUserWidget* HUD = PC->GetHUDWidget())
-			{
-				if (HUD->IsInViewport())
-					HUD->RemoveFromParent();
-			}
-
-			if (!GameOverWidgetInstance && GameOverWidgetClass)
-			{
-				GameOverWidgetInstance = CreateWidget<UUserWidget>(PC, GameOverWidgetClass);
-			}
-			if (GameOverWidgetInstance && !GameOverWidgetInstance->IsInViewport())
-			{
-				GameOverWidgetInstance->AddToViewport(100);
-			}
-
-			FInputModeUIOnly Mode;
-			if (GameOverWidgetInstance) Mode.SetWidgetToFocus(GameOverWidgetInstance->TakeWidget());
-			PC->SetInputMode(Mode);
-			PC->bShowMouseCursor = true;
-			PC->SetPause(true);
+			GetCharacterMovement()->DisableMovement();
 		}
+		DisableInput(PC);
+		PC->ShowGameOverWidget();
 	}
 }
 
@@ -177,9 +159,10 @@ void ALSPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 float ALSPlayerCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
                                      AController* EventInstigator, AActor* DamageCauser)
 {
+	const float Prev = CurrentHealth;
 	CurrentHealth -= DamageAmount;
-	UpdateHealthBar(static_cast<int32>(CurrentHealth),static_cast<int32>(MaxHealth));
-	if (FMath::IsNearlyZero(CurrentHealth))
+	UpdateHealthBar(CurrentHealth,MaxHealth);
+	if (Prev > 0.f && CurrentHealth <= 0.f)
 	{
 		Death();
 	}
@@ -339,7 +322,7 @@ void ALSPlayerCharacter::EndInvenUI()
 	PC->HideInvenWidget();
 }
 
-void ALSPlayerCharacter::UpdateHealthBar(int32 Current, int32 Max)
+void ALSPlayerCharacter::UpdateHealthBar(float Current, float Max)
 {
 	if (ALSPlayerController* PC = Cast<ALSPlayerController>(GetController()))
 	{
@@ -353,8 +336,8 @@ void ALSPlayerCharacter::UpdateHealthBar(int32 Current, int32 Max)
 
 		if (HUDHealthBar)
 		{
-			const float pct = (Max > 0) ? static_cast<float>(Current) / static_cast<float>(Max) : 0.f;
-			HUDHealthBar->SetPercent(FMath::Clamp(pct, 0.f, 1.f));
+			float pct = (Max > 0) ? Current / Max : 0.f;
+			HUDHealthBar->SetPercent(pct);
 		}
 	}
 }

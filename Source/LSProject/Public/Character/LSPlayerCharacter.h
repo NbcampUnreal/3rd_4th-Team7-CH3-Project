@@ -57,7 +57,7 @@ public:
 	float GetMaxHealth() const;
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
-	void UpdateHealthBar(int32 Current, int32 Max);
+	void UpdateHealthBar(float Current, float Max);
 
 	UFUNCTION(BlueprintCallable, Category = "State")
 	void Equip();
