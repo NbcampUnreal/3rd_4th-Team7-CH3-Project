@@ -23,8 +23,13 @@ public:
 	USkeletalMeshComponent* WeaponSkeletalMesh;
 
 	virtual void Fire() override;
+	virtual void Reload() override;
 
 	float GetFireRate() const;
+	int32 GetCurrentAmmo() const;
+	int32 GetMaxAmmo() const;
+	bool IsCanReload() const;
+	bool IsCanFire() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Socket")
 	FTransform GetLeftHandSocketTransform() const;
@@ -41,8 +46,13 @@ protected:
 	float FireRate;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	UNiagaraSystem* FireEffect;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	USoundBase* FireSound;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	float FireSoundVolume;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	USoundBase* ReloadSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	float ReloadSoundVolume;
 };

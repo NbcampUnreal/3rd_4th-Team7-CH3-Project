@@ -18,3 +18,8 @@ void ALSWeaponPistol::Fire()
 {
 	Super::Fire();
 }
+
+void ALSWeaponPistol::Reload()
+{
+	Super::Reload();
+}
