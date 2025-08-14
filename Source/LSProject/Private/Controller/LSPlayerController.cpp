@@ -25,8 +25,12 @@ ALSPlayerController::ALSPlayerController() :
 	InvenWidgetInstance(nullptr),
 	MainMenuWidgetClass(nullptr),
 	InGameHUDWidgetClass(nullptr),
+	GameOverWidgetClass(nullptr),
+	GameClearWidgetClass(nullptr),
 	MainMenuWidget(nullptr),
-	InGameHUDWidget(nullptr)
+	InGameHUDWidget(nullptr),
+	GameOverWidget(nullptr),
+	GameClearWidget(nullptr)
 {
 }
 
@@ -131,7 +135,47 @@ void ALSPlayerController::GameQuit()
 {
 	UKismetSystemLibrary::QuitGame(this, this, EQuitPreference::Quit, true);
 }
+void ALSPlayerController::ShowGameOverWidget()
+{
+	if (bGameOverShown) return;
+	bGameOverShown = true;
 
+	HideHUDWidget();
+
+	if (!GameOverWidget && GameOverWidgetClass)
+	{
+		GameOverWidget = CreateWidget<UUserWidget>(this, GameOverWidgetClass);
+		if (GameOverWidget)
+		{
+			GameOverWidget->AddToViewport(100);
+			SetUIOnlyInput(GameOverWidget);
+		}
+	}
+}
+void ALSPlayerController::ShowGameClearWidget()
+{
+	if (bGameClearShown || bGameOverShown) return;
+	bGameClearShown = true;
+
+	HideHUDWidget();
+
+	if (!GameClearWidget && GameClearWidgetClass)
+	{
+		GameClearWidget = CreateWidget<UUserWidget>(this, GameClearWidgetClass);
+		if (GameClearWidget)
+		{
+			GameClearWidget->AddToViewport(100);
+			SetUIOnlyInput(GameClearWidget);
+		}
+	}
+}
+void ALSPlayerController::HideHUDWidget()
+{
+	if (InGameHUDWidget && InGameHUDWidget->IsInViewport())
+	{
+		InGameHUDWidget->RemoveFromParent();
+	}
+}
 UUserWidget* ALSPlayerController::GetHUDWidget() const
 {
 	return InGameHUDWidget;
@@ -183,3 +227,18 @@ void ALSPlayerController::SetupMainMapPlay()
 	SetInputMode(InputMode);
 	bShowMouseCursor = false;
 }
+void ALSPlayerController::SetUIOnlyInput(UUserWidget* Focus)
+{
+	FInputModeUIOnly Mode;
+	if (Focus) Mode.SetWidgetToFocus(Focus->TakeWidget());
+	Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+	SetInputMode(Mode);
+	bShowMouseCursor = true;
+}
+void ALSPlayerController::SetGameOnlyInput()
+{
+	FInputModeGameOnly Mode;
+	SetInputMode(Mode);
+	bShowMouseCursor = false; 
+}
+

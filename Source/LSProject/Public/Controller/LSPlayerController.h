@@ -13,7 +13,9 @@ class ULSInventoryWidget;
 
 class UUserWidget; 
 class UWBP_MainMenu; 
-class UWBP_InGameHUD; 
+class UWBP_InGameHUD;
+class UWBP_GameOver;
+class UWBP_GameClear;
 
 class UTextBlock;
 class UProgressBar;
@@ -61,11 +63,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI") 
 	TSubclassOf<UUserWidget> MainMenuWidgetClass; 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI") 
-	TSubclassOf<UUserWidget> InGameHUDWidgetClass; 
+	TSubclassOf<UUserWidget> InGameHUDWidgetClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UUserWidget> GameOverWidgetClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UUserWidget> GameClearWidgetClass;
 	UPROPERTY() 
 	UUserWidget* MainMenuWidget; 
 	UPROPERTY() 
 	UUserWidget* InGameHUDWidget;
+	UPROPERTY()
+	UUserWidget* GameOverWidget;
+	UPROPERTY()
+	UUserWidget* GameClearWidget;
 
 	UFUNCTION(BlueprintPure, Category="HUD")
 	UUserWidget* GetHUDWidget() const;
@@ -73,16 +83,27 @@ public:
 	UFUNCTION(BlueprintCallable) 
 	void GameStart(); 
 	UFUNCTION(BlueprintCallable) 
-	void GameQuit(); 
+	void GameQuit();
+	UFUNCTION(BlueprintCallable)
+	void ShowGameOverWidget();
+	UFUNCTION(BlueprintCallable)
+	void ShowGameClearWidget();
+	UFUNCTION(BlueprintCallable)
+	void HideHUDWidget();
+
+	UPROPERTY(VisibleAnywhere, Category="UI")
+	bool bGameOverShown = false;
+	UPROPERTY(VisibleAnywhere, Category="UI")
+	bool bGameClearShown = false;
 
 protected: 
 	virtual void BeginPlay() override;
 
 private:
-	//시작맵에서 카메라 고정도하고 메뉴도 UI온리로 표시할거
 	void ShowMainMenuWidget();
 	void LockToStartMapCamera();
-	
-	void SetupMainMapPlay(); //메인맵표시 허드랑 입력까지 GameOnly로
+	void SetupMainMapPlay();
+	void SetUIOnlyInput(UUserWidget* Focus = nullptr);
+	void SetGameOnlyInput();
 
 };  
