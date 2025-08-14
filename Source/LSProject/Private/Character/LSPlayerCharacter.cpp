@@ -15,6 +15,7 @@
 #include "Widget/LSInventoryWidget.h"
 #include "Weapon/LSWeaponBase.h"
 #include "Props/LSNullFence.h" //Static함수로 만들어서 가져올까 그냥?
+#include "Components/CapsuleComponent.h"
 
 
 ALSPlayerCharacter::ALSPlayerCharacter()
@@ -43,6 +44,10 @@ ALSPlayerCharacter::ALSPlayerCharacter()
 	CharacterStateComp = CreateDefaultSubobject<ULSCharacterStateComp>(TEXT("CharacterStateComponent"));
 	WeaponSystemComp = CreateDefaultSubobject<ULSPlayerWeaponSystemComp>(TEXT("WeaponSystemComponent"));
 	Tags.AddUnique("Player");
+
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+	
 }
 
 ECurrentWeapon ALSPlayerCharacter::GetCurrentWeapon() const
@@ -168,6 +173,7 @@ float ALSPlayerCharacter::TakeDamage(float DamageAmount, struct FDamageEvent con
 {
 	const float Prev = CurrentHealth;
 	CurrentHealth -= DamageAmount;
+	UE_LOG(LogTemp, Warning, TEXT("Damage: prev=%.1f curr=%.1f"), Prev, CurrentHealth);
 	UpdateHealthBar(CurrentHealth,MaxHealth);
 	if (Prev > 0.f && CurrentHealth <= 0.f)
 	{
