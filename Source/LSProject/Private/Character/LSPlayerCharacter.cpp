@@ -33,6 +33,7 @@ ALSPlayerCharacter::ALSPlayerCharacter()
 	MaxHealth = 500.0f;
 	CurrentHealth = MaxHealth;
 	CurrentWeapon = ECurrentWeapon::None;
+	bCanFire = true;
 
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 
@@ -129,7 +130,7 @@ void ALSPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 			}
 			if (PlayerController->AttackAction)
 			{
-				EnhancedInput->BindAction(PlayerController->AttackAction, ETriggerEvent::Started,
+				EnhancedInput->BindAction(PlayerController->AttackAction, ETriggerEvent::Triggered,
 				                          this, &ALSPlayerCharacter::Attack);
 			}
 			if (PlayerController->ReloadAction)
@@ -238,11 +239,16 @@ void ALSPlayerCharacter::StopSprint(const FInputActionValue& Value)
 	}
 }
 
+void ALSPlayerCharacter::ResetFireTimer()
+{
+	bCanFire = true;
+}
 
 void ALSPlayerCharacter::Attack()
 {
 	Super::Attack();
 
+	if (!bCanFire) return;
 	if (FireMontageCollection.IsEmpty()) return;
 	if (CurrentWeapon == ECurrentWeapon::None) return;
 	if (!CharacterStateComp->CanFire()) return;
@@ -256,6 +262,16 @@ void ALSPlayerCharacter::Attack()
 		CharacterStateComp->SetState(ECharacterState::Fire);
 
 		WeaponSystemComp->CurrentWeapon->Fire();
+
+		bCanFire = false;
+		float FireRate = WeaponSystemComp->CurrentWeapon->GetFireRate();
+		
+		GetWorld()->GetTimerManager().SetTimer(
+			FireTimerHandle,
+			this,
+			&ALSPlayerCharacter::ResetFireTimer,
+			FireRate,
+			false);
 	}
 }
 

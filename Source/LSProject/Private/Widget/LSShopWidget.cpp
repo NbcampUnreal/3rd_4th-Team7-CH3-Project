@@ -30,7 +30,7 @@ void ULSShopWidget::NativeOnInitialized()
 		NotEnoughMoneyText->SetVisibility(ESlateVisibility::Hidden);
 	}
 
-	bIsFocusable = true;
+	SetIsFocusable(true);
 }
 
 void ULSShopWidget::NativeConstruct()
@@ -115,7 +115,7 @@ ULSShopWidget::ULSShopWidget(const FObjectInitializer& ObjectInitializer)
 {
 	ShopItemTable=nullptr;
 	DurationDisappear=1.0f;
-	bIsFocusable = true;
+	SetIsFocusable(true);
 }
 
 void ULSShopWidget::HandleBuyClicked(const FName& Name)

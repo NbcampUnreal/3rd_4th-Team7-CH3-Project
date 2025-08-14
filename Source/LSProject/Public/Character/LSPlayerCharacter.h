@@ -96,6 +96,10 @@ protected:
 	
 private:
 	ECurrentWeapon CurrentWeapon;
+	bool bCanFire;
+	FTimerHandle FireTimerHandle;
+
+	void ResetFireTimer();
 	
 	UPROPERTY()
 	UAnimMontage* FireMontage;
