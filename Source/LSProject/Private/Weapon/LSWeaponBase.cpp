@@ -1,55 +1,103 @@
 ﻿#include "Weapon/LSWeaponBase.h"
+#include "Camera/CameraComponent.h"
+#include "Character/LSPlayerCharacter.h"
+#include "Enemy/LSEnemy.h"
 #include "GameFramework/Actor.h"
+#include "Kismet/GameplayStatics.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraSystem.h"
 
 ALSWeaponBase::ALSWeaponBase()
 {
 	PrimaryActorTick.bCanEverTick = false;
-	
+
 	Scene = CreateDefaultSubobject<USceneComponent>(TEXT("WeaponScene"));
 	SetRootComponent(Scene);
 	WeaponSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
 	WeaponSkeletalMesh->SetupAttachment(Scene);
 
-	Damage = 20.0f;
+	MaxAmmo = 10;
+	CurrentAmmo = 10;
+
 	FireRange = 100000.0f;
-	Niagara = nullptr;
-	
+	Damage = 20.0f;
+	FireRate = 0.1f;
+	FireEffect = nullptr;
+	FireSound = nullptr;
+	FireSoundVolume = 1.0f;
 }
 
 void ALSWeaponBase::Fire()
 {
-    // 총구 위치를 가져옵니다
-    FVector MuzzleLocation = WeaponSkeletalMesh->GetSocketLocation(TEXT("Muzzle"));
-    // 총구 방향을 가져옵니다
-    FRotator MuzzleRotation = WeaponSkeletalMesh->GetSocketRotation(TEXT("Muzzle"));
-    FVector Direction = MuzzleRotation.Vector();
-    
-    // 라인트레이스의 끝점을 계산합니다
-    FVector EndLocation = MuzzleLocation + (Direction * FireRange);
-    
-    // 라인트레이스에 사용할 파라미터를 설정합니다
-    FHitResult HitResult;
-    FCollisionQueryParams QueryParams;
-    QueryParams.AddIgnoredActor(this); // 자기 자신은 무시
-    QueryParams.AddIgnoredActor(GetOwner()); // 무기를 들고 있는 캐릭터도 무시
-    
-    // 라인트레이스를 실행합니다
-    bool bHit = GetWorld()->LineTraceSingleByChannel(
-        HitResult,
-        MuzzleLocation,
-        EndLocation,
-        ECollisionChannel::ECC_Visibility,
-        QueryParams
-    );
+	if (ALSPlayerCharacter* Character = Cast<ALSPlayerCharacter>(GetOwner()))
+	{
+		FVector CameraLocation = Character->Camera->GetComponentLocation();
+		FVector CameraDirection = Character->Camera->GetForwardVector();
 
-	DrawDebugLine(
-		GetWorld(),
-		MuzzleLocation,
-		EndLocation,
-		FColor::Red,
-		false,
-		2.0f);
-	
+		FVector EndLocation = CameraLocation + (CameraDirection * FireRange);
+		FVector StartLocation = CameraLocation + (CameraDirection * 200.0f);;
+
+		FHitResult HitResult;
+		FCollisionQueryParams QueryParams;
+		QueryParams.AddIgnoredActor(this);
+		QueryParams.AddIgnoredActor(Character);
+
+		bool bHit = GetWorld()->LineTraceSingleByChannel(
+			HitResult,
+			StartLocation,
+			EndLocation,
+			ECC_Pawn,
+			QueryParams);
+
+		ALSEnemy* HitEnemy = Cast<ALSEnemy>(HitResult.GetActor());
+
+		if (bHit && HitEnemy)
+		{
+			UE_LOG(LogTemp, Log, TEXT("Hit Zombie"));
+			UGameplayStatics::ApplyDamage(
+				HitEnemy,
+				Damage,
+				nullptr,
+				this,
+				UDamageType::StaticClass());
+		}
+
+		FTransform MuzzleTransform = WeaponSkeletalMesh->GetSocketTransform(TEXT("Muzzle"));
+
+		if (FireEffect)
+		{
+			UNiagaraFunctionLibrary::SpawnSystemAttached(
+				FireEffect,
+				WeaponSkeletalMesh,
+				TEXT("Muzzle"),
+				FVector::ZeroVector,
+				FRotator::ZeroRotator,
+				EAttachLocation::SnapToTarget,
+				true);
+		}
+
+		if (FireSound)
+		{
+			UGameplayStatics::PlaySoundAtLocation(
+				this,
+				FireSound,
+				MuzzleTransform.GetLocation(),
+				FireSoundVolume);
+		}
+
+		DrawDebugLine(
+			GetWorld(),
+			StartLocation,
+			EndLocation,
+			FColor::Red,
+			false,
+			2.0f);
+	}
+}
+
+float ALSWeaponBase::GetFireRate() const
+{
+	return FireRate;
 }
 
 FTransform ALSWeaponBase::GetLeftHandSocketTransform() const

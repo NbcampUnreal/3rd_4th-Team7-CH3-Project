@@ -118,7 +118,6 @@ void ULSCharacterStateComp::SetState(ECharacterState NewState)
 	if (CurrentState == NewState) return;
 
 	CurrentState = NewState;
-	UE_LOG(LogTemp, Warning, TEXT("Set StateIN : %d"), CurrentState);
 }
 
 void ULSCharacterStateComp::StopCurrentMontage()
