@@ -18,4 +18,5 @@ class LSPROJECT_API IWeaponInterface
 
 public:
 	virtual void Fire() = 0;
+	virtual void Reload() = 0;
 };

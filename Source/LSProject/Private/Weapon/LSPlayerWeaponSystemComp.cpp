@@ -17,7 +17,7 @@ void ULSPlayerWeaponSystemComp::BeginPlay()
 	OwnerCharacter = Cast<ALSPlayerCharacter>(GetOwner());
 }
 
-void ULSPlayerWeaponSystemComp::EquipWeapon(int Index)
+void ULSPlayerWeaponSystemComp::EquipWeapon()
 {
 	if (WeaponClass.IsEmpty()) return;
 
@@ -29,11 +29,12 @@ void ULSPlayerWeaponSystemComp::EquipWeapon(int Index)
 
 	if (OwnerCharacter)
 	{
+		const int32 Index = static_cast<int32>(OwnerCharacter->GetCurrentWeapon()) - 1;
+		
 		if (WeaponClass.IsValidIndex(Index))
 		{
 			CurrentWeapon = Cast<ALSWeaponBase>(GetWorld()->SpawnActor(WeaponClass[Index]));
 			CurrentWeapon->SetOwner(OwnerCharacter);
-			UE_LOG(LogTemp, Warning, TEXT("weapon spawn"));
 			if (USkeletalMeshComponent* Mesh = OwnerCharacter->GetMesh())
 			{
 				IsArmedWeapon = CurrentWeapon->AttachToComponent(

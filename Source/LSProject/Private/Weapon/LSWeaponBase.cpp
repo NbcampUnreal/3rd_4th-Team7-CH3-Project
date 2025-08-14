@@ -25,12 +25,20 @@ ALSWeaponBase::ALSWeaponBase()
 	FireEffect = nullptr;
 	FireSound = nullptr;
 	FireSoundVolume = 1.0f;
+	ReloadSound = nullptr;
+	ReloadSoundVolume = 1.0f;
 }
 
 void ALSWeaponBase::Fire()
 {
 	if (ALSPlayerCharacter* Character = Cast<ALSPlayerCharacter>(GetOwner()))
 	{
+		CurrentAmmo--;
+		if (CurrentAmmo < 0)
+		{
+			CurrentAmmo = 0;
+		}
+
 		FVector CameraLocation = Character->Camera->GetComponentLocation();
 		FVector CameraDirection = Character->Camera->GetForwardVector();
 
@@ -95,9 +103,34 @@ void ALSWeaponBase::Fire()
 	}
 }
 
+void ALSWeaponBase::Reload()
+{
+	CurrentAmmo = MaxAmmo;
+}
+
 float ALSWeaponBase::GetFireRate() const
 {
 	return FireRate;
+}
+
+int32 ALSWeaponBase::GetCurrentAmmo() const
+{
+	return CurrentAmmo;
+}
+
+int32 ALSWeaponBase::GetMaxAmmo() const
+{
+	return MaxAmmo;
+}
+
+bool ALSWeaponBase::IsCanReload() const
+{
+	return CurrentAmmo < MaxAmmo;
+}
+
+bool ALSWeaponBase::IsCanFire() const
+{
+	return CurrentAmmo > 0;
 }
 
 FTransform ALSWeaponBase::GetLeftHandSocketTransform() const

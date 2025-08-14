@@ -258,6 +258,7 @@ void ALSPlayerCharacter::Attack()
 	if (FireMontageCollection.IsEmpty()) return;
 	if (CurrentWeapon == ECurrentWeapon::None) return;
 	if (!CharacterStateComp->CanFire()) return;
+	if (!WeaponSystemComp->CurrentWeapon->IsCanFire()) return;
 
 	const int32 Index = static_cast<int32>(CurrentWeapon) - 1;
 
@@ -285,6 +286,7 @@ void ALSPlayerCharacter::Reload(const FInputActionValue& Value)
 {
 	if (ReloadMontageCollection.IsEmpty()) return;
 	if (CurrentWeapon == ECurrentWeapon::None) return;
+	if (!WeaponSystemComp->CurrentWeapon->IsCanReload()) return;
 	if (!CharacterStateComp->CanReload()) return;
 
 	const int32 Index = static_cast<int32>(CurrentWeapon) - 1;
@@ -309,8 +311,6 @@ void ALSPlayerCharacter::Equip()
 		EquipMontage = EquipMontageCollection[Index];
 		PlayAnimMontage(EquipMontage);
 		CharacterStateComp->SetState(ECharacterState::Equip);
-
-		WeaponSystemComp->EquipWeapon(Index);
 	}
 }
 

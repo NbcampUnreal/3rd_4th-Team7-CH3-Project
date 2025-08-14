@@ -31,7 +31,7 @@ public:
 	bool IsArmedWeapon;
 
 	UFUNCTION()
-	void EquipWeapon(int Index);
+	void EquipWeapon();
 	UFUNCTION()
 	void UnEquipWeapon();
 };

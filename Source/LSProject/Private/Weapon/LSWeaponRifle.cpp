@@ -15,4 +15,9 @@ void ALSWeaponRifle::Fire()
 	Super::Fire();
 }
 
+void ALSWeaponRifle::Reload()
+{
+	Super::Reload();
+}
+
 
