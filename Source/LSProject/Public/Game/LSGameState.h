@@ -54,13 +54,12 @@ private:
 	float SpawnInterval = 0.1f;
 
 	UPROPERTY(EditAnywhere, Category="Wave")
-	TArray<int32> DaySpawnBudget = {0, 9, 20, 30, 40, 1}; //총 100으로
+	TArray<int32> DaySpawnBudget = {0, 10, 15, 20, 25, 30}; //총 100으로
 	
 	bool  bPrevIsDay = true;
 	int32 PrevDay = 1;
 	
 	bool  bWaveActive = false;
-	bool  bBossWave   = false;
 	int32 RemainingToSpawn = 0;
 	int32 AliveEnemies     = 0;
 	

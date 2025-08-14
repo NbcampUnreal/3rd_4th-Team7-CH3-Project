@@ -137,41 +137,8 @@ void ALSGameState::StartNightWave(int32 Day)
 	if (bWaveActive) return;
 
 	bWaveActive = true;
-	bBossWave   = (Day == 5);
-
 	RemainingToSpawn = DaySpawnBudget.IsValidIndex(Day) ? DaySpawnBudget[Day] : 0;
-
-	if (bBossWave)
-	{
-		TryRegisterSpawnVolumes();
-		TArray<ALSEnemySpawnVolume*> Valid;
-		for (auto& W : SpawnVolumes) if (W.IsValid()) Valid.Add(W.Get());
-
-		if (Valid.Num() > 0)
-		{
-			ALSEnemySpawnVolume* V = Valid[FMath::RandRange(0, Valid.Num()-1)];
-
-			const FVector Extent = V->BoxComponent->GetScaledBoxExtent();
-			const FVector Center = V->BoxComponent->GetComponentLocation();
-			const FVector SpawnLoc = Center + FVector(
-				FMath::FRandRange(-Extent.X, Extent.X),
-				FMath::FRandRange(-Extent.Y, Extent.Y),
-				FMath::FRandRange(-Extent.Z, Extent.Z)
-			);
-
-			GetWorld()->SpawnActor<ALSBoss>(ALSBoss::StaticClass(), SpawnLoc, FRotator::ZeroRotator);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("[Wave] No SpawnVolume found for Boss"));
-		}
-
-		// 보스 1마리로 끝
-		RemainingToSpawn = 0;
-		bWaveActive = false;
-		return;
-	}
-
+	
 	if (RemainingToSpawn > 0)
 	{
 		GetWorldTimerManager().SetTimer(
@@ -183,7 +150,6 @@ void ALSGameState::EndWave()
 {
 	GetWorldTimerManager().ClearTimer(SpawnTimerHandle);
 	bWaveActive = false;
-	bBossWave   = false;
 	RemainingToSpawn = 0;
 	DespawnRemainZombie();
 }
