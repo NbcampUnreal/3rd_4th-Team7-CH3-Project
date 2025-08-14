@@ -16,7 +16,6 @@ ALSEnemySpawnVolume::ALSEnemySpawnVolume()
 void ALSEnemySpawnVolume::BeginPlay()
 {
 	Super::BeginPlay();
-	SpawnEnemy(TempWave);
 }
 
 void ALSEnemySpawnVolume::SpawnEnemy(int32 NowWave)
