@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Character/LSPlayerCharacter.h"
 #include "Components/ActorComponent.h"
 #include "LSInventoryComp.generated.h"
 
@@ -21,11 +22,17 @@ protected:
 public:
 	void AddToInven(const FName& Input,int32 Amount);
 	int32 CountItem(const FName& Input);
-	
-	//추후 삭제
-	UFUNCTION(Blueprintable)
-	void ShowInven();
+	void equip(const FName& Input);
+	void Unequip();
+	void ChangeWeaponSlot(const FName& NewWeapon);
+	FORCEINLINE FName GetMyWeapon() const {return MyWeaponName;}
+
 private:
 	UPROPERTY()
 	TMap<FName,int32> MyItems;
+
+	FName MyWeaponName;
+	
+	ECurrentWeapon ChangeWeaponNameToEnum(const FName& Input);
+	void ChangeWeapon();
 };

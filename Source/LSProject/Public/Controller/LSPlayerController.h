@@ -56,7 +56,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI") 
 	TSubclassOf<ULSInventoryWidget> InvenWidgetClass; 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI") 
-	TObjectPtr<ULSInventoryWidget> InvenWidgetInstance; 
+	TObjectPtr<ULSInventoryWidget> InvenWidgetInstance;
+	FORCEINLINE ULSInventoryWidget* GetInvenWidget() {return InvenWidgetInstance;};
 	void ShowInvenWidget();
 	void HideInvenWidget();
 	

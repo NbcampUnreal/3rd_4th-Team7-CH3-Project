@@ -38,6 +38,9 @@ public:
 	UPROPERTY(meta=(BindWidget))
 	UImage* IconImage;
 
+	UPROPERTY()
+	FName SlotName;
+
 	FORCEINLINE void SetType(FName Category){Type=Category;}
 	
 private:

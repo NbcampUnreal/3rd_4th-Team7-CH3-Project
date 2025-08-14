@@ -27,4 +27,8 @@ public:
 
 	UPROPERTY()
 	UImage* IconImage;
+
+	UPROPERTY()
+	FName Type;
+	
 };

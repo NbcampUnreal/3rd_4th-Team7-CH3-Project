@@ -47,7 +47,6 @@ void ALSPlayerController::BeginPlay()
 	}
 	SetupMainMapPlay();
 
-	
 	if (ULocalPlayer* LocalPlayer = GetLocalPlayer())
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
