@@ -25,6 +25,8 @@ ALSEnemy::ALSEnemy()
 	SphereComponent->SetupAttachment(GetCapsuleComponent());
 	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ALSEnemy::OnEnemyOverlap);
 	SphereComponent->OnComponentEndOverlap.AddDynamic(this, &ALSEnemy::OnEnemyEndOverlap);
+	//UWidgetComponent
+	//UUserWidget
 }
 
 void ALSEnemy::Attack()
@@ -49,28 +51,40 @@ void ALSEnemy::Attack()
 float ALSEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 	class AController* EventInstigator, AActor* DamageCauser)
 {
+	CurrentHealth -= DamageAmount;
+	if (CurrentHealth<=0.0f)
+	{
+		Death();
+		return DamageAmount;
+	}
+	
 	if (!CachedAnim)
 	{
 		CachedAnim = GetMesh()->GetAnimInstance();
 	}
 	if (CachedAnim)
 	{
-		CachedAnim->StopAllMontages(0.5f);
+		AAIController* AIController = Cast<AAIController>(GetController());
+		if (AIController)
+		{
+			AIController->StopMovement(); //EnemyTodo : 리팩토링 요망
+		}
+		CachedAnim->StopAllMontages(0.f);
 		if (TakeDamageMontage)
 		{
-			PlayAnimMontage(TakeDamageMontage,1.0f);
+			CachedAnim->Montage_Play(TakeDamageMontage,1.0f);
 		}
-	}
-	CurrentHealth -= DamageAmount;
-	if (CurrentHealth<=0.0f)
-	{
-		Death();
 	}
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
 
 void ALSEnemy::Death()
 {
+	AAIController* AIController = Cast<AAIController>(GetController());
+	if (AIController)
+	{
+		AIController->StopMovement(); //EnemyTodo : 리팩토링 요망
+	}
 	if (!CachedAnim)
 	{
 		CachedAnim=GetMesh()->GetAnimInstance();
@@ -80,8 +94,7 @@ void ALSEnemy::Death()
 		CachedAnim->StopAllMontages(0.5f);
 		if (DeathMontage)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Zombie Is Death"))
-			PlayAnimMontage(DeathMontage,1.0f);
+			CachedAnim->Montage_Play(DeathMontage,1.0f);
 		}
 	}
 
@@ -95,7 +108,15 @@ void ALSEnemy::Death()
 	{
 		GS->OnEnemyKilled();
 	}
-	Destroy();
+
+	//TimerHandle로 딜레이 걸고 3초 뒤 Destroy
+	GetWorld()->GetTimerManager().SetTimer(
+		DeathTimerHandle,
+		this,
+		&ALSEnemy::Delete,
+		1.f,
+		false
+	);
 }
 
 void ALSEnemy::AddAbility(float AddHealth, float AddDamage)
@@ -110,21 +131,19 @@ void ALSEnemy::BeginPlay()
 	
 	if (ZombieType == ELSZombieType::Fence)
 	{
-		//UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] ZombieType is Fence"));
 		AAIController* AIController = Cast<AAIController>(GetController());
 		if (AIController)
 		{
-			UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] FenceZom AIController"))
 			UBlackboardComponent* Blackboard = Cast<UBlackboardComponent>(AIController->GetBlackboardComponent());
 			if (Blackboard)
 			{
-				UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] BlackBoard Key Is Fence"))
 				Blackboard->SetValueAsBool("IsFenceZom",true);
 			}
 		}
 	}
 }
 
+//회전 : 잘 안 됨...
 void ALSEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -161,7 +180,6 @@ void ALSEnemy::HitAttack()
 			{
 				if (HitActor->ActorHasTag("Player"))
 				{
-					UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Enemy Attack is Perfect Completed"));
 					UGameplayStatics::ApplyDamage(
 						HitActor,
 						AttackDamage,
@@ -175,7 +193,6 @@ void ALSEnemy::HitAttack()
 					//사운드 재생
 					if (FenceSound)
 					{
-						UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Enemy Attack is Perfect Completed"));					
 						UGameplayStatics::PlaySoundAtLocation(this, FenceSound, GetActorLocation());
 					}
 					UGameplayStatics::ApplyDamage(
@@ -238,4 +255,14 @@ void ALSEnemy::SetDeltaRotation(float DeltaSeconds)
 	{
 		IsRotation=false;
 	}
+}
+
+void ALSEnemy::Delete()
+{
+	if (DeathTimerHandle.IsValid())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(DeathTimerHandle);
+		DeathTimerHandle.Invalidate();
+	}
+	Destroy();
 }

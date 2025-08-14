@@ -22,10 +22,8 @@ void ALSEnemySpawnVolume::SpawnEnemy(int32 NowWave)
 {
 	if (FLSEnemySpawnRow* SpawnRow = GetRandomEnemy(NowWave))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] GetRandomEnemy Success"))
 		if (TSubclassOf<AActor> SpawnActorClass = SpawnRow->SpawnActor)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Spawn Success"))
 			ALSEnemy* Enemy = Cast<ALSEnemy>(GetWorld()->SpawnActor<AActor>(
 				SpawnActorClass,
 				GetRandomVector(),
@@ -58,12 +56,10 @@ FLSEnemySpawnRow* ALSEnemySpawnVolume::GetRandomEnemy(int32 NowWave) const
 			if (Row->EnemyWave!=NowWave) continue;
 			if(Row->SpawnRate)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Enemy SpawnRate SUCCEESS"))
 				float SpawnRandomRate = FMath::RandRange(0.0f,100.0f);
 				CompareRate += Row->SpawnRate;
 				if (SpawnRandomRate<=CompareRate)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] Return Random Enemy SUCCEESS"))
 					return Row;
 				}
 			}

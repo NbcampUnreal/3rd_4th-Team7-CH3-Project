@@ -93,5 +93,8 @@ protected:
 
 	UPROPERTY()
 	AActor* Player=nullptr;
+
+	FTimerHandle DeathTimerHandle;
 	
+	void Delete();
 };
