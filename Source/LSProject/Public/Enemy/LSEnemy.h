@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Character/LSCharacterBase.h"
+#include "Components/WidgetComponent.h"
 #include "LSEnemy.generated.h"
 
 class USphereComponent;
@@ -39,6 +40,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Overlap)
 	USphereComponent* SphereComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Overlap)
+	UWidgetComponent* WidgetComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Overlap)
+	UUserWidget* UserWidget;
 
 	FTimerHandle AttackTimerHandle;
 
@@ -57,6 +62,8 @@ protected:
 			AActor* OtherActor,
 			UPrimitiveComponent* OtherComp,
 			int32 OtherBodyIndex);
+
+	void UpdateCurrentHealth();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Type)
 	ELSZombieType ZombieType;
@@ -77,6 +84,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, Blueprintable, Category="Sound")
 	USoundBase* FenceSound;
+
+	bool IsHited;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Montage")
 	UAnimMontage* HitMontage;
@@ -97,4 +106,6 @@ protected:
 	FTimerHandle DeathTimerHandle;
 	
 	void Delete();
+private:
+	bool IsDeath=false;
 };

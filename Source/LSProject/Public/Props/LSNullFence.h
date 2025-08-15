@@ -24,6 +24,9 @@ public:
 	UUserWidget* UserWidget;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LSNullFence")
 	UWidgetComponent* WidgetComponent;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LSNullFence")
+	UBoxComponent* OverlapBoxComponent;
 
 	void RestoreFence();
 

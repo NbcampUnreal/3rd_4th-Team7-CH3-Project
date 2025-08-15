@@ -6,6 +6,7 @@
 #include "Game/LSPlayerState.h"
 #include "Components/SphereComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/ProgressBar.h"
 #include "Game/LSGameState.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -19,14 +20,20 @@ ALSEnemy::ALSEnemy()
 	StartVectorZ=30.f;
 	StartVectorY=0.f;
 	StartVectorX=30.f;
+	IsHited=false;
 	HitMontage=nullptr;
+	TakeDamageMontage=nullptr;
 	DeathMontage=nullptr;
+
+	
 	SphereComponent=CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 	SphereComponent->SetupAttachment(GetCapsuleComponent());
+	
 	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ALSEnemy::OnEnemyOverlap);
 	SphereComponent->OnComponentEndOverlap.AddDynamic(this, &ALSEnemy::OnEnemyEndOverlap);
-	//UWidgetComponent
-	//UUserWidget
+	
+	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
+	WidgetComponent->SetupAttachment(GetCapsuleComponent());
 }
 
 void ALSEnemy::Attack()
@@ -52,6 +59,7 @@ float ALSEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& Damage
 	class AController* EventInstigator, AActor* DamageCauser)
 {
 	CurrentHealth -= DamageAmount;
+	UpdateCurrentHealth();
 	if (CurrentHealth<=0.0f)
 	{
 		Death();
@@ -80,6 +88,8 @@ float ALSEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& Damage
 
 void ALSEnemy::Death()
 {
+	if (IsDeath) return;
+	IsDeath=true;
 	AAIController* AIController = Cast<AAIController>(GetController());
 	if (AIController)
 	{
@@ -156,30 +166,34 @@ void ALSEnemy::Tick(float DeltaTime)
 //montage의 notify에서 호출됨
 void ALSEnemy::HitAttack()
 {
-	FCollisionShape CollisionShape = FCollisionShape::MakeSphere(50.0f);
+	FCollisionShape CollisionShape = FCollisionShape::MakeSphere(45.f);
 	FVector LocalOffset(StartVectorX, StartVectorY, StartVectorZ);
 	FVector StartLocation = GetActorTransform().TransformPosition(LocalOffset);
-	FVector EndLocation = StartLocation+ GetActorForwardVector() * AttackRange;
+	//FVector EndLocation = StartLocation+ GetActorForwardVector() * AttackRange;
 	TArray<FHitResult> Hits;
 
 	bool bHit = GetWorld()->SweepMultiByChannel(
 		Hits,
 		StartLocation,
-		EndLocation,
+		StartLocation,
 		FQuat::Identity,
 		ECC_Visibility,
 		CollisionShape
 	);
 
+	IsHited=false;
 	DrawDebugSphere(GetWorld(), StartLocation, CollisionShape.GetSphereRadius(), 16, FColor::Red,false, 0.5f);
+
 	if (bHit)
 	{
 		for(const FHitResult& Hit : Hits)
 		{
+			if (IsHited) return;
 			if (AActor* HitActor = Hit.GetActor())
 			{
 				if (HitActor->ActorHasTag("Player"))
 				{
+					IsHited = true;
 					UGameplayStatics::ApplyDamage(
 						HitActor,
 						AttackDamage,
@@ -190,6 +204,7 @@ void ALSEnemy::HitAttack()
 				}
 				else if (HitActor->ActorHasTag("Fence"))
 				{
+					IsHited = true;
 					//사운드 재생
 					if (FenceSound)
 					{
@@ -234,6 +249,23 @@ void ALSEnemy::OnEnemyEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* Ot
 	if (OtherActor==Player)
 	{
 		GetWorldTimerManager().ClearTimer(AttackTimerHandle);
+	}
+}
+
+void ALSEnemy::UpdateCurrentHealth()
+{
+	if (!WidgetComponent) return;
+	if (!UserWidget)
+	{
+		UserWidget = WidgetComponent->GetWidget();
+	}
+	if (UserWidget)
+	{
+		if(UProgressBar* ProgressBar = Cast<UProgressBar>(UserWidget->GetWidgetFromName(TEXT("FenceHealthBar"))))
+		{
+			float HealthPercent = CurrentHealth/MaxHealth;
+			ProgressBar->SetPercent(HealthPercent);
+		}
 	}
 }
 
