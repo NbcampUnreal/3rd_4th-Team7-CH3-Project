@@ -49,6 +49,7 @@ void ULSPlayerWeaponSystemComp::UnEquipWeapon()
 {
 	if (CurrentWeapon)
 	{
+		OwnerCharacter->SetCurrentWeapon(ECurrentWeapon::None);
 		CurrentWeapon->Destroy();
 		CurrentWeapon = nullptr;
 	}

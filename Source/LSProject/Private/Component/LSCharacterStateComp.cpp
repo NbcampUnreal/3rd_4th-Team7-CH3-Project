@@ -8,7 +8,6 @@ ULSCharacterStateComp::ULSCharacterStateComp()
 	CurrentState = ECharacterState::Idle;
 }
 
-
 void ULSCharacterStateComp::BeginPlay()
 {
 	Super::BeginPlay();
@@ -39,11 +38,14 @@ void ULSCharacterStateComp::OnMontageEnded(UAnimMontage* Montage, bool bInterrup
 {
 	if (bInterrupted) return;
 
-	SetState(ECharacterState::Idle);
 
 	if (FMath::IsNearlyZero(OwnerCharacter->GetCurrentHealth()))
 	{
 		SetState(ECharacterState::Die);
+	}
+	else
+	{
+		SetState(ECharacterState::Idle);
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("Montage Ended"));
@@ -106,6 +108,17 @@ bool ULSCharacterStateComp::CanReload() const
 	}
 }
 
+bool ULSCharacterStateComp::CanDie() const
+{
+	switch (CurrentState)
+	{
+	case ECharacterState::Die:
+		return false;
+	default:
+		return true;
+	}
+}
+
 ECharacterState ULSCharacterStateComp::GetCurrentState() const
 {
 	return CurrentState;
@@ -116,6 +129,7 @@ void ULSCharacterStateComp::SetState(ECharacterState NewState)
 	if (CurrentState == NewState) return;
 
 	CurrentState = NewState;
+	UE_LOG(LogTemp, Warning, TEXT("Set State : %d"), CurrentState);
 }
 
 void ULSCharacterStateComp::StopCurrentMontage()

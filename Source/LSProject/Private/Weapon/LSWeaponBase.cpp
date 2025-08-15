@@ -71,8 +71,6 @@ void ALSWeaponBase::Fire()
 				UDamageType::StaticClass());
 		}
 
-		FTransform MuzzleTransform = WeaponSkeletalMesh->GetSocketTransform(TEXT("Muzzle"));
-
 		if (FireEffect)
 		{
 			UNiagaraFunctionLibrary::SpawnSystemAttached(
@@ -83,15 +81,6 @@ void ALSWeaponBase::Fire()
 				FRotator::ZeroRotator,
 				EAttachLocation::SnapToTarget,
 				true);
-		}
-
-		if (FireSound)
-		{
-			UGameplayStatics::PlaySoundAtLocation(
-				this,
-				FireSound,
-				MuzzleTransform.GetLocation(),
-				FireSoundVolume);
 		}
 
 		DrawDebugLine(
@@ -132,9 +121,4 @@ bool ALSWeaponBase::IsCanReload() const
 bool ALSWeaponBase::IsCanFire() const
 {
 	return CurrentAmmo > 0;
-}
-
-FTransform ALSWeaponBase::GetLeftHandSocketTransform() const
-{
-	return WeaponSkeletalMesh->GetSocketTransform(TEXT("LeftHandGrip"));
 }

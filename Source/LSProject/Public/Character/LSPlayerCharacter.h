@@ -20,7 +20,6 @@ enum class ECurrentWeapon : uint8
 	None UMETA(DisplayName = "None"),
 	Pistol UMETA(DisplayName = "Pistol"),
 	Rifle UMETA(DisplayName = "Rifle"),
-	Shotgun UMETA(DisplayName = "Shotgun")
 };
 
 UCLASS()
@@ -52,7 +51,8 @@ public:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon") 
 	TObjectPtr<ULSPlayerWeaponSystemComp> WeaponSystemComp;
-	
+
+	UFUNCTION(BlueprintPure, Category = "Health")
 	float GetCurrentHealth() const;
 	float GetMaxHealth() const;
 
@@ -110,8 +110,6 @@ private:
 	UAnimMontage* ReloadMontage;
 	UPROPERTY()
 	UAnimMontage* EquipMontage;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	UAnimMontage* DieMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	TArray<UAnimMontage*> FireMontageCollection;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))

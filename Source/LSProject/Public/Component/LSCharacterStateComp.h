@@ -47,6 +47,7 @@ public:
 	bool CanEquip() const;
 	bool CanFire() const;
 	bool CanReload() const;
+	bool CanDie() const;
 	ECharacterState GetCurrentState() const;
 	void SetState(ECharacterState NewState);
 

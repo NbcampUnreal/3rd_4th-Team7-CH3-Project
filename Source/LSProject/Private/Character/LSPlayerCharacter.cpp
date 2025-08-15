@@ -15,6 +15,7 @@
 #include "Weapon/LSWeaponBase.h"
 #include "Props/LSNullFence.h" //Static함수로 만들어서 가져올까 그냥?
 #include "Components/CapsuleComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 ALSPlayerCharacter::ALSPlayerCharacter()
@@ -46,7 +47,6 @@ ALSPlayerCharacter::ALSPlayerCharacter()
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
-	
 }
 
 ECurrentWeapon ALSPlayerCharacter::GetCurrentWeapon() const
@@ -87,17 +87,14 @@ void ALSPlayerCharacter::Death()
 {
 	Super::Death();
 
-	PlayAnimMontage(DieMontage);
-	CharacterStateComp->SetState(ECharacterState::Die);
-
-	if (ALSPlayerController* PC = Cast<ALSPlayerController>(GetController()))
+	if (CharacterStateComp->CanDie())
 	{
-		if (GetCharacterMovement())
+		CharacterStateComp->SetState(ECharacterState::Die);
+
+		if (ALSPlayerController* PC = Cast<ALSPlayerController>(GetController()))
 		{
-			GetCharacterMovement()->DisableMovement();
+			PC->ShowGameOverWidget();
 		}
-		DisableInput(PC);
-		PC->ShowGameOverWidget();
 	}
 }
 
@@ -141,43 +138,43 @@ void ALSPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 			if (PlayerController->ReloadAction)
 			{
 				EnhancedInput->BindAction(PlayerController->ReloadAction, ETriggerEvent::Started,
-										  this, &ALSPlayerCharacter::Reload);
+				                          this, &ALSPlayerCharacter::Reload);
 			}
-			if (PlayerController->OpenShopAction) 
-			{ 
-				EnhancedInput->BindAction(PlayerController->OpenShopAction, ETriggerEvent::Started, 
-											this, &ALSPlayerCharacter::OpenShopUI); 
+			if (PlayerController->OpenShopAction)
+			{
+				EnhancedInput->BindAction(PlayerController->OpenShopAction, ETriggerEvent::Started,
+				                          this, &ALSPlayerCharacter::OpenShopUI);
 			}
-			if (PlayerController->OpenInvenAction) 
-			{ 
-				EnhancedInput->BindAction(PlayerController->OpenInvenAction, ETriggerEvent::Started, 
-											this, &ALSPlayerCharacter::StartInvenUI); 
+			if (PlayerController->OpenInvenAction)
+			{
+				EnhancedInput->BindAction(PlayerController->OpenInvenAction, ETriggerEvent::Started,
+				                          this, &ALSPlayerCharacter::StartInvenUI);
 			}
-			if (PlayerController->OpenInvenAction) 
-			{ 
-				EnhancedInput->BindAction(PlayerController->OpenInvenAction, ETriggerEvent::Completed, 
-											this, &ALSPlayerCharacter::EndInvenUI); 
+			if (PlayerController->OpenInvenAction)
+			{
+				EnhancedInput->BindAction(PlayerController->OpenInvenAction, ETriggerEvent::Completed,
+				                          this, &ALSPlayerCharacter::EndInvenUI);
 			}
-			if (PlayerController->RestoreFenceAction) 
-			{ 
-				EnhancedInput->BindAction(PlayerController->RestoreFenceAction, ETriggerEvent::Triggered, 
-											this, &ALSPlayerCharacter::RestoreFence); 
+			if (PlayerController->RestoreFenceAction)
+			{
+				EnhancedInput->BindAction(PlayerController->RestoreFenceAction, ETriggerEvent::Triggered,
+				                          this, &ALSPlayerCharacter::RestoreFence);
 			}
-		} 
+		}
 	}
 }
 
 float ALSPlayerCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
                                      AController* EventInstigator, AActor* DamageCauser)
 {
-	const float Prev = CurrentHealth;
 	CurrentHealth -= DamageAmount;
-	UE_LOG(LogTemp, Warning, TEXT("Damage: prev=%.1f curr=%.1f"), Prev, CurrentHealth);
-	UpdateHealthBar(CurrentHealth,MaxHealth);
-	if (Prev > 0.f && CurrentHealth <= 0.f)
+	if (CurrentHealth <= 0.f)
 	{
+		CurrentHealth = 0.f;
 		Death();
 	}
+	UE_LOG(LogTemp, Warning, TEXT("Damage: curr=%.1f"), CurrentHealth);
+	UpdateHealthBar(CurrentHealth, MaxHealth);
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
 
@@ -277,7 +274,7 @@ void ALSPlayerCharacter::Attack()
 
 		bCanFire = false;
 		float FireRate = WeaponSystemComp->CurrentWeapon->GetFireRate();
-		
+
 		GetWorld()->GetTimerManager().SetTimer(
 			FireTimerHandle,
 			this,
@@ -298,6 +295,7 @@ void ALSPlayerCharacter::Reload(const FInputActionValue& Value)
 	//if (!InvenComp->HasAmmo(MaxAmmo))	return;
 
 	const int32 Index = static_cast<int32>(CurrentWeapon) - 1;
+	ALSWeaponBase* Weapon = WeaponSystemComp->CurrentWeapon;
 
 	if (ReloadMontageCollection.IsValidIndex(Index))
 	{
@@ -313,7 +311,7 @@ void ALSPlayerCharacter::Equip()
 	if (!CharacterStateComp->CanEquip()) return;
 
 	const int32 Index = static_cast<int32>(CurrentWeapon) - 1;
-	
+
 	if (EquipMontageCollection.IsValidIndex(Index))
 	{
 		EquipMontage = EquipMontageCollection[Index];
@@ -324,30 +322,30 @@ void ALSPlayerCharacter::Equip()
 
 void ALSPlayerCharacter::OpenShopUI()
 {
-	ALSGameState* GS=GetWorld()->GetGameState<ALSGameState>();
-	if (!GS)	return;
-	
-	if (ALSPlayerController* PC=Cast<ALSPlayerController>(GetController()))
+	ALSGameState* GS = GetWorld()->GetGameState<ALSGameState>();
+	if (!GS) return;
+
+	if (ALSPlayerController* PC = Cast<ALSPlayerController>(GetController()))
 	{
 		if (GS->bGetCanOpenShopUI())
 		{
-			PC->ShowShopWidget();	
+			PC->ShowShopWidget();
 		}
 	}
 }
 
 void ALSPlayerCharacter::StartInvenUI()
 {
-	ALSPlayerController* PC=Cast<ALSPlayerController>(GetController());
-	if (!PC)	return;
+	ALSPlayerController* PC = Cast<ALSPlayerController>(GetController());
+	if (!PC) return;
 
 	PC->ShowInvenWidget();
 }
 
 void ALSPlayerCharacter::EndInvenUI()
 {
-	ALSPlayerController* PC=Cast<ALSPlayerController>(GetController());
-	if (!PC)	return;
+	ALSPlayerController* PC = Cast<ALSPlayerController>(GetController());
+	if (!PC) return;
 
 	PC->HideInvenWidget();
 }

@@ -31,9 +31,6 @@ public:
 	bool IsCanReload() const;
 	bool IsCanFire() const;
 
-	UFUNCTION(BlueprintCallable, Category = "Socket")
-	FTransform GetLeftHandSocketTransform() const;
-
 protected:
 	int32 MaxAmmo;
 	int32 CurrentAmmo;
