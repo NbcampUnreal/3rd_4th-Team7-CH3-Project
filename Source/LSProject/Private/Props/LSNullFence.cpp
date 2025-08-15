@@ -1,5 +1,6 @@
 #include "Props/LSNullFence.h"
 
+#include "Components/BoxComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Game/LSPlayerState.h"
 #include "Kismet/GameplayStatics.h"
@@ -11,11 +12,12 @@ ALSNullFence::ALSNullFence()
 
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
 	MeshComponent->SetupAttachment(Root);
-	MeshComponent->OnComponentBeginOverlap.AddDynamic(this, &ALSNullFence::OnOverlapStartEvent);
-	MeshComponent->OnComponentEndOverlap.AddDynamic(this, &ALSNullFence::OnOverlapEndEvent);
 
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
 	WidgetComponent->SetupAttachment(Root);
+
+	OverlapBoxComponent=CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
+	OverlapBoxComponent->SetupAttachment(Root);
 
 	UseCoin = 50;
 	IsOverlaped=false;
@@ -25,6 +27,8 @@ ALSNullFence::ALSNullFence()
 void ALSNullFence::BeginPlay()
 {
 	Super::BeginPlay();
+	OverlapBoxComponent->OnComponentBeginOverlap.AddDynamic(this, &ALSNullFence::OnOverlapStartEvent);
+	OverlapBoxComponent->OnComponentEndOverlap.AddDynamic(this, &ALSNullFence::OnOverlapEndEvent);
 	if (WidgetComponent)
 	{
 		UserWidget=WidgetComponent->GetUserWidgetObject();
@@ -39,11 +43,15 @@ void ALSNullFence::OnOverlapStartEvent(UPrimitiveComponent* OverlappedComponent,
                                        UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	Player = UGameplayStatics::GetPlayerPawn(GetWorld(),0);
-	if (OtherActor==Player && WidgetComponent)
+	if (OtherActor!=Player ) return;
+	UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] Player"));
+	if (WidgetComponent)
 	{
+		UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] WidgetComponent"));
 		UserWidget=WidgetComponent->GetUserWidgetObject();
 		if(UserWidget)
 		{
+			UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] UserWidget"));
 			UserWidget->SetVisibility(ESlateVisibility::Visible);
 			IsOverlaped=true;
 		}
@@ -55,12 +63,15 @@ void ALSNullFence::OnOverlapEndEvent(UPrimitiveComponent* OverlappedComponent, A
 {
 	Player = UGameplayStatics::GetPlayerPawn(GetWorld(),0);
 	if (OtherActor==Player && WidgetComponent)
+	UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] Player End"));
 	{
 		if (WidgetComponent)
 		{
+			UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] WidgetComponent End"));
 			UserWidget=WidgetComponent->GetUserWidgetObject();
 			if(UserWidget)
 			{
+				UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] UserWidget End"));
 				UserWidget->SetVisibility(ESlateVisibility::Hidden);
 				IsOverlaped=false;
 			}
