@@ -5,6 +5,7 @@
 #include "Components/WidgetComponent.h"
 #include "LSEnemy.generated.h"
 
+class UCameraComponent;
 class USphereComponent;
 
 UENUM(BlueprintType)
@@ -44,7 +45,8 @@ protected:
 	UWidgetComponent* WidgetComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Overlap)
 	UUserWidget* UserWidget;
-
+	
+	UCameraComponent* CameraComp;
 	FTimerHandle AttackTimerHandle;
 
 	UFUNCTION()
@@ -71,8 +73,6 @@ protected:
 	UPROPERTY(EditAnywhere, BluePrintReadWrite, Category=Coin)
 	int32 EnemyCoin;
 
-	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = Attack)
-	float AttackRange;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Attack)
 	float AttackDamage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Attack)
@@ -99,11 +99,13 @@ protected:
 	
 	bool IsRotation=false;
 	void SetDeltaRotation(float DeltaSeconds);
+	void HealthRotation();
 
 	UPROPERTY()
 	AActor* Player=nullptr;
 
 	FTimerHandle DeathTimerHandle;
+	FTimerHandle HealthTimerHandle;
 	
 	void Delete();
 private:

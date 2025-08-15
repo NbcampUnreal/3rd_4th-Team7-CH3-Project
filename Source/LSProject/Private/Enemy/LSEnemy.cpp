@@ -2,6 +2,7 @@
 
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Game/LSPlayerState.h"
 #include "Components/SphereComponent.h"
@@ -15,7 +16,6 @@ ALSEnemy::ALSEnemy()
 	WalkSpeed=300.f;
 	ZombieType=ELSZombieType::Normal;
 	EnemyCoin=0;
-	AttackRange=30.f;
 	AttackDamage=30.f;
 	StartVectorZ=30.f;
 	StartVectorY=0.f;
@@ -24,7 +24,7 @@ ALSEnemy::ALSEnemy()
 	HitMontage=nullptr;
 	TakeDamageMontage=nullptr;
 	DeathMontage=nullptr;
-
+	CameraComp=nullptr;
 	
 	SphereComponent=CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 	SphereComponent->SetupAttachment(GetCapsuleComponent());
@@ -151,6 +151,14 @@ void ALSEnemy::BeginPlay()
 			}
 		}
 	}
+
+	GetWorld()->GetTimerManager().SetTimer(
+			HealthTimerHandle,
+			this,
+			&ALSEnemy::HealthRotation,
+			0.1f,
+			true
+	);
 }
 
 //회전 : 잘 안 됨...
@@ -166,10 +174,9 @@ void ALSEnemy::Tick(float DeltaTime)
 //montage의 notify에서 호출됨
 void ALSEnemy::HitAttack()
 {
-	FCollisionShape CollisionShape = FCollisionShape::MakeSphere(45.f);
+	FCollisionShape CollisionShape = FCollisionShape::MakeSphere(50.f);
 	FVector LocalOffset(StartVectorX, StartVectorY, StartVectorZ);
 	FVector StartLocation = GetActorTransform().TransformPosition(LocalOffset);
-	//FVector EndLocation = StartLocation+ GetActorForwardVector() * AttackRange;
 	TArray<FHitResult> Hits;
 
 	bool bHit = GetWorld()->SweepMultiByChannel(
@@ -276,6 +283,7 @@ void ALSEnemy::SetDeltaRotation(float DeltaSeconds)
 	{
 		Player = UGameplayStatics::GetPlayerPawn(GetWorld(),0);
 	}
+	
 	FRotator NowRotation =  GetActorRotation();
 	FRotator LookRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Player->GetActorLocation());
 
@@ -289,8 +297,35 @@ void ALSEnemy::SetDeltaRotation(float DeltaSeconds)
 	}
 }
 
+void ALSEnemy::HealthRotation()
+{
+	if (!WidgetComponent) return;
+	if (!Player)
+	{
+		Player = UGameplayStatics::GetPlayerPawn(GetWorld(),0);
+		CameraComp = Player->GetComponentByClass<UCameraComponent>();
+	}
+	if (!CameraComp)
+	{
+		CameraComp = Player->GetComponentByClass<UCameraComponent>();
+	}
+	FVector PlayerLocation = CameraComp->GetComponentLocation();
+	FVector WidgetLocation = WidgetComponent->GetComponentLocation();
+	
+	FVector Direction = (PlayerLocation - WidgetLocation).GetSafeNormal();
+	
+	FRotator LookAtRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+	
+	WidgetComponent->SetWorldRotation(LookAtRotation);
+}
+
 void ALSEnemy::Delete()
 {
+	if (HealthTimerHandle.IsValid())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(HealthTimerHandle);
+		HealthTimerHandle.Invalidate();
+	}
 	if (DeathTimerHandle.IsValid())
 	{
 		GetWorld()->GetTimerManager().ClearTimer(DeathTimerHandle);
