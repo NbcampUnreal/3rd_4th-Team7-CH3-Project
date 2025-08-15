@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraSystem.h"
+#include "Component/LSInventoryComp.h"
 
 ALSWeaponBase::ALSWeaponBase()
 {

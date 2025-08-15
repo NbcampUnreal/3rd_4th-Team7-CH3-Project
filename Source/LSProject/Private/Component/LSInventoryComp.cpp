@@ -63,8 +63,8 @@ void ULSInventoryComp::Unequip()
 	ULSPlayerWeaponSystemComp* OtherComp = Character->FindComponentByClass<ULSPlayerWeaponSystemComp>();
 	if (!OtherComp) return;
 
-	//애니메이션
 	MyWeaponName=TEXT("None");
+	//애니메이션
 	EquipWeapon();
 
 	//무기 삭제
@@ -73,11 +73,50 @@ void ULSInventoryComp::Unequip()
 
 void ULSInventoryComp::ChangeWeaponSlot(const FName& NewWeapon)
 {
-	Unequip();
-	
-	MyWeaponName=NewWeapon;
+	if (int32* ExistingValue = MyItems.Find(MyWeaponName))
+	{
+		(*ExistingValue)++;
+	}
+	else
+	{
+		MyItems.Add(MyWeaponName, 1);
+	}
 
-	Equip(MyWeaponName);
+	if (int32* ExistingValue = MyItems.Find(NewWeapon))
+	{
+		(*ExistingValue)--;
+	}
+
+	AActor* Owner = GetOwner();
+	if (!Owner) return;
+
+	ALSPlayerCharacter* Character=Cast<ALSPlayerCharacter>(Owner);
+	if (!Character) return;
+
+	ULSPlayerWeaponSystemComp* OtherComp = Character->FindComponentByClass<ULSPlayerWeaponSystemComp>();
+	if (!OtherComp) return;
+
+	MyWeaponName=NewWeapon;
+	//애니메이션
+	EquipWeapon();
+}
+
+bool ULSInventoryComp::HasAmmo(int32 MyMaxAmmo)
+{
+	FString AmmoStr=MyWeaponName.ToString();
+	AmmoStr.Append("Ammo");
+	FName Ammo=FName(*AmmoStr);
+
+	if (MyItems.Find(Ammo))
+	{
+		if (MyItems[Ammo]>=MyMaxAmmo)
+		{
+			MyItems[Ammo]-=MyMaxAmmo;
+			return true;
+		}
+	}
+
+	return false;
 }
 
 

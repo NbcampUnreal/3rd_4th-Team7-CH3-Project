@@ -63,8 +63,6 @@ bool ULSCharacterStateComp::CanEquip() const
 {
 	switch (CurrentState)
 	{
-	case ECharacterState::Equip:
-		return false;
 	case ECharacterState::Fire:
 		return false;
 	case ECharacterState::Reload:

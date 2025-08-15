@@ -20,12 +20,12 @@ void ULSPlayerWeaponSystemComp::BeginPlay()
 void ULSPlayerWeaponSystemComp::EquipWeapon()
 {
 	if (WeaponClass.IsEmpty()) return;
-
+	
 	if (CurrentWeapon)
 	{
 		CurrentWeapon->Destroy();
 		CurrentWeapon = nullptr;
-	}
+	} 
 
 	if (OwnerCharacter)
 	{

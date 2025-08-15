@@ -12,7 +12,6 @@
 #include "Weapon/LSPlayerWeaponSystemComp.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/ProgressBar.h"
-#include "Widget/LSInventoryWidget.h"
 #include "Weapon/LSWeaponBase.h"
 #include "Props/LSNullFence.h" //Static함수로 만들어서 가져올까 그냥?
 #include "Components/CapsuleComponent.h"
@@ -294,6 +293,9 @@ void ALSPlayerCharacter::Reload(const FInputActionValue& Value)
 	if (CurrentWeapon == ECurrentWeapon::None) return;
 	if (!WeaponSystemComp->CurrentWeapon->IsCanReload()) return;
 	if (!CharacterStateComp->CanReload()) return;
+	//우진
+	//int32 MaxAmmo = WeaponSystemComp->CurrentWeapon->GetMaxAmmo();
+	//if (!InvenComp->HasAmmo(MaxAmmo))	return;
 
 	const int32 Index = static_cast<int32>(CurrentWeapon) - 1;
 

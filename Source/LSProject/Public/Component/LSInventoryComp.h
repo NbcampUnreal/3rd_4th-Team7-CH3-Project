@@ -26,6 +26,7 @@ public:
 	void Unequip();
 	void ChangeWeaponSlot(const FName& NewWeapon);
 	FORCEINLINE FName GetMyWeapon() const {return MyWeaponName;}
+	bool HasAmmo(int32 MyMaxAmmo);
 
 private:
 	UPROPERTY()
