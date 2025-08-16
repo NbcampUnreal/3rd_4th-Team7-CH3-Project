@@ -2,6 +2,9 @@
 #include "Component/LSInventoryComp.h"
 #include "Character/LSPlayerCharacter.h"
 #include "Weapon/LSPlayerWeaponSystemComp.h"
+#include "Controller/LSPlayerController.h"
+#include "Widget/LSInventoryWidget.h"
+#include "Weapon/LSWeaponBase.h"
 
 ULSInventoryComp::ULSInventoryComp()
 {
@@ -40,6 +43,9 @@ void ULSInventoryComp::Equip(const FName& Input)
 
 	MyWeaponName=Input;
 
+	AActor* Owner = GetOwner();
+	if (!Owner) return;
+
 	EquipWeapon();
 }
 
@@ -62,63 +68,80 @@ void ULSInventoryComp::Unequip()
 
 	ULSPlayerWeaponSystemComp* OtherComp = Character->FindComponentByClass<ULSPlayerWeaponSystemComp>();
 	if (!OtherComp) return;
-
-	MyWeaponName=TEXT("None");
+	
 	//애니메이션
 	EquipWeapon();
 
 	//무기 삭제
 	OtherComp->UnEquipWeapon();
+
+	//무기 destroy 후 조정
+	MyWeaponName=TEXT("None");
+	
+	//UI Update
+	ALSPlayerController* PC=Cast<ALSPlayerController>(Character->GetController());
+	if (!PC)	return;
+	if (!PC->GetInvenWidget())	return;
+	PC->GetInvenWidget()->OnUpdateInvenUI.Broadcast();
+	
 }
 
 void ULSInventoryComp::ChangeWeaponSlot(const FName& NewWeapon)
 {
-	if (int32* ExistingValue = MyItems.Find(MyWeaponName))
-	{
-		(*ExistingValue)++;
-	}
-	else
-	{
-		MyItems.Add(MyWeaponName, 1);
-	}
-
-	if (int32* ExistingValue = MyItems.Find(NewWeapon))
-	{
-		(*ExistingValue)--;
-	}
-
-	AActor* Owner = GetOwner();
-	if (!Owner) return;
-
-	ALSPlayerCharacter* Character=Cast<ALSPlayerCharacter>(Owner);
-	if (!Character) return;
-
-	ULSPlayerWeaponSystemComp* OtherComp = Character->FindComponentByClass<ULSPlayerWeaponSystemComp>();
-	if (!OtherComp) return;
-
+	Unequip();
 	MyWeaponName=NewWeapon;
-	//애니메이션
-	EquipWeapon();
+	Equip(MyWeaponName);
 }
 
-bool ULSInventoryComp::HasAmmo(int32 MyMaxAmmo)
+bool ULSInventoryComp::HasAmmo()
 {
 	FString AmmoStr=MyWeaponName.ToString();
 	AmmoStr.Append("Ammo");
 	FName Ammo=FName(*AmmoStr);
 
-	if (MyItems.Find(Ammo))
+	if (MyItems.Find(Ammo) && MyItems[Ammo]>0)
 	{
-		if (MyItems[Ammo]>=MyMaxAmmo)
-		{
-			MyItems[Ammo]-=MyMaxAmmo;
-			return true;
-		}
+		return true;
 	}
 
 	return false;
 }
 
+int ULSInventoryComp::RequiredAmmo(int32 RequiredAmmo)
+{
+	FString AmmoStr=MyWeaponName.ToString();
+	AmmoStr.Append("Ammo");
+	FName AmmoName=FName(*AmmoStr);
+
+	if (MyItems.Find(AmmoName))
+	{
+		if (MyItems[AmmoName]>=RequiredAmmo)
+		{
+			MyItems[AmmoName]-=RequiredAmmo;
+			return	RequiredAmmo;
+		}
+		else
+		{
+			int32 Available = MyItems[AmmoName];
+			MyItems[AmmoName]=0;
+			return Available;
+		}
+	}
+
+	return 0;
+}
+
+void ULSInventoryComp::AddAmmoToInven(int32 RequiredAmmo)
+{
+	FString AmmoStr=MyWeaponName.ToString();
+	AmmoStr.Append("Ammo");
+	FName AmmoName=FName(*AmmoStr);
+	
+	int32& NewValue=MyItems.FindOrAdd(AmmoName);
+	NewValue+=RequiredAmmo;
+
+	MyItems[AmmoName]=NewValue;
+}
 
 ECurrentWeapon ULSInventoryComp::ChangeWeaponNameToEnum(const FName& Input) 
 {
@@ -147,6 +170,7 @@ void ULSInventoryComp::EquipWeapon()
 
 	Player->SetCurrentWeapon(ChangeWeaponNameToEnum(MyWeaponName));
 	Player->Equip();
+	
 }
 
 

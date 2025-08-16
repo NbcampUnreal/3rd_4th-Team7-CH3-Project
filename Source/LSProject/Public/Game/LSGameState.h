@@ -43,6 +43,7 @@ private:
 	UPROPERTY() UTextBlock* TimeTextBlock = nullptr;
 	UPROPERTY() UTextBlock* CoinTextBlock = nullptr;
 	UPROPERTY() UTextBlock* KillTextBlock = nullptr;
+	UPROPERTY() UTextBlock* BulletTextBlock = nullptr;
 
 	UPROPERTY()
 	TArray<TWeakObjectPtr<ALSEnemySpawnVolume>> SpawnVolumes;

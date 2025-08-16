@@ -9,7 +9,7 @@ ALSWeaponPistol::ALSWeaponPistol()
 	PrimaryActorTick.bCanEverTick = false;
 
 	MaxAmmo = 15;
-	CurrentAmmo = MaxAmmo;
+	CurrentAmmo = 0;
 	Damage = 30.0f;
 	FireRate = 0.2f;
 }

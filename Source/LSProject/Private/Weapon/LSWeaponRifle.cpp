@@ -5,7 +5,7 @@ ALSWeaponRifle::ALSWeaponRifle()
 	PrimaryActorTick.bCanEverTick = false;
 	
 	MaxAmmo = 30;
-	CurrentAmmo = MaxAmmo;
+	CurrentAmmo = 0;
 	Damage = 50.0f;
 	FireRate = 0.1f;
 }

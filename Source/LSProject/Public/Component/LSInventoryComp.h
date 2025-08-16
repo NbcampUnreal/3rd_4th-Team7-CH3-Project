@@ -26,8 +26,10 @@ public:
 	void Unequip();
 	void ChangeWeaponSlot(const FName& NewWeapon);
 	FORCEINLINE FName GetMyWeapon() const {return MyWeaponName;}
-	bool HasAmmo(int32 MyMaxAmmo);
-
+	bool HasAmmo();
+	int RequiredAmmo(int32 RequiredAmmo);
+	void AddAmmoToInven(int32 RequiredAmmo);
+	
 private:
 	UPROPERTY()
 	TMap<FName,int32> MyItems;
