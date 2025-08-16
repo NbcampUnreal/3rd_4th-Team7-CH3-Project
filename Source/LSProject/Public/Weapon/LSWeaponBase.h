@@ -22,6 +22,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "WeaponMesh")
 	USkeletalMeshComponent* WeaponSkeletalMesh;
 
+	virtual void BeginPlay() override;
 	virtual void Fire() override;
 	virtual void Reload() override;
 
@@ -29,8 +30,11 @@ public:
 	int32 GetCurrentAmmo() const;
 	int32 GetMaxAmmo() const;
 	bool IsCanReload() const;
-	bool IsCanFire() const;
 
+	void PlayNoneFireSound();
+
+	FTransform MuzzleTransform;
+	
 protected:
 	int32 MaxAmmo;
 	int32 CurrentAmmo;
@@ -49,7 +53,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	float FireSoundVolume;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
-	USoundBase* ReloadSound;
+	USoundBase* NoneFireSound;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
-	float ReloadSoundVolume;
+	float NoneFireSoundVolume;
+	
 };

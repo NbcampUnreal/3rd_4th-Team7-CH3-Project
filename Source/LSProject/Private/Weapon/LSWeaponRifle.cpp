@@ -10,6 +10,11 @@ ALSWeaponRifle::ALSWeaponRifle()
 	FireRate = 0.1f;
 }
 
+void ALSWeaponRifle::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
 void ALSWeaponRifle::Fire()
 {
 	Super::Fire();
