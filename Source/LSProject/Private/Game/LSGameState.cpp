@@ -104,9 +104,9 @@ void ALSGameState::UpdateHUD()
 			CoinTextBlock->SetText(FText::FromString(TEXT("0$")));
 		}
 	}
+	int32 Kills = 0;
 	if (KillTextBlock)
 	{
-		int32 Kills = 0;
 		if (ALSPlayerState* PS = PC->GetPlayerState<ALSPlayerState>())
 			Kills = PS->GetZombieNum();
 
@@ -120,6 +120,30 @@ void ALSGameState::UpdateHUD()
 	else
 	{
 		ShopPressTextBlock->SetVisibility((ESlateVisibility::Hidden));
+	}
+
+	const bool  bIsDayNow = DayNightCtrl->IsDayPhase();
+	const int32 DayNow    = DayNightCtrl->GetCurrentDay();
+	if (!bLocalClearShown && Kills >= 100)
+	{
+		if (PC->IsLocalPlayerController())
+		{
+			PC->ShowGameClearWidget();
+			bLocalClearShown = true;
+		}
+	}
+	if ((bIsDayNow != bLocalPrevIsDay) || (DayNow != LocalPrevDay))
+	{
+		if (!bLocalClearShown && bIsDayNow && (LocalPrevDay == 5))
+		{
+			if (PC->IsLocalPlayerController())
+			{
+				PC->ShowGameClearWidget();
+				bLocalClearShown = true;
+			}
+		}
+		bLocalPrevIsDay = bIsDayNow;
+		LocalPrevDay    = DayNow;
 	}
 }
 void ALSGameState::TryRegisterSpawnVolumes()
@@ -191,25 +215,10 @@ void ALSGameState::OnEnemyKilled()
 		if (ALSPlayerState* PS = Cast<ALSPlayerState>(PC->PlayerState))
 		{
 			PS->AddZombieKill();
-			const int32 Kills = PS->GetZombieNum();
-			if (Kills >= 100)
-			{
-				if (ALSPlayerCharacter* PlayerCharacter = Cast<ALSPlayerCharacter>(PC->GetPawn()))
-				{
-					const bool bAlive = (PlayerCharacter->GetCurrentHealth() > 0.f);
-					if (bAlive)
-					{
-						if (ALSPlayerController* LSPC = Cast<ALSPlayerController>(PC))
-						{
-							LSPC->ShowGameClearWidget();
-						}
-					}
-				}
-			}
+			PS->AddCoin(50);
 		}
 	}
 	UpdateHUD();
-	
 }
 void ALSGameState::DespawnRemainZombie()
 {
