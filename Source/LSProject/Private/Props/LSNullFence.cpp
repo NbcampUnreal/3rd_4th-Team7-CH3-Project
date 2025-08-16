@@ -90,6 +90,10 @@ void ALSNullFence::RestoreFence()
 	))
 	{
 		//소리 재생
+		if (RestoreSound)
+		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), RestoreSound, GetActorLocation(), FRotator::ZeroRotator);
+		}
 		if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
 		{
 			if (APlayerState* PlayerState = PlayerController->GetPlayerState<APlayerState>())
