@@ -63,7 +63,7 @@ void ALSGameState::UpdateHUD()
 			else              EndWave();           // 낮 시작(스폰 정지)
 
 			bPrevIsDay = bIsDayNow;
-			PrevDay    = DayNow;
+			PrevDay = DayNow;
 		}
 	}
 	auto* PC = Cast<ALSPlayerController>(GetWorld()->GetFirstPlayerController());
@@ -71,8 +71,8 @@ void ALSGameState::UpdateHUD()
 
 	UUserWidget* HUD = PC->GetHUDWidget();
 	if (!HUD) return;
-	
-	if (!DayTextBlock) 
+
+	if (!DayTextBlock)
 		DayTextBlock = Cast<UTextBlock>(HUD->GetWidgetFromName(TEXT("DayText")));
 	if (!TimeTextBlock)
 		TimeTextBlock = Cast<UTextBlock>(HUD->GetWidgetFromName(TEXT("TimeText")));
@@ -84,8 +84,8 @@ void ALSGameState::UpdateHUD()
 		ShopPressTextBlock = Cast<UTextBlock>(HUD->GetWidgetFromName(TEXT("ShopPressText")));
 	if (!BulletTextBlock)
 		BulletTextBlock = Cast<UTextBlock>(HUD->GetWidgetFromName(TEXT("BulletTextBlock")));
-	if (!DayTextBlock || !TimeTextBlock || ! ShopPressTextBlock || !BulletTextBlock) return;
-	
+	if (!DayTextBlock || !TimeTextBlock || !ShopPressTextBlock || !BulletTextBlock) return;
+
 	//데이 텍스트 업데이트
 	const int32 Day = DayNightCtrl->GetCurrentDay();
 	DayTextBlock->SetText(FText::FromString(FString::Printf(TEXT("Day %d"), Day)));
@@ -126,7 +126,7 @@ void ALSGameState::UpdateHUD()
 	}
 
 	const bool  bIsDayNow = DayNightCtrl->IsDayPhase();
-	const int32 DayNow    = DayNightCtrl->GetCurrentDay();
+	const int32 DayNow = DayNightCtrl->GetCurrentDay();
 	if (!bLocalClearShown && Kills >= 100)
 	{
 		if (PC->IsLocalPlayerController())
@@ -146,22 +146,23 @@ void ALSGameState::UpdateHUD()
 			}
 		}
 		bLocalPrevIsDay = bIsDayNow;
-		LocalPrevDay    = DayNow;
-	if (BulletTextBlock)
-	{
-		if (ALSPlayerCharacter* Character=Cast<ALSPlayerCharacter>(PC->GetPawn()))
+		LocalPrevDay = DayNow;
+		if (BulletTextBlock)
 		{
-			if (ULSPlayerWeaponSystemComp* WeaponComp=Character->FindComponentByClass<ULSPlayerWeaponSystemComp>())
+			if (ALSPlayerCharacter* Character = Cast<ALSPlayerCharacter>(PC->GetPawn()))
 			{
-				int32 CurrentAmmo=0;
-				int32 MaxAmmo=0;
-				if (WeaponComp->CurrentWeapon)
+				if (ULSPlayerWeaponSystemComp* WeaponComp = Character->FindComponentByClass<ULSPlayerWeaponSystemComp>())
 				{
-					CurrentAmmo=WeaponComp->CurrentWeapon->GetCurrentAmmo();
-					MaxAmmo=WeaponComp->CurrentWeapon->GetMaxAmmo();
-				}
+					int32 CurrentAmmo = 0;
+					int32 MaxAmmo = 0;
+					if (WeaponComp->CurrentWeapon)
+					{
+						CurrentAmmo = WeaponComp->CurrentWeapon->GetCurrentAmmo();
+						MaxAmmo = WeaponComp->CurrentWeapon->GetMaxAmmo();
+					}
 
-				BulletTextBlock->SetText(FText::FromString(FString::Printf(TEXT("Bullet : %d / %d"),CurrentAmmo,MaxAmmo )));
+					BulletTextBlock->SetText(FText::FromString(FString::Printf(TEXT("Bullet : %d / %d"), CurrentAmmo, MaxAmmo)));
+				}
 			}
 		}
 	}
