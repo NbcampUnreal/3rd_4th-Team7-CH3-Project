@@ -14,6 +14,11 @@ ALSWeaponPistol::ALSWeaponPistol()
 	FireRate = 0.2f;
 }
 
+void ALSWeaponPistol::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
 void ALSWeaponPistol::Fire()
 {
 	Super::Fire();

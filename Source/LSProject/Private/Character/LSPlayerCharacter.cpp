@@ -15,7 +15,6 @@
 #include "Weapon/LSWeaponBase.h"
 #include "Props/LSNullFence.h" //Static함수로 만들어서 가져올까 그냥?
 #include "Components/CapsuleComponent.h"
-#include "Kismet/GameplayStatics.h"
 
 
 ALSPlayerCharacter::ALSPlayerCharacter()
@@ -260,28 +259,34 @@ void ALSPlayerCharacter::Attack()
 	if (FireMontageCollection.IsEmpty()) return;
 	if (CurrentWeapon == ECurrentWeapon::None) return;
 	if (!CharacterStateComp->CanFire()) return;
-	if (!WeaponSystemComp->CurrentWeapon->IsCanFire()) return;
 
-	const int32 Index = static_cast<int32>(CurrentWeapon) - 1;
-
-	if (FireMontageCollection.IsValidIndex(Index))
+	if (WeaponSystemComp->CurrentWeapon->GetCurrentAmmo() > 0)
 	{
-		FireMontage = FireMontageCollection[Index];
-		PlayAnimMontage(FireMontage);
-		CharacterStateComp->SetState(ECharacterState::Fire);
+		const int32 Index = static_cast<int32>(CurrentWeapon) - 1;
 
-		WeaponSystemComp->CurrentWeapon->Fire();
+		if (FireMontageCollection.IsValidIndex(Index))
+		{
+			FireMontage = FireMontageCollection[Index];
+			PlayAnimMontage(FireMontage);
+			CharacterStateComp->SetState(ECharacterState::Fire);
 
-		bCanFire = false;
-		float FireRate = WeaponSystemComp->CurrentWeapon->GetFireRate();
-
-		GetWorld()->GetTimerManager().SetTimer(
-			FireTimerHandle,
-			this,
-			&ALSPlayerCharacter::ResetFireTimer,
-			FireRate,
-			false);
+			WeaponSystemComp->CurrentWeapon->Fire();
+		}
 	}
+	else
+	{
+			WeaponSystemComp->CurrentWeapon->PlayNoneFireSound();
+	}
+	
+	bCanFire = false;
+	float FireRate = WeaponSystemComp->CurrentWeapon->GetFireRate();
+
+	GetWorld()->GetTimerManager().SetTimer(
+		FireTimerHandle,
+		this,
+		&ALSPlayerCharacter::ResetFireTimer,
+		FireRate,
+		false);
 }
 
 void ALSPlayerCharacter::Reload(const FInputActionValue& Value)
@@ -295,7 +300,6 @@ void ALSPlayerCharacter::Reload(const FInputActionValue& Value)
 	//if (!InvenComp->HasAmmo(MaxAmmo))	return;
 
 	const int32 Index = static_cast<int32>(CurrentWeapon) - 1;
-	ALSWeaponBase* Weapon = WeaponSystemComp->CurrentWeapon;
 
 	if (ReloadMontageCollection.IsValidIndex(Index))
 	{

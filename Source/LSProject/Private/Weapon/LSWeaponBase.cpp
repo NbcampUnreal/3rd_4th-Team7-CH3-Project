@@ -26,8 +26,16 @@ ALSWeaponBase::ALSWeaponBase()
 	FireEffect = nullptr;
 	FireSound = nullptr;
 	FireSoundVolume = 1.0f;
-	ReloadSound = nullptr;
-	ReloadSoundVolume = 1.0f;
+	NoneFireSound = nullptr;
+	NoneFireSoundVolume = 1.0f;
+	MuzzleTransform = FTransform::Identity;
+}
+
+void ALSWeaponBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	MuzzleTransform = WeaponSkeletalMesh->GetSocketTransform(TEXT("Muzzle"));
 }
 
 void ALSWeaponBase::Fire()
@@ -82,6 +90,15 @@ void ALSWeaponBase::Fire()
 				EAttachLocation::SnapToTarget,
 				true);
 		}
+		
+		if (FireSound)
+		{
+			UGameplayStatics::PlaySoundAtLocation(
+				GetWorld(),
+				FireSound,
+				MuzzleTransform.GetLocation(),
+				FireSoundVolume);
+		}
 
 		DrawDebugLine(
 			GetWorld(),
@@ -118,7 +135,11 @@ bool ALSWeaponBase::IsCanReload() const
 	return CurrentAmmo < MaxAmmo;
 }
 
-bool ALSWeaponBase::IsCanFire() const
+void ALSWeaponBase::PlayNoneFireSound()
 {
-	return CurrentAmmo > 0;
+	UGameplayStatics::PlaySoundAtLocation(
+		GetWorld(),
+		NoneFireSound,
+		MuzzleTransform.GetLocation(),
+		NoneFireSoundVolume);
 }
