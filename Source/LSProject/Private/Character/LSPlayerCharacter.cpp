@@ -275,9 +275,9 @@ void ALSPlayerCharacter::Attack()
 	}
 	else
 	{
-			WeaponSystemComp->CurrentWeapon->PlayNoneFireSound();
+		WeaponSystemComp->CurrentWeapon->PlayNoneFireSound();
 	}
-	
+
 	bCanFire = false;
 	float FireRate = WeaponSystemComp->CurrentWeapon->GetFireRate();
 
@@ -293,10 +293,13 @@ void ALSPlayerCharacter::Reload(const FInputActionValue& Value)
 {
 	if (ReloadMontageCollection.IsEmpty()) return;
 	if (CurrentWeapon == ECurrentWeapon::None) return;
-	if (!WeaponSystemComp->CurrentWeapon->IsCanReload()) return;
+	if (WeaponSystemComp->CurrentWeapon)
+	{
+		if (!WeaponSystemComp->CurrentWeapon->IsCanReload()) return;
+	}
 	if (!CharacterStateComp->CanReload()) return;
-	if (!InventoryComp->HasAmmo())	return;
-	
+	if (!InventoryComp->HasAmmo()) return;
+
 	const int32 Index = static_cast<int32>(CurrentWeapon) - 1;
 
 	if (ReloadMontageCollection.IsValidIndex(Index))
