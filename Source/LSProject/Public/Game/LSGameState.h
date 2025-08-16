@@ -68,5 +68,9 @@ private:
 	void EndWave();
 	void SpawnTick();
 	void DespawnRemainZombie();
+
+	bool bLocalPrevIsDay = true;
+	int32 LocalPrevDay = 1;
+	bool bLocalClearShown = false;
 	
 };
