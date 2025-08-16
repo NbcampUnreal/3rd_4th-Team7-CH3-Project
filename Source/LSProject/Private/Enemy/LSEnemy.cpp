@@ -108,12 +108,6 @@ void ALSEnemy::Death()
 		}
 	}
 
-	ALSPlayerState* GameState = Cast<ALSPlayerState>(GetPlayerState());
-	if (GameState)
-	{
-		GameState->SetCoin(EnemyCoin);
-	}
-
 	if (ALSGameState* GS = GetWorld() ? GetWorld()->GetGameState<ALSGameState>() : nullptr)
 	{
 		GS->OnEnemyKilled();
