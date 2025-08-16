@@ -40,7 +40,7 @@ ALSPlayerCharacter::ALSPlayerCharacter()
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 
 	ShopComp = CreateDefaultSubobject<ULSShopComp>(TEXT("ShopComponent"));
-	InvenComp = CreateDefaultSubobject<ULSInventoryComp>(TEXT("InventoryComponent"));
+	InventoryComp = CreateDefaultSubobject<ULSInventoryComp>(TEXT("InventoryComponent"));
 	CharacterStateComp = CreateDefaultSubobject<ULSCharacterStateComp>(TEXT("CharacterStateComponent"));
 	WeaponSystemComp = CreateDefaultSubobject<ULSPlayerWeaponSystemComp>(TEXT("WeaponSystemComponent"));
 	Tags.AddUnique("Player");
@@ -290,13 +290,11 @@ void ALSPlayerCharacter::Reload(const FInputActionValue& Value)
 	if (CurrentWeapon == ECurrentWeapon::None) return;
 	if (!WeaponSystemComp->CurrentWeapon->IsCanReload()) return;
 	if (!CharacterStateComp->CanReload()) return;
-	//우진
-	//int32 MaxAmmo = WeaponSystemComp->CurrentWeapon->GetMaxAmmo();
-	//if (!InvenComp->HasAmmo(MaxAmmo))	return;
-
+	if (!InventoryComp->HasAmmo())	return;
+	
 	const int32 Index = static_cast<int32>(CurrentWeapon) - 1;
 	ALSWeaponBase* Weapon = WeaponSystemComp->CurrentWeapon;
-
+	
 	if (ReloadMontageCollection.IsValidIndex(Index))
 	{
 		ReloadMontage = ReloadMontageCollection[Index];

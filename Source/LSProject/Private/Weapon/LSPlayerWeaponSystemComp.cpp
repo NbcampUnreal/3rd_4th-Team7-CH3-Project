@@ -1,6 +1,8 @@
 #include "Weapon/LSPlayerWeaponSystemComp.h"
 #include "Character/LSPlayerCharacter.h"
 #include "Weapon/LSWeaponBase.h"
+#include "Component/LSInventoryComp.h"
+#include "Controller/LSPlayerController.h"
 
 ULSPlayerWeaponSystemComp::ULSPlayerWeaponSystemComp()
 {
@@ -49,6 +51,12 @@ void ULSPlayerWeaponSystemComp::UnEquipWeapon()
 {
 	if (CurrentWeapon)
 	{
+		//우진
+		ULSInventoryComp* InvenComp=OwnerCharacter->FindComponentByClass<ULSInventoryComp>();
+		if (!InvenComp) return;
+		
+		InvenComp->AddAmmoToInven(CurrentWeapon->GetCurrentAmmo());
+		
 		OwnerCharacter->SetCurrentWeapon(ECurrentWeapon::None);
 		CurrentWeapon->Destroy();
 		CurrentWeapon = nullptr;

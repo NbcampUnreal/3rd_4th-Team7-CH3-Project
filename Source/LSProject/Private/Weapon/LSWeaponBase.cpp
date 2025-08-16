@@ -7,6 +7,8 @@
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraSystem.h"
 #include "Component/LSInventoryComp.h"
+#include "Controller/LSPlayerController.h"
+#include "Widget/LSInventoryWidget.h"
 
 ALSWeaponBase::ALSWeaponBase()
 {
@@ -95,7 +97,23 @@ void ALSWeaponBase::Fire()
 
 void ALSWeaponBase::Reload()
 {
-	CurrentAmmo = MaxAmmo;
+	//우진->
+	ALSPlayerCharacter* Player = Cast<ALSPlayerCharacter>(GetOwner());
+	if (!Player)	return;
+
+	ULSInventoryComp* Inven=Player->FindComponentByClass<ULSInventoryComp>();
+	if (!Inven)	return;
+
+	CurrentAmmo+=Inven->RequiredAmmo(MaxAmmo-CurrentAmmo);
+
+	//UI Update
+	ALSPlayerController* PC=Cast<ALSPlayerController>(Player->GetController());
+	if (!PC)	return ;
+	if (!PC->GetInvenWidget())	return ;
+	ULSInventoryWidget* InvenUI=Cast<ULSInventoryWidget>(PC->GetInvenWidget());
+	InvenUI->OnUpdateInvenUI.Broadcast();
+	
+	//CurrentAmmo = MaxAmmo;
 }
 
 float ALSWeaponBase::GetFireRate() const

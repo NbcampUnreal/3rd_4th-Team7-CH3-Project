@@ -11,7 +11,8 @@
 #include "Components/BoxComponent.h"
 #include "Game/LSPlayerState.h"
 #include "Character/LSPlayerCharacter.h"
-
+#include "Weapon/LSPlayerWeaponSystemComp.h"
+#include "Weapon/LSWeaponBase.h"
 
 
 void ALSGameState::BeginPlay()
@@ -81,7 +82,9 @@ void ALSGameState::UpdateHUD()
 		KillTextBlock = Cast<UTextBlock>(HUD->GetWidgetFromName(TEXT("KillText")));
 	if (!ShopPressTextBlock)
 		ShopPressTextBlock = Cast<UTextBlock>(HUD->GetWidgetFromName(TEXT("ShopPressText")));
-	if (!DayTextBlock || !TimeTextBlock || ! ShopPressTextBlock) return;
+	if (!BulletTextBlock)
+		BulletTextBlock = Cast<UTextBlock>(HUD->GetWidgetFromName(TEXT("BulletTextBlock")));
+	if (!DayTextBlock || !TimeTextBlock || ! ShopPressTextBlock || !BulletTextBlock) return;
 	
 	//데이 텍스트 업데이트
 	const int32 Day = DayNightCtrl->GetCurrentDay();
@@ -144,6 +147,23 @@ void ALSGameState::UpdateHUD()
 		}
 		bLocalPrevIsDay = bIsDayNow;
 		LocalPrevDay    = DayNow;
+	if (BulletTextBlock)
+	{
+		if (ALSPlayerCharacter* Character=Cast<ALSPlayerCharacter>(PC->GetPawn()))
+		{
+			if (ULSPlayerWeaponSystemComp* WeaponComp=Character->FindComponentByClass<ULSPlayerWeaponSystemComp>())
+			{
+				int32 CurrentAmmo=0;
+				int32 MaxAmmo=0;
+				if (WeaponComp->CurrentWeapon)
+				{
+					CurrentAmmo=WeaponComp->CurrentWeapon->GetCurrentAmmo();
+					MaxAmmo=WeaponComp->CurrentWeapon->GetMaxAmmo();
+				}
+
+				BulletTextBlock->SetText(FText::FromString(FString::Printf(TEXT("Bullet : %d / %d"),CurrentAmmo,MaxAmmo )));
+			}
+		}
 	}
 }
 void ALSGameState::TryRegisterSpawnVolumes()

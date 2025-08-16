@@ -45,7 +45,6 @@ void ULSShopComp::BuyItem(const FName& ItemName)
 		if (ALSPlayerState* PlayerState=PC->GetPlayerState<ALSPlayerState>())
 		{
 			int CurCoin=PlayerState->GetCoin();
-			//위젯 버튼->아이템 선택
 
 			const FString Context(TEXT("Get Item"));
 			const FLSShopItemRow* Row=ShopItemData->FindRow<FLSShopItemRow>(ItemName,Context,true);
@@ -57,12 +56,10 @@ void ULSShopComp::BuyItem(const FName& ItemName)
 				{
 					CurCoin-=ItemPrice;
 					PlayerState->SetCoin(CurCoin);
-					//PC->Player->Inventory->AddtoInven(ItemName)
 					Inventory->AddToInven(ItemName,Row->Number);
 				}
 				else
 				{
-					//UI->돈이 부족
 					OnShopNotEnoughMoney.Broadcast();
 				}
 			}

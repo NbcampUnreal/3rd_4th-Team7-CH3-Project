@@ -44,7 +44,7 @@ public:
 	TObjectPtr<ULSShopComp> ShopComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Store")
-	TObjectPtr<ULSInventoryComp> InvenComp;
+	TObjectPtr<ULSInventoryComp> InventoryComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="StateComp")
 	TObjectPtr<ULSCharacterStateComp> CharacterStateComp;
