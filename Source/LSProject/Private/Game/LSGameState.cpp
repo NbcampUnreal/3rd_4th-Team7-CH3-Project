@@ -147,22 +147,24 @@ void ALSGameState::UpdateHUD()
 		}
 		bLocalPrevIsDay = bIsDayNow;
 		LocalPrevDay = DayNow;
-		if (BulletTextBlock)
-		{
-			if (ALSPlayerCharacter* Character = Cast<ALSPlayerCharacter>(PC->GetPawn()))
-			{
-				if (ULSPlayerWeaponSystemComp* WeaponComp = Character->FindComponentByClass<ULSPlayerWeaponSystemComp>())
-				{
-					int32 CurrentAmmo = 0;
-					int32 MaxAmmo = 0;
-					if (WeaponComp->CurrentWeapon)
-					{
-						CurrentAmmo = WeaponComp->CurrentWeapon->GetCurrentAmmo();
-						MaxAmmo = WeaponComp->CurrentWeapon->GetMaxAmmo();
-					}
+	}
 
-					BulletTextBlock->SetText(FText::FromString(FString::Printf(TEXT("Bullet : %d / %d"), CurrentAmmo, MaxAmmo)));
+	
+	if (BulletTextBlock)
+	{
+		if (ALSPlayerCharacter* Character = Cast<ALSPlayerCharacter>(PC->GetPawn()))
+		{
+			if (ULSPlayerWeaponSystemComp* WeaponComp = Character->FindComponentByClass<ULSPlayerWeaponSystemComp>())
+			{
+				int32 CurrentAmmo = 0;
+				int32 MaxAmmo = 0;
+				if (WeaponComp->CurrentWeapon)
+				{
+					CurrentAmmo = WeaponComp->CurrentWeapon->GetCurrentAmmo();
+					MaxAmmo = WeaponComp->CurrentWeapon->GetMaxAmmo();
 				}
+
+				BulletTextBlock->SetText(FText::FromString(FString::Printf(TEXT("Bullet : %d / %d"), CurrentAmmo, MaxAmmo)));
 			}
 		}
 	}

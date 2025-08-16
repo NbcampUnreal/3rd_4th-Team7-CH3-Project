@@ -101,14 +101,6 @@ void ALSWeaponBase::Fire()
 				MuzzleTransform.GetLocation(),
 				FireSoundVolume);
 		}
-
-		DrawDebugLine(
-			GetWorld(),
-			StartLocation,
-			EndLocation,
-			FColor::Red,
-			false,
-			2.0f);
 	}
 }
 

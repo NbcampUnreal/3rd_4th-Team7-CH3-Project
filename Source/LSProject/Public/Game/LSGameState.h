@@ -33,8 +33,6 @@ public:
 private:
 	bool bIsCharacterOverlappedWithDoor;
 	bool bIsDay;
-	//bool bIShowingShopUI;
-	//bool bCanUseShop;
 
 	FTimerHandle HUDUpdateTimerHandle;
 	UPROPERTY() ALSDayNightController* DayNightCtrl = nullptr;
