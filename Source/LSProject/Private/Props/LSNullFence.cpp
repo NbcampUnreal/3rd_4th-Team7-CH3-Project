@@ -89,6 +89,7 @@ void ALSNullFence::RestoreFence()
 		GetActorRotation()
 	))
 	{
+		//소리 재생
 		if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
 		{
 			if (APlayerState* PlayerState = PlayerController->GetPlayerState<APlayerState>())
