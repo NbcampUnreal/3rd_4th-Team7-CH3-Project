@@ -7,6 +7,8 @@
 class ALSDayNightController;
 class UTextBlock;
 class ALSEnemySpawnVolume;
+class UAudioComponent;
+class USoundBase;
 
 UCLASS()
 class LSPROJECT_API ALSGameState : public AGameState
@@ -21,6 +23,18 @@ public:
 	FORCEINLINE bool GetDoorOverlapped() const {return bIsCharacterOverlappedWithDoor;}
 	FORCEINLINE bool GetDay() const {return bIsDay;}
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Audio")
+	UAudioComponent* BGMComp = nullptr;
+
+	UPROPERTY(VisibleAnywhere, Category="Audio")
+	USoundBase* StartMapBGM = nullptr;
+
+	UPROPERTY(VisibleAnywhere, Category="Audio")
+	USoundBase* DayBGM = nullptr;
+
+	UPROPERTY(VisibleAnywhere, Category="Audio")
+	USoundBase* NightBGM = nullptr;
+	
 	bool bGetCanOpenShopUI();
 
 	virtual void BeginPlay() override;
@@ -71,5 +85,10 @@ private:
 	bool bLocalPrevIsDay = true;
 	int32 LocalPrevDay = 1;
 	bool bLocalClearShown = false;
-	
+
+	void PlayBGM(USoundBase* Sound, float FadeTime = 1.0f, float Volume = 0.6f);
+	void InitStartMapBGM();
+	void InitMainMapBGM();
+
+	USoundBase* CurrentBGMSound = nullptr;
 };

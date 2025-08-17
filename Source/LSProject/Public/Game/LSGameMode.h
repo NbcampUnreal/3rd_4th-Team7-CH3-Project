@@ -6,9 +6,8 @@
 #include "GameFramework/GameMode.h"
 #include "LSGameMode.generated.h"
 
-/**
- * 
- */
+class USoundBase;
+
 UCLASS()
 class LSPROJECT_API ALSGameMode : public AGameMode
 {
@@ -16,4 +15,13 @@ class LSPROJECT_API ALSGameMode : public AGameMode
 
 public:
 	ALSGameMode();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Audio")
+	USoundBase* StartMapBGM;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Audio")
+	USoundBase* DayBGM;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Audio")
+	USoundBase* NightBGM;
 };
