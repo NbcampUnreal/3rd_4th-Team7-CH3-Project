@@ -10,12 +10,6 @@
 #include "Widget/LSInvenSlot.h"
 #include "Components/Image.h"
 
-void ULSInventoryWidget::NativeOnInitialized()
-{
-	Super::NativeOnInitialized();
-
-}
-
 void ULSInventoryWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -23,7 +17,8 @@ void ULSInventoryWidget::NativeConstruct()
 	LayOutEmptyInven();
 	LayoutInInven();
 	LayOutInWeapon();
-
+	LayOutInUseItem();
+	
 	OnUpdateInvenUI.AddDynamic(this,&ULSInventoryWidget::UpdateSlot);
 }
 
@@ -131,4 +126,14 @@ void ULSInventoryWidget::LayOutInWeapon()
 			WeaponSlot->IconImage->SetBrushFromTexture(Row->Icon);
 		}	
 	}
+}
+
+void ULSInventoryWidget::LayOutInUseItem()
+{
+	UseItemContainer->ClearChildren();	
+	if (!EmptySlotClass)	return;
+	UseItemSlot=CreateWidget<ULSInvenSlot>(this, EmptySlotClass);
+	UseItemSlot->SlotName=FName(TEXT("UseItem"));
+	UseItemContainer->AddChild(UseItemSlot);
+	
 }

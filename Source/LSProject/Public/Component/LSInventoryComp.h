@@ -29,6 +29,7 @@ public:
 	bool HasAmmo();
 	int RequiredAmmo(int32 RequiredAmmo);
 	void AddAmmoToInven(int32 RequiredAmmo);
+	void UseItem(const FName& Input);
 	
 private:
 	UPROPERTY()

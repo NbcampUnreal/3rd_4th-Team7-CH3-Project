@@ -2,9 +2,7 @@
 
 
 #include "Widget/LSInvenSlot.h"
-
-#include "DataTable/LSDragDropOperation.h"
-#include "DataTable/LSInvenRowObject.h"
+#include "DataTable/LSInvenSlotInfo.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Controller/LSPlayerController.h"
 #include "Widget/LSInventoryWidget.h"
@@ -25,7 +23,7 @@ void ULSInvenSlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPoin
 {
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
 	
-	ULSInvenRowObject* RowObject=NewObject<ULSInvenRowObject>();
+	ULSInvenSlotInfo* RowObject=NewObject<ULSInvenSlotInfo>();
 	RowObject->NameText=NameText;
 	RowObject->Type=Type;
 
@@ -46,7 +44,7 @@ bool ULSInvenSlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEven
 
 	if (!InOperation)	return false;
 
-	ULSInvenRowObject* RowObj = Cast<ULSInvenRowObject>(InOperation->Payload);
+	ULSInvenSlotInfo* RowObj = Cast<ULSInvenSlotInfo>(InOperation->Payload);
 	if (!RowObj)	return false;
 
 	ALSPlayerController* PC=GetOwningPlayer<ALSPlayerController>();
@@ -127,6 +125,21 @@ bool ULSInvenSlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEven
 		Type=RowObj->Type;
 		
 		InvenComp->Unequip();
+		
+		//Update Layout
+		if (!PC->GetInvenWidget())	return false;
+		PC->GetInvenWidget()->OnUpdateInvenUI.Broadcast();
+		
+		return true;
+	}
+
+	//->무기 사용
+	if (SlotName==FName(TEXT("UseItem")) && RowObj->Type=="Item")
+	{
+		FText TextName=RowObj->NameText->GetText();
+		FString TextAsString=TextName.ToString();
+		FName TextAsName(*TextAsString);
+		InvenComp->UseItem(TextAsName);
 		
 		//Update Layout
 		if (!PC->GetInvenWidget())	return false;

@@ -20,8 +20,6 @@ class LSPROJECT_API ULSInventoryWidget : public UUserWidget
 	GENERATED_BODY()
 
 protected:
-	virtual void NativeOnInitialized() override;
-	
 	virtual void NativeConstruct() override;
 
 public:
@@ -44,6 +42,9 @@ public:
 	
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UPanelWidget> EmptyContainer;
+
+	UPROPERTY(meta=(BindWidget))
+	TObjectPtr<UPanelWidget> UseItemContainer;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Inven")
 	UDataTable* InventoryTable;
@@ -58,8 +59,12 @@ private:
 	UPROPERTY()																	
 	TObjectPtr<ULSInvenSlot> EmptySlot;
 
+	UPROPERTY()																	
+	TObjectPtr<ULSInvenSlot> UseItemSlot;
+
 	void LayOutEmptyInven();
 	void LayoutInInven();
 	void LayOutInWeapon();
+	void LayOutInUseItem();
 	
 };
