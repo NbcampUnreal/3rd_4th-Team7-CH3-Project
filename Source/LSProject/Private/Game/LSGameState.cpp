@@ -6,7 +6,6 @@
 #include "Components/TextBlock.h"
 #include "EngineUtils.h"                
 #include "Enemy/LSEnemySpawnVolume.h"
-#include "Enemy/LSBoss.h"
 #include "Game/LSPlayerState.h"
 #include "Character/LSPlayerCharacter.h"
 #include "Weapon/LSPlayerWeaponSystemComp.h"
@@ -276,10 +275,7 @@ void ALSGameState::DespawnRemainZombie()
 	{
 		ALSEnemy* Enemy = *It;
 		if (!Enemy) continue;
-		if (Enemy->IsA(ALSBoss::StaticClass()))
-		{
-			continue;
-		}
+		
 		Enemy->GetWorldTimerManager().ClearAllTimersForObject(Enemy);
 
 		Enemy->Destroy();
