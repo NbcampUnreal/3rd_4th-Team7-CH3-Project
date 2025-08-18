@@ -25,8 +25,6 @@ protected:
 	
 	virtual void NativeConstruct() override;
 	
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
-
 	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 
 public:

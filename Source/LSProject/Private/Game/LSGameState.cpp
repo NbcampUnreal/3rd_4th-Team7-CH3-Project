@@ -50,8 +50,7 @@ ALSGameState::ALSGameState()
 {
 	bIsCharacterOverlappedWithDoor=false;
 	bIsDay=true;
-	//bIShowingShopUI=false;
-
+	
 	USceneComponent* Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	RootComponent = Root;
 
@@ -60,6 +59,7 @@ ALSGameState::ALSGameState()
 	BGMComp->bAutoActivate = false;
 	BGMComp->bAllowSpatialization = false;
 	BGMComp->bIsUISound = false;
+	
 }
 
 bool ALSGameState::bGetCanOpenShopUI()
@@ -150,7 +150,7 @@ void ALSGameState::UpdateHUD()
 
 	const bool  bIsDayNow = DayNightCtrl->IsDayPhase();
 	const int32 DayNow = DayNightCtrl->GetCurrentDay();
-	if (!bLocalClearShown && Kills >= 100)
+	if (!bLocalClearShown && Kills >= 80)
 	{
 		if (PC->IsLocalPlayerController())
 		{

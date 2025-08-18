@@ -17,11 +17,11 @@ public:
 	ALSGameMode();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Audio")
-	USoundBase* StartMapBGM;
+	USoundBase* StartMapBGM=nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Audio")
-	USoundBase* DayBGM;
+	USoundBase* DayBGM=nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Audio")
-	USoundBase* NightBGM;
+	USoundBase* NightBGM=nullptr;
 };

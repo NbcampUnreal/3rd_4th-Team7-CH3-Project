@@ -63,6 +63,12 @@ void ALSPlayerController::BeginPlay()
 
 void ALSPlayerController::ShowShopWidget()
 {
+	if (InvenWidgetInstance)
+	{
+		InvenWidgetInstance->RemoveFromParent();
+		InvenWidgetInstance=nullptr;
+	}
+	
 	if (!ShopWidgetInstance&& ShopWidgetClass)
 	{
 		ShopWidgetInstance = CreateWidget<ULSShopWidget>(this, ShopWidgetClass);
@@ -70,11 +76,8 @@ void ALSPlayerController::ShowShopWidget()
 		{
 			ShopWidgetInstance->AddToViewport();
 			FInputModeUIOnly InputMode;
-			//FInputModeGameAndUI InputMode;
 			SetInputMode(InputMode);
 			bShowMouseCursor = true;
-
-			UE_LOG(LogTemp, Warning, TEXT("Show SHOP WIDGET"));
 		}
 	}
 }
@@ -204,11 +207,7 @@ void ALSPlayerController::ShowMainMenuWidget()
 
 void ALSPlayerController::LockToStartMapCamera() 
 {
-	for (TActorIterator<ACameraActor> It(GetWorld()); It; ++It)
-	{
-		SetViewTargetWithBlend(*It, 0.f);
-		break; 
-	}
+	if (TActorIterator<ACameraActor> It(GetWorld()); It) { SetViewTargetWithBlend(*It, 0.f); }
 }
 
 void ALSPlayerController::SetupMainMapPlay()

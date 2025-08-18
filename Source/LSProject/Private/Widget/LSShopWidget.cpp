@@ -16,6 +16,12 @@ void ULSShopWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
+	ALSPlayerState* PS = GetOwningPlayerState<ALSPlayerState>(false);
+	if (PS)
+	{
+		CoinText->SetText(FText::AsNumber(PS->GetCoin()));
+	}
+	
 	if (APawn* Pawn = GetOwningPlayerPawn())
 	{
 		if (ALSPlayerCharacter* Player=Cast<ALSPlayerCharacter>(Pawn))
@@ -81,16 +87,6 @@ void ULSShopWidget::NativeConstruct()
 	}
 }
 
-void ULSShopWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
-{
-	Super::NativeTick(MyGeometry, InDeltaTime);
-
-	ALSPlayerState* PS = GetOwningPlayerState<ALSPlayerState>(false);
-	if (PS)
-	{
-		CoinText->SetText(FText::AsNumber(PS->GetCoin()));
-	}
-}
 
 FReply ULSShopWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
 {
@@ -128,6 +124,12 @@ void ULSShopWidget::HandleBuyClicked(const FName& Name)
 			if (ShopComp)
 			{
 				ShopComp->BuyItem(Name);
+
+				ALSPlayerState* PS = GetOwningPlayerState<ALSPlayerState>(false);
+				if (PS)
+				{
+					CoinText->SetText(FText::AsNumber(PS->GetCoin()));
+				}
 			}
 		}
 	}

@@ -90,5 +90,6 @@ private:
 	void InitStartMapBGM();
 	void InitMainMapBGM();
 
+	UPROPERTY()
 	USoundBase* CurrentBGMSound = nullptr;
 };
