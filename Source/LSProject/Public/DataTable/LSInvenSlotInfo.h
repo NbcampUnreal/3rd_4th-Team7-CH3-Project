@@ -19,15 +19,15 @@ class LSPROJECT_API ULSInvenSlotInfo : public UObject
 	
 public:
 	UPROPERTY()
-	UTextBlock* NameText;
+	UTextBlock* NameText=nullptr;
 
 	UPROPERTY()
-	UTextBlock* CountText;
+	UTextBlock* CountText=nullptr;
 
 	UPROPERTY()
-	UImage* IconImage;
+	UImage* IconImage=nullptr;
 
 	UPROPERTY()
-	FName Type;
+	FName Type="None";
 	
 };

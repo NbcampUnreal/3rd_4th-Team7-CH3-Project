@@ -32,26 +32,24 @@ void ALSHouse::BeginPlay()
 void ALSHouse::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (ALSPlayerCharacter* Character=Cast<ALSPlayerCharacter>(OtherActor))
+	ALSPlayerCharacter* Character=Cast<ALSPlayerCharacter>(OtherActor);
+	if (!Character)	return;
+
+	if (ALSGameState* GS=GetWorld()->GetGameState<ALSGameState>())
 	{
-		UE_LOG(LogTemp,Warning,TEXT("Overlap begin with Door"));
-		if (ALSGameState* GS=GetWorld()->GetGameState<ALSGameState>())
-		{
-			GS->SetDoorOverlapped(true);
-		}
+		GS->SetDoorOverlapped(true);
 	}
 }
 
 void ALSHouse::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	int32 OtherBodyIndex)
 {
-	if (ALSPlayerCharacter* Character=Cast<ALSPlayerCharacter>(OtherActor))
+	ALSPlayerCharacter* Character=Cast<ALSPlayerCharacter>(OtherActor);
+	if (!Character)	return;
+	
+	if (ALSGameState* GS=GetWorld()->GetGameState<ALSGameState>())
 	{
-		UE_LOG(LogTemp,Warning,TEXT("Overlap end with Door"));
-		if (ALSGameState* GS=GetWorld()->GetGameState<ALSGameState>())
-		{
-			GS->SetDoorOverlapped(false);
-		}
+		GS->SetDoorOverlapped(false);
 	}
 }
 

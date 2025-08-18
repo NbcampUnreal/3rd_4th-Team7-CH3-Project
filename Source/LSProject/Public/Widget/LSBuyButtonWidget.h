@@ -10,6 +10,7 @@
 class UButton;
 class UTextBlock;
 class UImage;
+class USoundBase;
 
 /**
  * 
