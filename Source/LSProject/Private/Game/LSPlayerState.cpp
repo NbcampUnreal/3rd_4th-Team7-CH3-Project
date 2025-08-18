@@ -6,7 +6,7 @@
 ALSPlayerState::ALSPlayerState()
 {
 	//추후 수정
-	Coin=1000;
+	Coin=500;
 }
 
 void ALSPlayerState::AddZombieKill(int32 Delta)

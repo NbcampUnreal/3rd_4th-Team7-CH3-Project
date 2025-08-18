@@ -20,6 +20,7 @@ public:
 
 
 private:
+	UPROPERTY(EditAnywhere,Category="Settings")
 	int32 Coin;
 	int32 ZombieNum=0;
 };
