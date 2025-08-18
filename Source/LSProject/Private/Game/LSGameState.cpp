@@ -13,7 +13,9 @@
 #include "Character/LSPlayerCharacter.h"
 #include "Weapon/LSPlayerWeaponSystemComp.h"
 #include "Weapon/LSWeaponBase.h"
-
+#include "Components/AudioComponent.h"
+#include "Sound/SoundBase.h"
+#include "Game/LSGameMode.h"
 
 void ALSGameState::BeginPlay()
 {
@@ -23,7 +25,21 @@ void ALSGameState::BeginPlay()
 		UGameplayStatics::GetActorOfClass(GetWorld(), ALSDayNightController::StaticClass())
 	);
 	TryRegisterSpawnVolumes();
-	
+	if (ALSGameMode* GM = GetWorld()->GetAuthGameMode<ALSGameMode>())
+	{
+		if (GM->StartMapBGM) StartMapBGM = GM->StartMapBGM;
+		if (GM->DayBGM)      DayBGM      = GM->DayBGM;
+		if (GM->NightBGM)    NightBGM    = GM->NightBGM;
+	}
+	const FString LevelName = UGameplayStatics::GetCurrentLevelName(GetWorld(), true);
+	if (LevelName.Equals(TEXT("LSStartMap"), ESearchCase::IgnoreCase))
+	{
+		InitStartMapBGM();
+	}
+	else if (LevelName.Equals(TEXT("LSMainMap"), ESearchCase::IgnoreCase))
+	{
+		InitMainMapBGM();
+	}
 	GetWorldTimerManager().SetTimer(
 		HUDUpdateTimerHandle, this, &ALSGameState::UpdateHUD, 0.2f, true, 0.0f
 	);
@@ -37,6 +53,15 @@ ALSGameState::ALSGameState()
 	bIsCharacterOverlappedWithDoor=false;
 	bIsDay=true;
 	//bIShowingShopUI=false;
+
+	USceneComponent* Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	RootComponent = Root;
+
+	BGMComp = CreateDefaultSubobject<UAudioComponent>(TEXT("BGMComp"));
+	BGMComp->SetupAttachment(RootComponent);
+	BGMComp->bAutoActivate = false;
+	BGMComp->bAllowSpatialization = false;
+	BGMComp->bIsUISound = false;
 }
 
 bool ALSGameState::bGetCanOpenShopUI()
@@ -145,6 +170,7 @@ void ALSGameState::UpdateHUD()
 				bLocalClearShown = true;
 			}
 		}
+		PlayBGM(bIsDayNow ? DayBGM : NightBGM, 1.2f, 0.6f);
 		bLocalPrevIsDay = bIsDayNow;
 		LocalPrevDay = DayNow;
 	}
@@ -264,4 +290,35 @@ void ALSGameState::DespawnRemainZombie()
 
 	AliveEnemies     = 0;
 	RemainingToSpawn = 0;
+}
+void ALSGameState::PlayBGM(USoundBase* Sound, float FadeTime, float Volume)
+{
+	if (!BGMComp) return;
+
+	if (Sound && Sound == CurrentBGMSound && BGMComp->IsPlaying())
+		return;
+
+	if (BGMComp->IsPlaying())
+		BGMComp->FadeOut(FadeTime, 0.f);
+
+	CurrentBGMSound = Sound;
+	BGMComp->SetSound(Sound);
+	if (Sound)
+	{
+		BGMComp->FadeIn(FadeTime, Volume);
+		BGMComp->Play();
+	}
+}
+
+void ALSGameState::InitStartMapBGM()
+{
+	PlayBGM(StartMapBGM, 3.0f, 0.5f); 
+}
+
+void ALSGameState::InitMainMapBGM()
+{
+	const bool bIsDayNow = DayNightCtrl ? DayNightCtrl->IsDayPhase() : true;
+	PlayBGM(bIsDayNow ? DayBGM : NightBGM, 3.0f, 0.1f);
+	bLocalPrevIsDay = bIsDayNow;
+	LocalPrevDay = DayNightCtrl ? DayNightCtrl->GetCurrentDay() : LocalPrevDay;
 }
