@@ -1,6 +1,5 @@
 #include "AI/LSBTTask_FindCloseFense.h"
 
-#include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Props/LSTestFence.h"
 #include "Kismet/GameplayStatics.h"
@@ -18,14 +17,13 @@ EBTNodeResult::Type ULSBTTask_FindCloseFense::ExecuteTask(UBehaviorTreeComponent
 	FVector CloseFenceLocation =  FindCloseFense(AIPawn);
 	if (CloseFenceLocation==FVector::ZeroVector)
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] BTTask : FindCloseFence is Not Found"))
 		return EBTNodeResult::Failed;
 	}
 	Comp.GetBlackboardComponent()->SetValueAsVector(TEXT("MoveToLocation"),CloseFenceLocation);
 	return EBTNodeResult::Succeeded;
 }
 
-FVector ULSBTTask_FindCloseFense::FindCloseFense(AActor* AIPawn) const
+FVector ULSBTTask_FindCloseFense::FindCloseFense(const AActor* AIPawn) const
 {
 	TArray<AActor*> AllActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALSTestFence::StaticClass(), AllActors);

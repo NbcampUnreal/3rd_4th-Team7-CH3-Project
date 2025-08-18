@@ -37,7 +37,6 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Overlap)
 	USphereComponent* SphereComponent;
@@ -45,7 +44,8 @@ protected:
 	UWidgetComponent* WidgetComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Overlap)
 	UUserWidget* UserWidget;
-	
+
+	UPROPERTY()
 	UCameraComponent* CameraComp;
 	FTimerHandle AttackTimerHandle;
 
@@ -98,7 +98,6 @@ protected:
 	UAnimInstance* CachedAnim;
 	
 	bool IsRotation=false;
-	void SetDeltaRotation(float DeltaSeconds);
 	void HealthRotation();
 
 	UPROPERTY()

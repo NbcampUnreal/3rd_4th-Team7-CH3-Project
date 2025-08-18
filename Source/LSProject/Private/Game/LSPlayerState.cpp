@@ -3,18 +3,31 @@
 
 #include "Game/LSPlayerState.h"
 
+#include "Kismet/GameplayStatics.h"
+
 ALSPlayerState::ALSPlayerState()
 {
-	//추후 수정
+	EmptySound=nullptr;
 	Coin=500;
 }
+
+
 
 void ALSPlayerState::AddZombieKill(int32 Delta)
 {
 	ZombieNum = FMath::Max(0, ZombieNum + Delta);
 }
 
-void ALSPlayerState::AddCoin(int32 NewCoin)
+bool ALSPlayerState::AddCoin(int32 NewCoin)
 {
-	Coin+=NewCoin;
+	if (Coin+NewCoin >= 0)
+	{
+		Coin+=NewCoin;
+		return true;
+	}
+	if (EmptySound)
+	{
+		UGameplayStatics::PlaySound2D(this, EmptySound);
+	}
+	return false;
 }

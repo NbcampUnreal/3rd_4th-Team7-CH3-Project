@@ -1,6 +1,5 @@
 #include "Enemy/LSEnemySpawnVolume.h"
 
-#include "AIController.h"
 #include "Enemy/LSEnemySpawnRow.h"
 #include "Components/BoxComponent.h"
 
@@ -18,7 +17,7 @@ void ALSEnemySpawnVolume::BeginPlay()
 	Super::BeginPlay();
 }
 
-void ALSEnemySpawnVolume::SpawnEnemy(int32 NowWave)
+void ALSEnemySpawnVolume::SpawnEnemy(int32 NowWave) const
 {
 	if (FLSEnemySpawnRow* SpawnRow = GetRandomEnemy(NowWave))
 	{

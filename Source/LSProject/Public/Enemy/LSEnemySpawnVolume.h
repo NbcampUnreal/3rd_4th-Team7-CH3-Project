@@ -14,7 +14,7 @@ class LSPROJECT_API ALSEnemySpawnVolume : public AActor
 	
 public:	
 	ALSEnemySpawnVolume();
-	void SpawnEnemy(int32 NowWave);
+	void SpawnEnemy(int32 NowWave) const;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Component")
 	TObjectPtr<USceneComponent> SceneComponent;
@@ -27,6 +27,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	FLSEnemySpawnRow* GetRandomEnemy(int32 WaveNum) const;
+	
 	FVector GetRandomVector() const;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Wave")

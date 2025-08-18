@@ -4,12 +4,10 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "Game/LSPlayerState.h"
 #include "Components/SphereComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/ProgressBar.h"
 #include "Game/LSGameState.h"
-#include "Kismet/KismetMathLibrary.h"
 
 ALSEnemy::ALSEnemy()
 {
@@ -38,8 +36,7 @@ ALSEnemy::ALSEnemy()
 
 void ALSEnemy::Attack()
 {
-	AAIController* AIController = Cast<AAIController>(GetController());
-	if (AIController)
+	if (AAIController* AIController = Cast<AAIController>(GetController()))
 	{
 		AIController->StopMovement();
 	}
@@ -72,8 +69,7 @@ float ALSEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& Damage
 	}
 	if (CachedAnim)
 	{
-		AAIController* AIController = Cast<AAIController>(GetController());
-		if (AIController)
+		if (AAIController* AIController = Cast<AAIController>(GetController()))
 		{
 			AIController->StopMovement();
 		}
@@ -90,8 +86,7 @@ void ALSEnemy::Death()
 {
 	if (IsDeath) return;
 	IsDeath=true;
-	AAIController* AIController = Cast<AAIController>(GetController());
-	if (AIController)
+	if (AAIController* AIController = Cast<AAIController>(GetController()))
 	{
 		AIController->StopMovement();
 	}
@@ -135,11 +130,9 @@ void ALSEnemy::BeginPlay()
 	
 	if (ZombieType == ELSZombieType::Fence)
 	{
-		AAIController* AIController = Cast<AAIController>(GetController());
-		if (AIController)
+		if (AAIController* AIController = Cast<AAIController>(GetController()))
 		{
-			UBlackboardComponent* Blackboard = Cast<UBlackboardComponent>(AIController->GetBlackboardComponent());
-			if (Blackboard)
+			if (UBlackboardComponent* Blackboard = Cast<UBlackboardComponent>(AIController->GetBlackboardComponent()))
 			{
 				Blackboard->SetValueAsBool("IsFenceZom",true);
 			}
@@ -153,16 +146,6 @@ void ALSEnemy::BeginPlay()
 			0.1f,
 			true
 	);
-}
-
-//회전 : 잘 안 됨...
-void ALSEnemy::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-	if(IsRotation == true)
-	{
-		SetDeltaRotation(DeltaTime);
-	}
 }
 
 //montage의 notify에서 호출됨
@@ -266,27 +249,6 @@ void ALSEnemy::UpdateCurrentHealth()
 			float HealthPercent = CurrentHealth/MaxHealth;
 			ProgressBar->SetPercent(HealthPercent);
 		}
-	}
-}
-
-//잘 안 됨...
-void ALSEnemy::SetDeltaRotation(float DeltaSeconds)
-{
-	if (!Player)
-	{
-		Player = UGameplayStatics::GetPlayerPawn(GetWorld(),0);
-	}
-	
-	FRotator NowRotation =  GetActorRotation();
-	FRotator LookRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Player->GetActorLocation());
-
-	FRotator GoRotation = FMath::RInterpTo(NowRotation, LookRotation, DeltaSeconds, 3.f);
-
-	SetActorRotation(FRotator(0.f, GoRotation.Yaw, 0.f));
-
-	if	(FMath::Abs(FMath::FindDeltaAngleDegrees(LookRotation.Yaw,GetActorRotation().Yaw))<= 1.f)
-	{
-		IsRotation=false;
 	}
 }
 

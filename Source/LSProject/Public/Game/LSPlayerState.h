@@ -13,11 +13,13 @@ public:
 
 	FORCEINLINE int32 GetCoin() const{return Coin;}
 	FORCEINLINE void SetCoin(int32 NewCoin) {Coin=NewCoin;}
-	void AddCoin(int32 NewCoin);
+	bool AddCoin(int32 NewCoin);
 
 	FORCEINLINE int32 GetZombieNum() const { return ZombieNum; }
 	UFUNCTION(BlueprintCallable) void AddZombieKill(int32 Delta = 1);
-
+	
+	UPROPERTY(EditAnywhere,Category="Sound")
+	USoundBase* EmptySound;
 
 private:
 	UPROPERTY(EditAnywhere,Category="Settings")

@@ -1,7 +1,6 @@
 #include "AI/LSBTTask_RotationToFence.h"
 
 #include "AIController.h"
-#include "SWarningOrErrorBox.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 
@@ -28,7 +27,6 @@ EBTNodeResult::Type ULSBTTask_RotationToFence::ExecuteTask(UBehaviorTreeComponen
 	FRotator LookAtRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
 	
 	AIPawn->SetActorRotation(FRotator(AIPawn->GetActorRotation().Pitch ,LookAtRotation.Yaw, AIPawn->GetActorRotation().Roll));
-	UE_LOG(LogTemp, Warning, TEXT("[LSEnemyLog] AIPawn Rotation Success"))
 	
 	return EBTNodeResult::Succeeded;
 }

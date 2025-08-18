@@ -44,14 +44,11 @@ void ALSNullFence::OnOverlapStartEvent(UPrimitiveComponent* OverlappedComponent,
 {
 	Player = UGameplayStatics::GetPlayerPawn(GetWorld(),0);
 	if (OtherActor!=Player ) return;
-	UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] Player"));
 	if (WidgetComponent)
 	{
-		UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] WidgetComponent"));
 		UserWidget=WidgetComponent->GetUserWidgetObject();
 		if(UserWidget)
 		{
-			UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] UserWidget"));
 			UserWidget->SetVisibility(ESlateVisibility::Visible);
 			IsOverlaped=true;
 		}
@@ -63,15 +60,12 @@ void ALSNullFence::OnOverlapEndEvent(UPrimitiveComponent* OverlappedComponent, A
 {
 	Player = UGameplayStatics::GetPlayerPawn(GetWorld(),0);
 	if (OtherActor==Player && WidgetComponent)
-	UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] Player End"));
 	{
 		if (WidgetComponent)
 		{
-			UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] WidgetComponent End"));
 			UserWidget=WidgetComponent->GetUserWidgetObject();
 			if(UserWidget)
 			{
-				UE_LOG(LogTemp,Warning,TEXT("[LSEnemyLog] UserWidget End"));
 				UserWidget->SetVisibility(ESlateVisibility::Hidden);
 				IsOverlaped=false;
 			}
@@ -82,25 +76,29 @@ void ALSNullFence::OnOverlapEndEvent(UPrimitiveComponent* OverlappedComponent, A
 void ALSNullFence::RestoreFence()
 {
 	if (!IsOverlaped || !BPFenceClass) return;
-	if (GetWorld()->SpawnActor<AActor>(
-		BPFenceClass,
-		GetActorLocation(),
-		GetActorRotation()
-	))
+	
+	if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
 	{
-		//소리 재생
-		if (RestoreSound)
+		if (APlayerState* PlayerState = PlayerController->GetPlayerState<APlayerState>())
 		{
-			UGameplayStatics::PlaySoundAtLocation(GetWorld(), RestoreSound, GetActorLocation(), FRotator::ZeroRotator);
-		}
-		if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
-		{
-			if (APlayerState* PlayerState = PlayerController->GetPlayerState<APlayerState>())
+			ALSPlayerState* LSPlayerState = Cast<ALSPlayerState>(PlayerState);
+			if (LSPlayerState->AddCoin(-UseCoin))
 			{
-				ALSPlayerState* LSPlayerState = Cast<ALSPlayerState>(PlayerState);
-				LSPlayerState->AddCoin(-UseCoin);
-				Destroy();
+				if (GetWorld()->SpawnActor<AActor>(
+					BPFenceClass,
+					GetActorLocation(),
+					GetActorRotation()
+				))
+				{
+					//소리 재생
+					if (RestoreSound)
+					{
+						UGameplayStatics::PlaySoundAtLocation(GetWorld(), RestoreSound, GetActorLocation(), FRotator::ZeroRotator);
+					}
+					Destroy();
+				}
 			}
+			LSPlayerState->AddCoin(-UseCoin);
 		}
 	}
 }

@@ -7,8 +7,7 @@ void ULSAttackNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase
 	Super::Notify(MeshComp, Animation,EventReference);
 	if (AActor* Actor = MeshComp->GetOwner())
 	{
-		ALSEnemy* Enemy = Cast<ALSEnemy>(Actor);
-		if (Enemy)
+		if (ALSEnemy* Enemy = Cast<ALSEnemy>(Actor))
 		{
 			Enemy->HitAttack();
 		}
