@@ -79,7 +79,6 @@ void ALSNullFence::OnOverlapEndEvent(UPrimitiveComponent* OverlappedComponent, A
 	}
 }
 
-//EnemyTodo : 수정요망
 void ALSNullFence::RestoreFence()
 {
 	if (!IsOverlaped || !BPFenceClass) return;

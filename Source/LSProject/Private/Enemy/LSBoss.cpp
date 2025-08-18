@@ -34,7 +34,7 @@ void ALSBoss::StartFirstMontage()
 	AAIController* AIController = Cast<AAIController>(GetController());
 	if (AIController)
 	{
-		AIController->StopMovement(); //EnemyTodo : 리팩토링 요망
+		AIController->StopMovement();
 	}
 	
 	UAnimInstance* Anim = GetMesh()->GetAnimInstance();

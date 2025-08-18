@@ -35,7 +35,6 @@ void ALSZombieAIController::OnPossess(APawn* InPawn)
 	}
 }
 
-//EnemyTodo : 일단 무시
 void ALSZombieAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
 	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);

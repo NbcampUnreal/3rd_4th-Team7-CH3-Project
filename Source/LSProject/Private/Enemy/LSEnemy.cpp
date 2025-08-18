@@ -41,7 +41,7 @@ void ALSEnemy::Attack()
 	AAIController* AIController = Cast<AAIController>(GetController());
 	if (AIController)
 	{
-		AIController->StopMovement(); //EnemyTodo : 리팩토링 요망
+		AIController->StopMovement();
 	}
 
 	if (!CachedAnim)
@@ -75,7 +75,7 @@ float ALSEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& Damage
 		AAIController* AIController = Cast<AAIController>(GetController());
 		if (AIController)
 		{
-			AIController->StopMovement(); //EnemyTodo : 리팩토링 요망
+			AIController->StopMovement();
 		}
 		CachedAnim->StopAllMontages(0.f);
 		if (TakeDamageMontage)
@@ -93,7 +93,7 @@ void ALSEnemy::Death()
 	AAIController* AIController = Cast<AAIController>(GetController());
 	if (AIController)
 	{
-		AIController->StopMovement(); //EnemyTodo : 리팩토링 요망
+		AIController->StopMovement();
 	}
 	if (!CachedAnim)
 	{
@@ -183,8 +183,7 @@ void ALSEnemy::HitAttack()
 	);
 
 	IsHited=false;
-	DrawDebugSphere(GetWorld(), StartLocation, CollisionShape.GetSphereRadius(), 16, FColor::Red,false, 0.5f);
-
+	
 	if (bHit)
 	{
 		for(const FHitResult& Hit : Hits)
