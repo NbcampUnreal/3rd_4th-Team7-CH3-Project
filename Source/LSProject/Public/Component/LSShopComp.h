@@ -19,8 +19,7 @@ public:
 	ULSShopComp();
 
 	void BuyItem(const FName& ItemName);
-	void SellItem();
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
 	TObjectPtr<UDataTable> ShopItemData;
 
