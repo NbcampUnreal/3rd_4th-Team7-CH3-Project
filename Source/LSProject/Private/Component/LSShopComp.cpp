@@ -7,6 +7,7 @@
 #include "Engine/DataTable.h"
 #include "Component/LSInventoryComp.h"
 #include "Character/LSPlayerCharacter.h"
+#include "Kismet/GameplayStatics.h"
 
 ULSShopComp::ULSShopComp()
 {
@@ -57,6 +58,9 @@ void ULSShopComp::BuyItem(const FName& ItemName)
 					CurCoin-=ItemPrice;
 					PlayerState->SetCoin(CurCoin);
 					Inventory->AddToInven(ItemName,Row->Number);
+
+					UGameplayStatics::PlaySound2D(this, ClickSound);
+	
 				}
 				else
 				{

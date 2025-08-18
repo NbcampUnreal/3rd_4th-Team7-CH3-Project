@@ -22,9 +22,12 @@ public:
 	void SellItem();
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
-	UDataTable* ShopItemData;
+	TObjectPtr<UDataTable> ShopItemData;
 
 	FOnShopNotEnoughMoney OnShopNotEnoughMoney;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	USoundBase* ClickSound;
 protected:
 	virtual void BeginPlay() override;
 

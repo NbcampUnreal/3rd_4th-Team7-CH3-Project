@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "EntitySystem/MovieSceneComponentPtr.h"
 #include "LSShopWidget.generated.h"
 
 class UButton;
