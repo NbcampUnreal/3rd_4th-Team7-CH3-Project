@@ -3,8 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "DataTable/LSInvenRow.h"
-#include "LSInvenRowObject.generated.h"
+#include "LSInvenSlotInfo.generated.h"
 
 /**
  * 
@@ -14,7 +13,7 @@ class UTextBlock;
 class UImage;
 
 UCLASS()
-class LSPROJECT_API ULSInvenRowObject : public UObject
+class LSPROJECT_API ULSInvenSlotInfo : public UObject
 {
 	GENERATED_BODY()
 	

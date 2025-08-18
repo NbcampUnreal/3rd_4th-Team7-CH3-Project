@@ -38,7 +38,7 @@ ALSPlayerCharacter::ALSPlayerCharacter()
 
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 
-	ShopComp = CreateDefaultSubobject<ULSShopComp>(TEXT("ShopComponent"));
+	StoreComp = CreateDefaultSubobject<ULSShopComp>(TEXT("ShopComponent"));
 	InventoryComp = CreateDefaultSubobject<ULSInventoryComp>(TEXT("InventoryComponent"));
 	CharacterStateComp = CreateDefaultSubobject<ULSCharacterStateComp>(TEXT("CharacterStateComponent"));
 	WeaponSystemComp = CreateDefaultSubobject<ULSPlayerWeaponSystemComp>(TEXT("WeaponSystemComponent"));
@@ -323,6 +323,11 @@ void ALSPlayerCharacter::Equip()
 		PlayAnimMontage(EquipMontage);
 		CharacterStateComp->SetState(ECharacterState::Equip);
 	}
+}
+
+void ALSPlayerCharacter::AddHealth(int32 HealAmmount)
+{
+	CurrentHealth=FMath::Clamp(CurrentHealth+HealAmmount,0,MaxHealth);
 }
 
 void ALSPlayerCharacter::OpenShopUI()

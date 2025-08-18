@@ -4,7 +4,6 @@
 #include "Weapon/LSPlayerWeaponSystemComp.h"
 #include "Controller/LSPlayerController.h"
 #include "Widget/LSInventoryWidget.h"
-#include "Weapon/LSWeaponBase.h"
 
 ULSInventoryComp::ULSInventoryComp()
 {
@@ -141,6 +140,24 @@ void ULSInventoryComp::AddAmmoToInven(int32 RequiredAmmo)
 	NewValue+=RequiredAmmo;
 
 	MyItems[AmmoName]=NewValue;
+}
+
+void ULSInventoryComp::UseItem(const FName& Input)
+{
+	MyItems[Input]--;
+
+	if (Input=="Kit")
+	{
+		AActor* Owner = GetOwner();
+		if (!Owner) return;
+
+		ALSPlayerCharacter* Character=Cast<ALSPlayerCharacter>(Owner);
+		if (!Character) return;
+
+		Character->AddHealth((100));
+		UE_LOG(LogTemp,Warning,TEXT("ALSInventoryComp::Heal"));
+		Character->UpdateHealthBar(Character->GetCurrentHealth(),Character->GetMaxHealth());
+	}
 }
 
 ECurrentWeapon ULSInventoryComp::ChangeWeaponNameToEnum(const FName& Input) 

@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Component/LSShopComp.h"
 #include "DataTable/LSShopItemRow.h"
 #include "LSBuyButtonWidget.generated.h"
 

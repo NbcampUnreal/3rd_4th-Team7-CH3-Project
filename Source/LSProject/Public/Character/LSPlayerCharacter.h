@@ -40,8 +40,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "State")
 	void SetCurrentWeapon(ECurrentWeapon Weapon);
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Store")
-	TObjectPtr<ULSShopComp> ShopComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Store")
+	TObjectPtr<ULSShopComp> StoreComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Store")
 	TObjectPtr<ULSInventoryComp> InventoryComp;
@@ -61,6 +61,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "State")
 	void Equip();
+
+	void AddHealth(int32 HealAmmount);
 	
 protected:
 	virtual void BeginPlay() override;
